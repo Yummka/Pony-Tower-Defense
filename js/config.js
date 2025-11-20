@@ -1,7 +1,7 @@
 // ✅ ПРАВИЛЬНАЯ версия для config.js
 function createImage(filename) {
     const img = new Image();
-    img.src = `../images/${filename}`;
+    img.src = `images/${filename}`;
     return img;
 }
 
@@ -933,7 +933,8 @@ export const TOWER_CONFIG = {
                 };
 
                 // --- МУЗЫКА И ЗВУКИ ---
-export const backgroundMusic = new Audio('../audio/Pony Up.mp3');
+export const backgroundMusic = new Audio('audio/Pony Up.mp3');
 backgroundMusic.loop = true;      // Зацикливаем музыку
 
 backgroundMusic.volume = 0.4;     // Устанавливаем громкость (от 0.0 до 1.0)
+
