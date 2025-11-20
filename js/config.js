@@ -938,3 +938,4 @@ backgroundMusic.loop = true;      // Зацикливаем музыку
 
 backgroundMusic.volume = 0.4;     // Устанавливаем громкость (от 0.0 до 1.0)
 
+
