@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Защита Башни (Tower Defense)</title>
+    
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Подключение внешнего файла стилей -->
+    <link rel="stylesheet" href="Css.css">
+    
+    <!-- Импорт шрифта, который теперь находится в CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <script>
+        // Конфигурация Tailwind остается здесь, так как она должна быть до загрузки основного скрипта
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Press Start 2P', 'cursive'], 
+                    },
+                    colors: {
+                        'primary': '#4f46e5',
+                        'secondary': '#3c3c58',
+                        'money': '#10b981',
+                        'lives': '#ef4444',
+                        'wave': '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <!-- Главное меню -->
+    <div id="mainMenu" class="absolute inset-0 bg-secondary/95 backdrop-blur-sm flex flex-col items-center justify-center p-8 z-50">
+        <h1 class="text-4xl font-extrabold text-white mb-8">Май Литл Тауэр Дефенс</h1>
+        <div id="levelSelection" class="space-y-4 w-full max-w-sm"></div>
+        <p class="text-sm text-gray-400 mt-10">Сразись с тиарами и победи Трикси!</p>
+    </div>
+
+    <!-- Экран конца игры (старый) -->
+    <div id="endScreen" class="absolute inset-0 bg-black/95 backdrop-blur-sm flex flex-col items-center justify-center p-8 z-50 hidden">
+        <h1 id="endMessage" class="text-4xl font-extrabold text-white mb-4"></h1>
+        <p id="endStats" class="text-lg text-gray-300 mb-8"></p>
+        <button id="returnToMenuButton" class="px-6 py-3 bg-primary hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-lg transition duration-300">
+            Вернуться в меню
+        </button>
+    </div>
+
+    <!-- Всплывающее окно победы -->
+    <div id="win-popup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 p-4">
+        <div class="bg-secondary border-2 border-money/50 rounded-xl p-8 text-center text-white max-w-lg w-full shadow-2xl">
+            <h2 class="text-3xl font-bold text-money mb-4">УРОВЕНЬ ПРОЙДЕН!</h2>
+            <p class="text-gray-300 mb-6">Отличная работа! Враги повержены.</p>
+            <div class="flex justify-center gap-4 text-lg mb-8">
+                <p>💰 Золото: <span id="win-money-stat" class="font-bold text-yellow-300">0</span></p>
+                <p>❤️ Жизни: <span id="win-lives-stat" class="font-bold text-red-400">0</span></p>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button id="next-level-button" class="px-6 py-3 bg-money hover:bg-green-700 font-semibold rounded-lg shadow-lg transition duration-300 w-full sm:w-auto">Следующий уровень</button>
+                <button id="main-menu-button" class="px-6 py-3 bg-primary hover:bg-indigo-700 font-semibold rounded-lg shadow-lg transition duration-300 w-full sm:w-auto">Главное меню</button>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Всплывающее окно поражения -->
+    <div id="lose-popup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 p-4">
+        <div class="bg-secondary border-2 border-lives/50 rounded-xl p-8 text-center text-white max-w-lg w-full shadow-2xl">
+            <h2 class="text-3xl font-bold text-lives mb-4">ПОРАЖЕНИЕ...</h2>
+            <p class="text-gray-300 mb-8">Враги прорвали оборону. Попробуй еще раз!</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button id="restart-button" class="px-6 py-3 bg-primary hover:bg-indigo-700 font-semibold rounded-lg shadow-lg transition duration-300 w-full sm:w-auto">Начать заново</button>
+                <!-- Примечание: Кнопка возврата в меню уже есть в `win-popup`, но нужна и здесь. JS найдет ее по ID `returnToMenuButton` из старого `endScreen`. Можно использовать тот же ID или добавить обработчик для нового. Давайте используем старый для совместимости -->
+                <button id="returnToMenuButton" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 font-semibold rounded-lg shadow-lg transition duration-300 w-full sm:w-auto">Главное меню</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Всплывающее окно интро Флаттершай -->
+    <div id="fluttershyIntroPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 p-4">
+        <div class="bg-secondary border-2 border-yellow-300/50 rounded-xl p-8 text-center text-white max-w-2xl w-full shadow-2xl flex flex-col md:flex-row items-center gap-8">
+            <img src="images/флат_стоит.png" alt="Fluttershy" class="w-32 h-32 object-contain">
+            <div>
+                <h2 class="text-2xl font-bold text-yellow-300 mb-4">НОВАЯ ПОНИ ДОСТУПНА!</h2>
+                <p class="text-left text-gray-300 mb-6">
+                    Это <b>Флаттершай</b>! Она не наносит урона, но её добрый взгляд <b>замедляет</b> всех врагов в большом радиусе.
+                    Используй её, чтобы дать другим пони больше времени на атаку!
+                </p>
+                <button id="startLevelAfterIntroButton" class="w-full px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-secondary-900 font-semibold rounded-lg shadow-lg transition duration-300">
+                    Начать уровень!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="rainbowDashIntroPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 p-4">
+    <div class="bg-secondary border-2 border-cyan-400/50 rounded-xl p-8 text-center text-white max-w-2xl w-full shadow-2xl flex flex-col md:flex-row items-center gap-8">
+        <img src="images/РадугаСтоит.png" alt="Rainbow Dash" class="w-32 h-32 object-contain">
+        <div>
+            <h2 class="text-2xl font-bold text-cyan-400 mb-4">НОВАЯ ПОНИ ДОСТУПНА!</h2>
+            <p class="text-left text-gray-300 mb-6">
+                Это <b>Радуга Дэш</b>! Она не стоит на месте. Сначала выберите, где будет её база, а затем — куда она будет летать!
+                Пролетая, она оставляет за собой <b>грозовой след</b>, который наносит урон всем врагам на пути.
+            </p>
+            <button id="startLevelAfterRDIntroButton" class="w-full px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg shadow-lg transition duration-300">
+                Начать уровень!
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="rarityIntroPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 p-4">
+    <div class="bg-secondary border-2 border-purple-400/50 rounded-xl p-8 text-center text-white max-w-2xl w-full shadow-2xl flex flex-col md:flex-row items-center gap-8">
+        <img src="images/РаритиСтоит.png" alt="Rarity" class="w-32 h-32 object-contain">
+        <div>
+            <h2 class="text-2xl font-bold text-purple-400 mb-4">НОВАЯ ПОНИ ДОСТУПНА!</h2>
+            <p class="text-left text-gray-300 mb-6">
+                Это <b>Рэрити</b>! Она — дива с огромным радиусом и уроном, но стреляет редко. Когда враги подходят слишком близко, её <b>шкала драмы</b> заполняется.
+                Полная шкала приводит к "Истерике", которая <b>оглушает</b> всех врагов вокруг!
+            </p>
+            <button id="startLevelAfterRarityIntroButton" class="w-full px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg shadow-lg transition duration-300">
+                Начать уровень!
+            </button>
+        </div>
+    </div>
+</div>
+
+    <!-- Основной игровой контейнер -->
+    <!-- ✅ Новая структура игрового контейнера -->
+<div class="game-container">
+    <!-- Игровое поле -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- ПАНЕЛЬ ИНФОРМАЦИИ (Слева) -->
+    <div id="info-panel">
+        <div class="stat">💰 Золото: <span id="moneyDisplay">100</span></div>
+        <div class="stat">❤️ Жизни: <span id="livesDisplay">20</span></div>
+        <div class="stat">🌊 Волна: <span id="waveDisplay">1</span></div>
+        <button id="startWaveButton" class="action-btn">🚀 Новая Волна</button>
+        <button id="ingameMenuButton" class="action-btn secondary">🏠 В Меню</button>
+        <button id="sellTowerButton" class="action-btn secondary">💲 Продать Пони</button>
+    </div>
+
+    <!-- ПАНЕЛЬ СТРОИТЕЛЬСТВА (Снизу) -->
+    <div id="towers-panel">
+         <!-- Статус режима строительства -->
+        <div id="buildModeStatus" class="hidden">
+            Режим строительства: <b id="selectedTowerName"></b> (Esc — отменить)
+        </div>
+        <!-- Кнопки покупки -->
+        <div class="tower-buttons-group">
+            <button class="buy-btn tower-select-button" data-tower-type="Пинки Пай" data-cost="50">Пинки Пай (45💰)</button>
+            <button class="buy-btn tower-select-button" data-tower-type="Эппл Джек" data-cost="60">Эппл Джек (65💰)</button>
+            <button class="buy-btn tower-select-button" data-tower-type="Твайлайт Спаркл" data-cost="60">Твайлайт Спаркл (60💰)</button>
+            <button class="buy-btn tower-select-button" data-tower-type="Флаттершай" data-cost="55" id="fluttershy-buy-button">Флаттершай (55💰)</button>
+            <button class="buy-btn tower-select-button" data-tower-type="Радуга Дэш" data-cost="80" id="rainbowdash-buy-button" style="display: none;">Радуга Дэш (80💰)</button>
+            <button class="buy-btn tower-select-button" data-tower-type="Рэрити" data-cost="75" id="rarity-buy-button" style="display: none;">Рэрити (75💰)</button>
+        </div>
+    </div>
+</div>
+
+<div id="tower-info-panel" class="hidden">
+        <div class="info-header">
+            <img id="info-tower-img" src="" alt="Tower Image">
+            <h3 id="info-tower-name"></h3>
+        </div>
+        <div class="info-stats">
+            <p>💥 Урон: <span id="info-tower-damage"></span></p>
+            <p>🎯 Радиус: <span id="info-tower-range"></span></p>
+            <p>⏱️ Скорость: <span id="info-tower-speed"></span></p>
+        </div>
+        <p class="info-special"><b>Фишка:</b> <span id="info-tower-special"></span></p>
+    </div>
+
+    <!-- Подключаем наш основной скрипт в самом конце -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>```
