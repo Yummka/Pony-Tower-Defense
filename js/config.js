@@ -680,7 +680,7 @@ export const TOWER_CONFIG = {
 
         // --- КОНФИГУРАЦИЯ И НАСТРОЙКА ---
         
-        export const backgroundImage = createImage('background.jpg');
+        export const backgroundImage = createImage('фон.jpg');
 
 
         export const LEVELS_CONFIG = {
@@ -937,5 +937,6 @@ export const backgroundMusic = new Audio('audio/Pony Up.mp3');
 backgroundMusic.loop = true;      // Зацикливаем музыку
 
 backgroundMusic.volume = 0.4;     // Устанавливаем громкость (от 0.0 до 1.0)
+
 
 
