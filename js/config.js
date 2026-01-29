@@ -102,8 +102,9 @@ export const TOWER_CONFIG = {
             speed: 1.5,
             maxHealth: 20,
             bounty: 5,
-            width: 44,
-            height: 57,
+            width: 78,
+            height: 56,
+            frameWidth: 76,
         },
         
 
@@ -124,9 +125,9 @@ export const TOWER_CONFIG = {
         speed: 1.5,
         maxHealth: 20,
         bounty: 5,
-        width: 51.8, // Ширина отображения (больше, чем 564/8=70.5)
-        height: 57, // Высота отображения
-        frameWidth: 68.9,
+        width: 56, // Ширина отображения (больше, чем 564/8=70.5)
+        height: 56, // Высота отображения
+        frameWidth: 76,
         },
         
         Snail: {
@@ -168,9 +169,9 @@ export const TOWER_CONFIG = {
         speed: 2,
         maxHealth: 700,
         bounty: 250,
-        width: 79.1255, // Ширина отображения (больше, чем 564/8=70.5)
-        height: 89, // Высота отображения
-        frameWidth: 104.125,
+        width: 80, // Ширина отображения (больше, чем 564/8=70.5)
+        height: 94, // Высота отображения
+        frameWidth: 104,
         },
 
         PrinceBlueblood: {

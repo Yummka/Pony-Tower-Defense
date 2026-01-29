@@ -30,8 +30,8 @@ export default class Enemy {
         
         // Анимация Grunt (по умолчанию)
         this.frame = 0;
-        this.frameSpeed = 0.25; 
-        this.frameCount = 8;
+        this.frameSpeed = 0.3; 
+        this.frameCount = 15;
         
         if (type === "Tank") {
             this.frameCount = 12;
@@ -46,7 +46,7 @@ export default class Enemy {
             this.frameSpeed = 0.2;
             this.yOffset = -10; 
         }else if (type === "Spoon") { 
-            this.frameCount = 10;     
+            this.frameCount = 15;     
             this.frameSpeed = 0.2;
         }else if (type === "Snail") { 
             this.frameCount = 9;     
@@ -58,7 +58,7 @@ export default class Enemy {
             this.frameCount = 16;     
             this.frameSpeed = 0.3;
         }else if (type === "Trixie") { 
-            this.frameCount = 16;     
+            this.frameCount = 15;     
             this.frameSpeed = 0.3;
             this.yOffset = -20;
         }else if (type === "PrinceBlueblood") { 
