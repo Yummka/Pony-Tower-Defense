@@ -489,11 +489,11 @@ export const TOWER_CONFIG = {
 
     // --- Изображения Врагов ---
  export const enemyImages = {
-    Grunt:           createImage("тиара.png"),
+    Grunt:           createImage("ТиараН.png"),
     Tank:            createImage("пони.png"),
     Fast:            createImage("ТВ2.png"),
     Mom:             createImage("мать т2.png"),
-    Spoon:           createImage("ложка.png"),
+    Spoon:           createImage("ЛожкаН.png"),
     Snail:           createImage("снил.png"),
     Snip:            createImage("Снип.png"),
     BabsSeed:        createImage("Бэтс.png"),
