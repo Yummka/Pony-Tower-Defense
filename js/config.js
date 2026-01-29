@@ -554,7 +554,7 @@ export const TOWER_CONFIG = {
             { x: 129, y: 900, occupied: false }, { x: 179, y: 900, occupied: false },
             { x: 229, y: 900, occupied: false }, { x: 279, y: 900, occupied: false },
             { x: 329, y: 900, occupied: false }, { x: 379, y: 900, occupied: false },
-            { x: 429, y: 900, occupied: false }, { x: 479, y: 900, occupied: false },
+            { x: 429, y: 900, occupied: false }, { x: 479, y: 900, occupied: false },       //нижний ряд
             { x: 529, y: 900, occupied: false },
             { x: 579, y: 900, occupied: false },
             { x: 629, y: 900, occupied: false },
@@ -568,111 +568,231 @@ export const TOWER_CONFIG = {
             { x: 1029, y: 900, occupied: false },
             { x: 1079, y: 900, occupied: false },
 
-
-            { x: 925, y: 660, occupied: false },
-            { x: 920, y: 600, occupied: false },
-            { x: 920, y: 540, occupied: false },
-            { x: 920, y: 480, occupied: false },
-
-            { x: 980, y: 660, occupied: false },
-            { x: 980, y: 600, occupied: false },
-            { x: 980, y: 540, occupied: false },
-            { x: 980, y: 480, occupied: false },
-            { x: 980, y: 720, occupied: false },
-
-            { x: 1040, y: 600, occupied: false },
-            { x: 1100, y: 600, occupied: false },
-            { x: 1160, y: 600, occupied: false },
-            { x: 1220, y: 600, occupied: false },
-
-            { x: 1040, y: 660, occupied: false },
-            { x: 1100, y: 660, occupied: false },
-            { x: 1160, y: 660, occupied: false },
-
-            { x: 1040, y: 710, occupied: false },
-            { x: 1100, y: 710, occupied: false },
-            { x: 1160, y: 710, occupied: false },
-
-            { x: 1100, y: 480, occupied: false },   { x: 1100, y: 420, occupied: false },
-            { x: 1160, y: 480, occupied: false },
-            { x: 1220, y: 480, occupied: false },
+            { x: 179, y: 750, occupied: false },
+            { x: 229, y: 750, occupied: false }, { x: 279, y: 750, occupied: false },
+            { x: 329, y: 750, occupied: false }, { x: 379, y: 750, occupied: false },
+            { x: 429, y: 750, occupied: false }, { x: 479, y: 750, occupied: false },
+            { x: 529, y: 750, occupied: false },
+            { x: 579, y: 750, occupied: false },
+            { x: 629, y: 750, occupied: false },
+            { x: 679, y: 750, occupied: false },
+            { x: 729, y: 750, occupied: false },                        //ряд выше нижней дроги
+            { x: 779, y: 750, occupied: false },
+            { x: 829, y: 750, occupied: false },
+            { x: 879, y: 750, occupied: false },
+            { x: 929, y: 750, occupied: false },
 
 
-            { x: 800, y: 600, occupied: false },    { x: 800, y: 540, occupied: false },                                            { x: 670, y: 480, occupied: false },
-            { x: 740, y: 600, occupied: false },    { x: 800, y: 480, occupied: false },                                            { x: 610, y: 480, occupied: false },
-            { x: 680, y: 600, occupied: false },    { x: 800, y: 370, occupied: false },    { x: 665, y: 370, occupied: false },    { x: 550, y: 480, occupied: false },
-            { x: 620, y: 600, occupied: false },    { x: 800, y: 310, occupied: false },    { x: 605, y: 370, occupied: false },    { x: 490, y: 480, occupied: false },
-            { x: 560, y: 600, occupied: false },    { x: 800, y: 250, occupied: false },    { x: 545, y: 370, occupied: false },    { x: 430, y: 480, occupied: false },
-            { x: 500, y: 600, occupied: false },                                            { x: 485, y: 370, occupied: false },    { x: 370, y: 480, occupied: false },
-            { x: 440, y: 600, occupied: false },                                            { x: 425, y: 370, occupied: false },    { x: 310, y: 480, occupied: false },
-            { x: 380, y: 600, occupied: false },
-            { x: 320, y: 600, occupied: false },
-            { x: 260, y: 600, occupied: false },
-            { x: 200, y: 600, occupied: false },
-            { x: 140, y: 600, occupied: false },
-            { x: 80, y: 600, occupied: false },
+            { x: 879, y: 700, occupied: false },
+            { x: 929, y: 650, occupied: false },                //столб Справа между дорогами
+            { x: 879, y: 650, occupied: false },
+            { x: 929, y: 700, occupied: false },
+            { x: 929, y: 600, occupied: false },
+            { x: 879, y: 600, occupied: false },
 
 
-            { x: 730, y: 250, occupied: false },
-            { x: 670, y: 250, occupied: false },
-            { x: 610, y: 250, occupied: false },
-            { x: 550, y: 250, occupied: false },
-            { x: 490, y: 250, occupied: false },
-            { x: 430, y: 250, occupied: false },
-            { x: 370, y: 250, occupied: false },
-            { x: 310, y: 250, occupied: false },
+            { x: 879, y: 350, occupied: false },
+            { x: 929, y: 450, occupied: false },                //столб чуть выше Справа между дорогами
+            { x: 879, y: 450, occupied: false },
+            { x: 929, y: 350, occupied: false },
+            { x: 929, y: 400, occupied: false },
+            { x: 879, y: 400, occupied: false },
+            { x: 929, y: 300, occupied: false },
+            { x: 879, y: 300, occupied: false },
 
 
 
-            { x: 290, y: 305, occupied: false },
-            { x: 290, y: 365, occupied: false },
-            { x: 290, y: 425, occupied: false },
+        
+            { x: 329, y: 300, occupied: false }, { x: 379, y: 300, occupied: false },
+            { x: 429, y: 300, occupied: false }, { x: 479, y: 300, occupied: false },
+            { x: 529, y: 300, occupied: false },
+            { x: 579, y: 300, occupied: false },
+            { x: 629, y: 300, occupied: false },
+            { x: 679, y: 300, occupied: false },
+            { x: 729, y: 300, occupied: false },                        //ряд ниже верхней дроги
+            { x: 779, y: 300, occupied: false },
+            { x: 829, y: 300, occupied: false },
+            
+
+            { x: 179, y: 150, occupied: false },
+            { x: 229, y: 150, occupied: false }, { x: 279, y: 150, occupied: false },
+            { x: 329, y: 150, occupied: false }, { x: 379, y: 150, occupied: false },
+            { x: 429, y: 150, occupied: false }, { x: 479, y: 150, occupied: false },
+            { x: 529, y: 150, occupied: false },
+            { x: 579, y: 150, occupied: false },
+            { x: 629, y: 150, occupied: false },
+            { x: 679, y: 150, occupied: false },
+            { x: 729, y: 150, occupied: false },                        //ряд выше Верхней дроги
+            { x: 779, y: 150, occupied: false },
+            { x: 829, y: 150, occupied: false },
+            { x: 879, y: 150, occupied: false },
+            { x: 929, y: 150, occupied: false },
+            { x: 979, y: 150, occupied: false },
+            { x: 1029, y: 150, occupied: false },
+            { x: 1079, y: 150, occupied: false },
+
+             { x: 179, y: 100, occupied: false },
+            { x: 229, y: 100, occupied: false }, { x: 279, y: 100, occupied: false },
+            { x: 329, y: 100, occupied: false }, { x: 379, y: 100, occupied: false },
+            { x: 429, y: 100, occupied: false }, { x: 479, y: 100, occupied: false },
+            { x: 529, y: 100, occupied: false },
+            { x: 579, y: 100, occupied: false },
+            { x: 629, y: 100, occupied: false },
+            { x: 679, y: 100, occupied: false },
+            { x: 729, y: 100, occupied: false },                        //ещё выше Верхней дроги
+            { x: 779, y: 100, occupied: false },
+            { x: 829, y: 100, occupied: false },
+            { x: 879, y: 100, occupied: false },
+            { x: 929, y: 100, occupied: false },
+            { x: 979, y: 100, occupied: false },
+            { x: 1029, y: 100, occupied: false },
+            { x: 1079, y: 100, occupied: false },
 
 
-            { x: 170, y: 125, occupied: false },        { x: 230, y: 125, occupied: false },
-            { x: 170, y: 185, occupied: false },        { x: 290, y: 125, occupied: false },
-            { x: 170, y: 245, occupied: false },        { x: 350, y: 125, occupied: false },
-            { x: 170, y: 305, occupied: false },        { x: 410, y: 125, occupied: false },
-            { x: 170, y: 365, occupied: false },        { x: 470, y: 125, occupied: false },
-            { x: 170, y: 425, occupied: false },        { x: 530, y: 125, occupied: false },
-            { x: 170, y: 485, occupied: false },        { x: 590, y: 125, occupied: false },
-            { x: 170, y: 545, occupied: false },        { x: 650, y: 125, occupied: false },
-                                                        { x: 710, y: 125, occupied: false },
-                                                        { x: 770, y: 125, occupied: false },                                                        
-                                                        { x: 830, y: 125, occupied: false },
-                                                        { x: 890, y: 125, occupied: false },                                                       
-            { x: 110, y: 125, occupied: false },        { x: 950, y: 125, occupied: false },
-            { x: 110, y: 185, occupied: false },        { x: 1010, y: 125, occupied: false },
-            { x: 110, y: 245, occupied: false },        { x: 1060, y: 125, occupied: false },
-            { x: 110, y: 305, occupied: false },
-            { x: 110, y: 365, occupied: false },
-            { x: 110, y: 425, occupied: false },
-            { x: 110, y: 485, occupied: false },
-            { x: 110, y: 545, occupied: false },
 
-
+            { x: 179, y: 200, occupied: false },                    //левый ряд
+            { x: 179, y: 250, occupied: false }, 
+            { x: 179, y: 300, occupied: false }, 
+            { x: 179, y: 350, occupied: false }, 
+            { x: 179, y: 400, occupied: false }, 
+            { x: 179, y: 450, occupied: false }, 
+            { x: 179, y: 500, occupied: false },
+            { x: 179, y: 550, occupied: false }, 
+            { x: 179, y: 600, occupied: false }, 
+            { x: 179, y: 650, occupied: false }, 
+            { x: 179, y: 700, occupied: false }, 
             
 
 
-            { x: 910, y: 185, occupied: false },    
-            { x: 910, y: 245, occupied: false },
-            { x: 910, y: 305, occupied: false },
-            { x: 910, y: 365, occupied: false },
+            { x: 329, y: 350, occupied: false },             //колона слева между дорогами
+            { x: 329, y: 400, occupied: false },
+            { x: 329, y: 450, occupied: false },
+            { x: 329, y: 500, occupied: false },
+            { x: 329, y: 550, occupied: false },
+            { x: 329, y: 600, occupied: false },
 
-            { x: 970, y: 185, occupied: false },    
-            { x: 970, y: 245, occupied: false },
-            { x: 970, y: 305, occupied: false },
-            { x: 970, y: 365, occupied: false },
 
-            { x: 1030, y: 185, occupied: false },    
-            { x: 1030, y: 245, occupied: false },
-            { x: 1030, y: 305, occupied: false },
-            { x: 1030, y: 365, occupied: false },
+            { x: 379, y: 600, occupied: false },                //Дорога снизу от центра
+            { x: 429, y: 600, occupied: false },
+            { x: 479, y: 600, occupied: false },
+            { x: 529, y: 600, occupied: false },
+            { x: 579, y: 600, occupied: false },
+            { x: 629, y: 600, occupied: false },
+            { x: 679, y: 600, occupied: false },
+            { x: 729, y: 600, occupied: false },
 
-            { x: 1090, y: 185, occupied: false },    
-            { x: 1090, y: 245, occupied: false },
-            { x: 1090, y: 305, occupied: false },
-            { x: 1090, y: 365, occupied: false },
+
+            { x: 479, y: 450, occupied: false },                //Центральна дорога
+            { x: 529, y: 450, occupied: false },
+            { x: 579, y: 450, occupied: false },
+            { x: 629, y: 450, occupied: false },
+            { x: 679, y: 450, occupied: false },
+            { x: 729, y: 450, occupied: false },
+
+
+            { x: 1079, y: 200, occupied: false },
+            { x: 1079, y: 250, occupied: false },           //Дорога справа СВЕРХУ от дороги
+            { x: 1079, y: 300, occupied: false },
+            { x: 1079, y: 350, occupied: false },
+            { x: 1079, y: 400, occupied: false },
+            { x: 1079, y: 450, occupied: false },
+            
+            { x: 1129, y: 100, occupied: false },
+            { x: 1129, y: 150, occupied: false },
+            { x: 1129, y: 200, occupied: false },
+            { x: 1129, y: 250, occupied: false },           //Дорога справа справа сверху от дороги
+            { x: 1129, y: 300, occupied: false },
+            { x: 1129, y: 350, occupied: false },
+            { x: 1129, y: 400, occupied: false },
+            { x: 1129, y: 450, occupied: false },
+
+                                                       //Дорога справа справа справа сверху от дороги
+
+            { x: 1179, y: 350, occupied: false },
+            { x: 1179, y: 400, occupied: false },
+            { x: 1179, y: 450, occupied: false },
+
+                                                       //Дорога справа справа справа справа сверху от дороги
+            
+            { x: 1229, y: 350, occupied: false },
+            { x: 1229, y: 400, occupied: false },
+            { x: 1229, y: 450, occupied: false },
+
+                                                    //Дорога справа справа справа справа справа сверху от дороги
+            { x: 1279, y: 350, occupied: false },
+            { x: 1279, y: 400, occupied: false },
+            { x: 1279, y: 450, occupied: false },
+
+                                                    //Дорога справа справа справа справа справа сверху от дороги
+            { x: 1329, y: 350, occupied: false },
+            { x: 1329, y: 400, occupied: false },
+            { x: 1329, y: 450, occupied: false },
+            { x: 1329, y: 500, occupied: false },
+            { x: 1329, y: 550, occupied: false },
+
+                                                    //Дорога справа справа справа справа справа сверху от дороги
+            { x: 1379, y: 350, occupied: false },
+            { x: 1379, y: 400, occupied: false },
+            { x: 1379, y: 450, occupied: false },
+            { x: 1379, y: 500, occupied: false },
+            { x: 1379, y: 550, occupied: false },
+
+            { x: 1429, y: 500, occupied: false },               //самые правые у знака
+            { x: 1429, y: 550, occupied: false },
+
+
+
+
+
+            { x: 1079, y: 600, occupied: false },
+            { x: 1079, y: 650, occupied: false },           //Дорога справа СНИЗУ от дороги
+            { x: 1079, y: 700, occupied: false },
+            { x: 1079, y: 750, occupied: false },
+            { x: 1079, y: 800, occupied: false },
+            { x: 1079, y: 850, occupied: false },
+
+            { x: 1129, y: 600, occupied: false },
+            { x: 1129, y: 650, occupied: false },           //Дорога справа справа СНИЗУ от дороги
+            { x: 1129, y: 700, occupied: false },
+            { x: 1129, y: 750, occupied: false },
+            { x: 1129, y: 800, occupied: false },
+            { x: 1129, y: 850, occupied: false },
+            { x: 1129, y: 900, occupied: false },
+
+            { x: 1179, y: 600, occupied: false },
+            { x: 1179, y: 650, occupied: false },           //Дорога справа справа справа СНИЗУ от дороги
+            { x: 1179, y: 700, occupied: false },
+            { x: 1179, y: 750, occupied: false },
+            { x: 1179, y: 800, occupied: false },
+            { x: 1179, y: 850, occupied: false },
+            { x: 1179, y: 900, occupied: false },
+
+                                                   //Дорога справа справа справа СНИЗУ от дороги
+            { x: 1229, y: 700, occupied: false },
+            { x: 1229, y: 750, occupied: false },
+            { x: 1229, y: 800, occupied: false },
+            { x: 1229, y: 850, occupied: false },
+            { x: 1229, y: 900, occupied: false },
+
+                                                   //Дорога справа справа справа СНИЗУ от дороги
+            { x: 1279, y: 700, occupied: false },
+            { x: 1279, y: 750, occupied: false },
+            { x: 1279, y: 800, occupied: false },
+            { x: 1279, y: 850, occupied: false },
+            { x: 1279, y: 900, occupied: false },
+
+            { x: 1329, y: 700, occupied: false },
+            { x: 1329, y: 750, occupied: false },
+            { x: 1329, y: 800, occupied: false },
+            { x: 1329, y: 850, occupied: false },
+            { x: 1329, y: 900, occupied: false },
+
+            { x: 1379, y: 700, occupied: false },           { x: 1429, y: 700, occupied: false },
+            { x: 1379, y: 750, occupied: false },
+            { x: 1379, y: 800, occupied: false },
+            { x: 1379, y: 850, occupied: false },
+            { x: 1379, y: 900, occupied: false },
+
 
         ];
 
@@ -688,7 +808,7 @@ export const TOWER_CONFIG = {
 
         // --- КОНФИГУРАЦИЯ И НАСТРОЙКА ---
         
-        export const backgroundImage = createImage('ФПС3.png');
+        export const backgroundImage = createImage('ФПСН.png');
 
 
         export const LEVELS_CONFIG = {
