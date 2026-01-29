@@ -147,7 +147,7 @@ export default class Enemy {
             this.yOffset = -20;
         }else if (type === "Vtoroy") { 
             this.frameCount = 16;     
-            this.frameSpeed = 0.5;
+            this.frameSpeed = 0.3;
             this.yOffset = -20;
         }else if (type === "Tretiy") { 
             this.frameCount = 16;     
