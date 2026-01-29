@@ -102,7 +102,7 @@ export const TOWER_CONFIG = {
             speed: 1.5,
             maxHealth: 20,
             bounty: 5,
-            width: 26,
+            width: 56,
             height: 68,
             frameWidth: 76,
         },
@@ -125,8 +125,8 @@ export const TOWER_CONFIG = {
         speed: 1.5,
         maxHealth: 20,
         bounty: 5,
-        width: 26, // Ширина отображения (больше, чем 564/8=70.5)
-        height: 46, // Высота отображения
+        width: 56, // Ширина отображения (больше, чем 564/8=70.5)
+        height: 56, // Высота отображения
         frameWidth: 76,
         },
         
@@ -550,18 +550,26 @@ export const TOWER_CONFIG = {
         // Обновленные точки, расположенные по контуру тропинки
         export const buildSlots = [
             // Ваши исходные слоты...
-            { x: 20, y: 720, occupied: false }, { x: 80, y: 720, occupied: false },
-            { x: 140, y: 720, occupied: false }, { x: 200, y: 720, occupied: false },
-            { x: 260, y: 720, occupied: false }, { x: 320, y: 720, occupied: false },
-            { x: 380, y: 720, occupied: false }, { x: 440, y: 720, occupied: false },
-            { x: 500, y: 720, occupied: false }, { x: 560, y: 720, occupied: false },
-            { x: 740, y: 720, occupied: false },
-            { x: 800, y: 720, occupied: false },
-            { x: 860, y: 720, occupied: false },
-            { x: 920, y: 720, occupied: false },
+            { x: 29, y: 900, occupied: false }, { x: 79, y: 900, occupied: false },
+            { x: 129, y: 900, occupied: false }, { x: 179, y: 900, occupied: false },
+            { x: 229, y: 900, occupied: false }, { x: 279, y: 900, occupied: false },
+            { x: 329, y: 900, occupied: false }, { x: 379, y: 900, occupied: false },
+            { x: 429, y: 900, occupied: false }, { x: 479, y: 900, occupied: false },
+            { x: 529, y: 900, occupied: false },
+            { x: 579, y: 900, occupied: false },
+            { x: 629, y: 900, occupied: false },
+            { x: 679, y: 900, occupied: false },
+            { x: 729, y: 900, occupied: false },
+            { x: 779, y: 900, occupied: false },
+            { x: 829, y: 900, occupied: false },
+            { x: 879, y: 900, occupied: false },
+            { x: 929, y: 900, occupied: false },
+            { x: 979, y: 900, occupied: false },
+            { x: 1029, y: 900, occupied: false },
+            { x: 1079, y: 900, occupied: false },
 
 
-            { x: 920, y: 660, occupied: false },
+            { x: 925, y: 660, occupied: false },
             { x: 920, y: 600, occupied: false },
             { x: 920, y: 540, occupied: false },
             { x: 920, y: 480, occupied: false },
@@ -643,8 +651,7 @@ export const TOWER_CONFIG = {
             { x: 110, y: 545, occupied: false },
 
 
-            { x: 620, y: 720, occupied: false },
-            { x: 680, y: 720, occupied: false },
+            
 
 
             { x: 910, y: 185, occupied: false },    
@@ -673,15 +680,15 @@ export const TOWER_CONFIG = {
         export const SELL_REFUND_PERCENTAGE = 0.75;
         export const ENEMY_INTERVAL_MS = 500;
         export const PAUSE_BETWEEN_GROUPS_MS = 1000;
-        export const BUILD_SLOT_SIZE = 55;
-        export const originalWidth = 1280;
-        export const originalHeight = 845;
+        export const BUILD_SLOT_SIZE = 50;
+        export const originalWidth = 1536;
+        export const originalHeight = 1024;
 
 
 
         // --- КОНФИГУРАЦИЯ И НАСТРОЙКА ---
         
-        export const backgroundImage = createImage('фон.jpg');
+        export const backgroundImage = createImage('ФПС3.png');
 
 
         export const LEVELS_CONFIG = {

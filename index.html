@@ -164,21 +164,23 @@
             <button class="buy-btn tower-select-button" data-tower-type="Радуга Дэш" data-cost="80" id="rainbowdash-buy-button" style="display: none;">Радуга Дэш (80💰)</button>
             <button class="buy-btn tower-select-button" data-tower-type="Рэрити" data-cost="75" id="rarity-buy-button" style="display: none;">Рэрити (75💰)</button>
         </div>
+
+        <div id="tower-info-panel" class="hidden">
+    <div class="info-header">
+        <img id="info-tower-img" src="" alt="Tower Image">
+        <h3 id="info-tower-name"></h3>
+    </div>
+    <div class="info-stats">
+        <p>💥 Урон: <span id="info-tower-damage"></span></p>
+        <p>🎯 Радиус: <span id="info-tower-range"></span></p>
+        <p>⏱️ Скорость: <span id="info-tower-speed"></span></p>
+    </div>
+    <p class="info-special"><b>Фишка:</b> <span id="info-tower-special"></span></p>
+</div>
     </div>
 </div>
 
-<div id="tower-info-panel" class="hidden">
-        <div class="info-header">
-            <img id="info-tower-img" src="" alt="Tower Image">
-            <h3 id="info-tower-name"></h3>
-        </div>
-        <div class="info-stats">
-            <p>💥 Урон: <span id="info-tower-damage"></span></p>
-            <p>🎯 Радиус: <span id="info-tower-range"></span></p>
-            <p>⏱️ Скорость: <span id="info-tower-speed"></span></p>
-        </div>
-        <p class="info-special"><b>Фишка:</b> <span id="info-tower-special"></span></p>
-    </div>
+
 
     <!-- Подключаем наш основной скрипт в самом конце -->
     <script type="module" src="js/main.js"></script>

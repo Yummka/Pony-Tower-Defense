@@ -90,6 +90,8 @@ export default class UIManager {
         document.getElementById('startLevelAfterIntroButton').addEventListener('click', () => this.game.startGameAfterIntro());
         document.getElementById('startLevelAfterRDIntroButton').addEventListener('click', () => this.showRarityIntro());
         document.getElementById('startLevelAfterRarityIntroButton').addEventListener('click', () => this.game.startGameAfterIntro());
+
+        
     }
 
     // --- 3. Методы для обновления интерфейса (их будет вызывать Game) ---

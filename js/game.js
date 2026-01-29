@@ -159,9 +159,9 @@ export default class Game {
             if (!slot.occupied) {
                 const size = this.SCALED_BUILD_SLOT_SIZE;
                 const halfSize = size / 2;
-                this.ctx.fillStyle = 'rgba(85, 141, 92, 0.15)';
+                this.ctx.fillStyle = 'rgba(83, 156, 93, 0.6)';
                 this.ctx.fillRect(slot.x - halfSize, slot.y - halfSize, size, size);
-                this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                this.ctx.strokeStyle = 'rgba(8, 6, 6, 0.32)';
                 this.ctx.lineWidth = 1;
                 this.ctx.strokeRect(slot.x - halfSize, slot.y - halfSize, size, size);
             }
@@ -444,14 +444,19 @@ export default class Game {
     // --- УПРАВЛЕНИЕ РЕЖИМАМИ UI ---
     
     selectTower(type) {
-        if (this.money < TOWER_CONFIG[type].price) return;
+        if (this.money < TOWER_CONFIG[type].price) {
+            this.ui.updateTowerInfoPanel(null); // Скрываем, если не хватает денег
+            return;
+        }
         
+        // Если кликнули по уже выбранной (отмена)
         if (this.isBuilding && this.selectedTowerType === type) {
             this.cancelModes();
-        } else {
+        } else { // Если выбрали новую
             this.isBuilding = true;
             this.isSelling = false;
             this.selectedTowerType = type;
+            this.ui.updateTowerInfoPanel(type); // Показываем панель
         }
     }
 
@@ -469,6 +474,7 @@ export default class Game {
         this.selectedTowerType = null;
         this.isPlacingPatrolPoint = false;
         this.patrolTowerRef = null;
+        this.ui.updateTowerInfoPanel(null); // <<< ДОБАВЬТЕ ЭТУ СТРОКУ
     }
     
     // --- ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ---
