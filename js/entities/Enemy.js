@@ -50,10 +50,10 @@ export default class Enemy {
             this.frameSpeed = 0.2;
         }else if (type === "Snail") { 
             this.frameCount = 9;     
-            this.frameSpeed = 0.3;
+            this.frameSpeed = 0.2;
         }else if (type === "Snip"){ 
             this.frameCount = 16;     
-            this.frameSpeed = 0.5;
+            this.frameSpeed = 0.3;
         }else if (type === "BabsSeed") { 
             this.frameCount = 16;     
             this.frameSpeed = 0.3;
