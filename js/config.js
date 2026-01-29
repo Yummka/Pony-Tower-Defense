@@ -102,8 +102,8 @@ export const TOWER_CONFIG = {
             speed: 1.5,
             maxHealth: 20,
             bounty: 5,
-            width: 36,
-            height: 78,
+            width: 16,
+            height: 58,
         },
         
 
