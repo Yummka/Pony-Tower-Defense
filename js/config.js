@@ -102,8 +102,9 @@ export const TOWER_CONFIG = {
             speed: 1.5,
             maxHealth: 20,
             bounty: 5,
-            width: 16,
-            height: 58,
+            width: 26,
+            height: 68,
+            frameWidth: 76,
         },
         
 
@@ -124,8 +125,8 @@ export const TOWER_CONFIG = {
         speed: 1.5,
         maxHealth: 20,
         bounty: 5,
-        width: 36, // Ширина отображения (больше, чем 564/8=70.5)
-        height: 56, // Высота отображения
+        width: 26, // Ширина отображения (больше, чем 564/8=70.5)
+        height: 46, // Высота отображения
         frameWidth: 76,
         },
         
