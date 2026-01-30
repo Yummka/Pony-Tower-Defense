@@ -492,7 +492,7 @@ export const TOWER_CONFIG = {
             bounty: 5,
             width: 88, 
             height: 78, 
-            frameWidth: 98, // (Подбери под свой спрайт)
+            frameWidth: 108, // (Подбери под свой спрайт)
             yOffset: -10
         },
         
