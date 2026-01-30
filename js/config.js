@@ -483,6 +483,18 @@ export const TOWER_CONFIG = {
             frameWidth: 190, // (Подбери под свой спрайт)
             yOffset: -10
         },
+
+        Knight: {
+            name: "Knight",
+            color: "dark blue",
+            speed: 2, // Очень медленный
+            maxHealth: 130, // Но очень крепкий
+            bounty: 5,
+            width: 88, 
+            height: 78, 
+            frameWidth: 108, // (Подбери под свой спрайт)
+            yOffset: -10
+        },
         
     };
 
@@ -524,6 +536,7 @@ export const TOWER_CONFIG = {
     SfinksWalk:      createImage("СфинксИдёт.png"),
     SfinksFky:       createImage("СфинксЛетит.png"),
     Achel:           createImage("Ачел.png"),
+    Knight:          createImage("СтражИдёт.png"),
 };
 
 
@@ -809,6 +822,7 @@ export const TOWER_CONFIG = {
         // --- КОНФИГУРАЦИЯ И НАСТРОЙКА ---
         
         export const backgroundImage = createImage('ФПСН.png');
+        export const nightBackground = createImage('ФПСночь.png');
 
 
         export const LEVELS_CONFIG = {
@@ -819,7 +833,7 @@ export const TOWER_CONFIG = {
                             name: "Первая волна",
                             enemies: [
                                 //ShadowBolts Bell  Score
-                                { type: "Grunt", count: 5, interval: 500 },
+                                { type: "Knight", count: 5, interval: 500 },
                         
                             ]
                         },
@@ -1065,6 +1079,10 @@ export const backgroundMusic = new Audio('audio/Pony Up.mp3');
 backgroundMusic.loop = true;      // Зацикливаем музыку
 
 backgroundMusic.volume = 0.4;     // Устанавливаем громкость (от 0.0 до 1.0)
+
+export const nightMusic = new Audio('audio/Night.mp3');
+nightMusic.loop = true;
+nightMusic.volume = 0.4;
 
 
 

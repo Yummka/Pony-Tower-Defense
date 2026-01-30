@@ -165,6 +165,10 @@ export default class Enemy {
             this.frameCount = 16;     
             this.frameSpeed = 0.3;
             this.yOffset = -20;
+        }else if (type === "Knight") { 
+            this.frameCount = 15;     
+            this.frameSpeed = 0.3;
+            this.yOffset = -20;
         }
 
 

@@ -5,11 +5,11 @@ import Enemy from './entities/Enemy.js';
 import Tower from './entities/Tower.js';
 import Projectile from './entities/Projectile.js'; // Убедись, что Projectile тоже вынесен в отдельный файл
 import { 
-    path, buildSlots, LEVELS_CONFIG, backgroundImage, 
+    path, buildSlots, LEVELS_CONFIG, backgroundImage, nightBackground,
     TOWER_CONFIG, BUILD_SLOT_SIZE, SELL_REFUND_PERCENTAGE, 
-    PAUSE_BETWEEN_GROUPS_MS,
+    PAUSE_BETWEEN_GROUPS_MS, ENEMY_TYPES,
     originalWidth, originalHeight,
-    backgroundMusic,
+    backgroundMusic, nightMusic,
 } from './config.js';
 
 export default class Game {
@@ -192,6 +192,7 @@ export default class Game {
             this.ui.showRainbowDashIntro();
             return;
         }
+        
 
         // Обычный запуск уровня
         this.currentLevel = levelNumber;
