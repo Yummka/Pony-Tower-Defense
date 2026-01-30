@@ -483,6 +483,18 @@ export const TOWER_CONFIG = {
             frameWidth: 190, // (Подбери под свой спрайт)
             yOffset: -10
         },
+
+        Knight: {
+            name: "Knight",
+            color: "dark blue",
+            speed: 2, // Очень медленный
+            maxHealth: 120, // Но очень крепкий
+            bounty: 5,
+            width: 88, 
+            height: 78, 
+            frameWidth: 98, // (Подбери под свой спрайт)
+            yOffset: -10
+        },
         
     };
 
@@ -524,6 +536,7 @@ export const TOWER_CONFIG = {
     SfinksWalk:      createImage("СфинксИдёт.png"),
     SfinksFky:       createImage("СфинксЛетит.png"),
     Achel:           createImage("Ачел.png"),
+    Knight:          createImage("СтражИдёт.png"),
 };
 
 
@@ -819,7 +832,7 @@ export const TOWER_CONFIG = {
                             name: "Первая волна",
                             enemies: [
                                 //ShadowBolts Bell  Score
-                                { type: "Grunt", count: 5, interval: 500 },
+                                { type: "Knight", count: 5, interval: 500 },
                         
                             ]
                         },
