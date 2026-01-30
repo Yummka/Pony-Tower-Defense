@@ -24,6 +24,7 @@ export default class Enemy {
         this.color = cfg.color;
         this.bounty = cfg.bounty;
         this.isFinished = false;
+        this.hitboxRadius = cfg.hitboxRadius || 20;
 
         // НОВОЕ: Оффсет по Y (по умолчанию 0)
         this.yOffset = 0; 

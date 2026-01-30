@@ -53,7 +53,7 @@ export default class Tower {
             for (const enemy of enemies) {
                 if (enemy.currentHealth > 0 && !enemy.isFinished) {
                     const distance = Math.sqrt(Math.pow(enemy.x - this.x, 2) + Math.pow(enemy.y - this.y, 2));
-                    if (distance <= this.range) {
+                    if (distance - (enemy.hitboxRadius * this.game.scale) < this.range) {
                         if (enemy.slowDuration <= 0) {
                             if (distance < minPriorityDist) { minPriorityDist = distance; priorityTarget = enemy; }
                         }
@@ -68,7 +68,7 @@ export default class Tower {
             for (const enemy of enemies) {
                 if (enemy.currentHealth > 0 && !enemy.isFinished) {
                     const distance = Math.sqrt(Math.pow(enemy.x - this.x, 2) + Math.pow(enemy.y - this.y, 2));
-                    if (distance <= this.range && distance < minDistance) {
+                    if ((distance - enemy.hitboxRadius * this.game.scale) < this.range) {
                         minDistance = distance; nearestEnemy = enemy;
                     }
                 }
@@ -77,94 +77,142 @@ export default class Tower {
         }
     }
 
-    update(enemies, projectiles) {
-        // --- ЛОГИКА ДЛЯ РАДУГИ ДЭШ ---
-        if (this.isPatrolTower) {
-            if (!this.patrolEnd) return;
-            let targetPoint = this.patrolDirection === 1 ? this.patrolEnd : this.patrolStart;
-            const dx = targetPoint.x - this.patrolCurrentPos.x;
-            const dy = targetPoint.y - this.patrolCurrentPos.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance < this.patrolSpeed) { this.patrolDirection *= -1; } 
-            else {
-                this.patrolCurrentPos.x += (dx / distance) * this.patrolSpeed;
-                this.patrolCurrentPos.y += (dy / distance) * this.patrolSpeed;
+    // Tower.js
+
+// ЗАМЕНИТЕ ВЕСЬ ВАШ МЕТОД update() НА ЭТОТ:
+update(enemies, projectiles) {
+    const config = TOWER_CONFIG[this.type];
+
+    // --- 1. СПЕЦИАЛЬНАЯ ЛОГИКА ДЛЯ УНИКАЛЬНЫХ БАШЕН ---
+
+    // Логика для Радуги Дэш (патрулирование и AoE-аура)
+    if (this.isPatrolTower) {
+        if (!this.patrolEnd) return;
+        let targetPoint = this.patrolDirection === 1 ? this.patrolEnd : this.patrolStart;
+        const dx = targetPoint.x - this.patrolCurrentPos.x;
+        const dy = targetPoint.y - this.patrolCurrentPos.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < this.patrolSpeed) {
+            this.patrolDirection *= -1;
+        } else {
+            this.patrolCurrentPos.x += (dx / distance) * this.patrolSpeed;
+            this.patrolCurrentPos.y += (dy / distance) * this.patrolSpeed;
+        }
+        this.attackFrame = (this.attackFrame + config.frameSpeed) % config.frameCount;
+        this.facingDirection = dx > 0 ? 1 : -1;
+        enemies.forEach(enemy => {
+            const enemyDist = Math.sqrt(Math.pow(enemy.x - this.patrolCurrentPos.x, 2) + Math.pow(enemy.y - this.patrolCurrentPos.y, 2));
+            if (enemyDist < this.auraRadius) { enemy.currentHealth -= this.auraDamage; }
+        });
+        this.isAttacking = true; // Радуга всегда "атакует" в полете
+        return; // Выходим, так как логика для Радуги полностью своя
+    }
+
+    // Логика для Рэрити (шкала драмы и ульта)
+    if (this.isSniper) {
+        if (this.isUlting) {
+            this.ultFrame += config.ultFrameSpeed;
+            if (this.ultFrame >= config.ultFrameCount) { this.isUlting = false; this.ultFrame = 0; }
+            return;
+        }
+        let enemyInPersonalSpace = false;
+        for (const enemy of enemies) {
+            if (Math.sqrt(Math.pow(enemy.x - this.x, 2) + Math.pow(enemy.y - this.y, 2)) < this.dramaFillRadius) {
+                enemyInPersonalSpace = true; break;
             }
-            const config = TOWER_CONFIG[this.type];
-            this.attackFrame = (this.attackFrame + config.frameSpeed) % config.frameCount;
-            this.facingDirection = dx > 0 ? 1 : -1;
+        }
+        if (enemyInPersonalSpace && this.dramaMeter < this.dramaMeterMax) { this.dramaMeter += this.dramaFillRate; }
+        if (this.dramaMeter >= this.dramaMeterMax) {
+            this.isUlting = true; this.dramaMeter = 0;
+            const ultRadius = config.ultRadius * this.game.scale;
             enemies.forEach(enemy => {
-                const enemyDist = Math.sqrt(Math.pow(enemy.x - this.patrolCurrentPos.x, 2) + Math.pow(enemy.y - this.patrolCurrentPos.y, 2));
-                if (enemyDist < this.auraRadius) { enemy.currentHealth -= this.auraDamage; }
+                if (Math.sqrt(Math.pow(enemy.x - this.x, 2) + Math.pow(enemy.y - this.y, 2)) < ultRadius) {
+                    enemy.stunDuration = Math.max(enemy.stunDuration, config.ultStunDuration);
+                }
             });
             return;
         }
-
-        // --- ЛОГИКА ДЛЯ РЭРИТИ ---
-        if (this.isSniper) {
-            const config = TOWER_CONFIG[this.type];
-            if (this.isUlting) {
-                this.ultFrame += config.ultFrameSpeed;
-                if (this.ultFrame >= config.ultFrameCount) { this.isUlting = false; this.ultFrame = 0; }
-                return; // Во время ульты ничего другого не делаем
-            }
-            let enemyInPersonalSpace = false;
-            for (const enemy of enemies) {
-                if (Math.sqrt(Math.pow(enemy.x - this.x, 2) + Math.pow(enemy.y - this.y, 2)) < this.dramaFillRadius) {
-                    enemyInPersonalSpace = true; break;
-                }
-            }
-            if (enemyInPersonalSpace && this.dramaMeter < this.dramaMeterMax) { this.dramaMeter += this.dramaFillRate; }
-            if (this.dramaMeter >= this.dramaMeterMax) {
-                this.isUlting = true; this.dramaMeter = 0;
-                console.log("РЭРИТИ: ЭТО ПРОСТО УЖАСНО! *Истерика*");
-                const ultRadius = config.ultRadius * this.game.scale;
-                enemies.forEach(enemy => {
-                    if (Math.sqrt(Math.pow(enemy.x - this.x, 2) + Math.pow(enemy.y - this.y, 2)) < ultRadius) {
-                        enemy.stunDuration = Math.max(enemy.stunDuration, config.ultStunDuration);
-                    }
-                });
-                return;
+    }
+    
+    // Логика для Пинки Пай (AoE-атака по всем в радиусе)
+    if (this.type === 'Пинки Пай') {
+        this.isAttacking = false;
+        let enemiesInRange = false;
+        for (const enemy of enemies) {
+            if (Math.sqrt(Math.pow(enemy.x - this.x, 2) + Math.pow(enemy.y - this.y, 2)) < this.range) {
+                enemiesInRange = true;
+                break;
             }
         }
         
-        // --- ОБЩАЯ ЛОГИКА ДЛЯ ВСЕХ СТАТИЧНЫХ БАШЕН ---
+        if (enemiesInRange) {
+            this.isAttacking = true;
+            if (this.damageCooldown > 0) this.damageCooldown--;
+            if (this.damageCooldown <= 0) {
+                enemies.forEach(enemy => {
+                    if (Math.sqrt(Math.pow(enemy.x - this.x, 2) + Math.pow(enemy.y - this.y, 2)) < this.range) {
+                        enemy.currentHealth -= this.damage;
+                    }
+                });
+                this.damageCooldown = this.damageTickRate;
+            }
+        } else {
+            this.isAttacking = false;
+        }
+    }
+
+    // --- 2. ОБЩАЯ ЛОГИКА ДЛЯ ВСЕХ БАШЕН, АТАКУЮЩИХ ОДНУ ЦЕЛЬ ---
+    // (Эпплджек, Твайлайт, Флаттершай, Рэрити)
+    if (this.type !== 'Пинки Пай') {
+        // Потеря цели
         if (this.target) {
             const distance = Math.sqrt(Math.pow(this.target.x - this.x, 2) + Math.pow(this.target.y - this.y, 2));
             if (this.target.currentHealth <= 0 || this.target.isFinished || distance > this.range) {
                 this.target = null;
             }
         }
-        if (this.type === 'Флаттершай') this.findTarget(enemies);
-        else if (!this.target) this.findTarget(enemies);
+        // Поиск цели
+        if (!this.target) {
+            this.findTarget(enemies);
+        }
+        
+        // Поворот в сторону цели
         this.facingDirection = this.target ? ((this.target.x > this.x) ? 1 : -1) : -1;
         this.isAttacking = !!this.target;
 
+        // Логика атаки для Melee (Флаттершай, Эпплджек, Твайлайт)
         if (this.isMelee && this.target) {
             if (this.damageCooldown > 0) this.damageCooldown--;
             if (this.damageCooldown <= 0) {
-                this.target.currentHealth -= this.damage;
-                const config = TOWER_CONFIG[this.type];
-                if (config.applySlow) { this.target.slowDuration = config.slowDuration; }
+                if (config.applySlow) {
+                    this.target.slowDuration = config.slowDuration;
+                } else {
+                    this.target.currentHealth -= this.damage;
+                }
                 this.damageCooldown = this.damageTickRate;
             }
-        } else if (this.target) { // Для стреляющих башен (Рэрити)
+        } 
+        // Логика атаки для стрелков (Рэрити)
+        else if (this.target) {
             if (this.cooldown > 0) this.cooldown--;
             if (this.cooldown <= 0) {
                 this.shoot(projectiles);
                 this.cooldown = this.fireRate;
             }
         }
-        
-        if (this.isAttacking) {
-            const config = TOWER_CONFIG[this.type];
-            const frameSpeed = config.attackFrameSpeed || config.frameSpeed;
-            const frameCount = config.attackFrameCount || config.frameCount;
-            if (frameSpeed && frameCount) { this.attackFrame = (this.attackFrame + frameSpeed) % frameCount; }
-        } else {
-            this.attackFrame = 0;
-        }
     }
+    
+    // --- 3. ОБНОВЛЕНИЕ АНИМАЦИИ (для всех башен) ---
+    if (this.isAttacking) {
+        const frameSpeed = config.attackFrameSpeed || config.frameSpeed;
+        const frameCount = config.attackFrameCount || config.frameCount;
+        if (frameSpeed && frameCount) { 
+            this.attackFrame = (this.attackFrame + frameSpeed) % frameCount; 
+        }
+    } else {
+        this.attackFrame = 0;
+    }
+}
 
     shoot(projectiles) {
         const config = TOWER_CONFIG[this.type];
