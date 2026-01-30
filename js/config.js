@@ -105,6 +105,7 @@ export const TOWER_CONFIG = {
             width: 56,
             height: 68,
             frameWidth: 76,
+            hitboxRadius: 25,
         },
         
 
@@ -117,6 +118,7 @@ export const TOWER_CONFIG = {
         width: 60, // Ширина отображения (больше, чем 564/8=70.5)
         height: 70, // Высота отображения
         frameWidth: 74,
+        hitboxRadius: 25,
         },
 
         Spoon: {
@@ -128,6 +130,7 @@ export const TOWER_CONFIG = {
         width: 56, // Ширина отображения (больше, чем 564/8=70.5)
         height: 56, // Высота отображения
         frameWidth: 76,
+        hitboxRadius: 25,
         },
         
         Snail: {
@@ -139,6 +142,7 @@ export const TOWER_CONFIG = {
         width: 55.7, // Ширина отображения (больше, чем 564/8=70.5)
         height: 74, // Высота отображения
         frameWidth: 70.7,
+        hitboxRadius: 25,
         },
 
         Snip: {
@@ -150,6 +154,7 @@ export const TOWER_CONFIG = {
         width: 56, // Ширина отображения (больше, чем 564/8=70.5)
         height: 56, // Высота отображения
         frameWidth: 66,
+        hitboxRadius: 25,
         },
 
         BabsSeed: {
@@ -161,6 +166,7 @@ export const TOWER_CONFIG = {
         width: 52, // Ширина отображения (больше, чем 564/8=70.5)
         height: 64, // Высота отображения
         frameWidth: 62,
+        hitboxRadius: 25,
         },
 
         Trixie: {
@@ -172,6 +178,7 @@ export const TOWER_CONFIG = {
         width: 80, // Ширина отображения (больше, чем 564/8=70.5)
         height: 94, // Высота отображения
         frameWidth: 104,
+        hitboxRadius: 25,
         },
 
         PrinceBlueblood: {
@@ -183,6 +190,7 @@ export const TOWER_CONFIG = {
             width: 74, 
             height: 92, 
             frameWidth: 94, // (Подбери под свой спрайт)
+            hitboxRadius: 25,
         },
         
         Hoops: {
@@ -194,6 +202,7 @@ export const TOWER_CONFIG = {
             width: 85, 
             height: 83, 
             frameWidth: 110, // (Подбери под свой спрайт)
+            hitboxRadius: 25,
         },
 
         Stronghoof: {
@@ -205,7 +214,8 @@ export const TOWER_CONFIG = {
             width: 84, 
             height: 122, 
             frameWidth: 104, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         Score: {
@@ -217,7 +227,8 @@ export const TOWER_CONFIG = {
             width: 72, 
             height: 80, 
             frameWidth: 82, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         Bell: {
@@ -229,7 +240,8 @@ export const TOWER_CONFIG = {
             width: 74, 
             height: 86, 
             frameWidth: 84, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         Flam: {
@@ -241,7 +253,8 @@ export const TOWER_CONFIG = {
             width: 80, 
             height: 100, 
             frameWidth: 90, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
         
         ShadowBolts: {
@@ -253,7 +266,8 @@ export const TOWER_CONFIG = {
             width: 92, 
             height: 76, 
             frameWidth: 112, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
         
         ShadowBolts2: {
@@ -265,7 +279,8 @@ export const TOWER_CONFIG = {
             width: 94, 
             height: 76, 
             frameWidth: 114, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
         
         Flim: {
@@ -277,7 +292,8 @@ export const TOWER_CONFIG = {
             width: 74, 
             height: 100, 
             frameWidth: 84, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         Siren1: {
@@ -289,7 +305,8 @@ export const TOWER_CONFIG = {
             width: 160, 
             height: 242, 
             frameWidth: 160, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 35,
         },
 
         Siren2: {
@@ -301,7 +318,8 @@ export const TOWER_CONFIG = {
             width: 160, 
             height: 242, 
             frameWidth: 160, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 35,
         },
 
         Siren3: {
@@ -313,7 +331,8 @@ export const TOWER_CONFIG = {
             width: 160, 
             height: 242, 
             frameWidth: 160, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 35,
         },
 
         SirenP1: {
@@ -325,7 +344,8 @@ export const TOWER_CONFIG = {
             width: 70, 
             height: 74, 
             frameWidth: 90, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         SirenP2: {
@@ -337,7 +357,8 @@ export const TOWER_CONFIG = {
             width: 70, 
             height: 74, 
             frameWidth: 90, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         SirenP3: {
@@ -349,7 +370,8 @@ export const TOWER_CONFIG = {
             width: 70, 
             height: 74, 
             frameWidth: 90, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         Suri: {
@@ -361,7 +383,8 @@ export const TOWER_CONFIG = {
             width: 92, 
             height: 80, 
             frameWidth: 112, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         LightningDust: {
@@ -373,7 +396,8 @@ export const TOWER_CONFIG = {
             width: 102, 
             height: 80, 
             frameWidth: 122, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         Gilda: {
@@ -385,7 +409,8 @@ export const TOWER_CONFIG = {
             width: 112, 
             height: 80, 
             frameWidth: 132, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         Stariy: {
@@ -397,7 +422,8 @@ export const TOWER_CONFIG = {
             width: 110, 
             height: 82, 
             frameWidth: 130, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         Doctor: {
@@ -409,7 +435,8 @@ export const TOWER_CONFIG = {
             width: 96, 
             height: 86, 
             frameWidth: 106, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         Perviy: {
@@ -421,7 +448,8 @@ export const TOWER_CONFIG = {
             width: 96, 
             height: 86, 
             frameWidth: 106, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         Vtoroy: {
@@ -433,7 +461,8 @@ export const TOWER_CONFIG = {
             width: 96, 
             height: 86, 
             frameWidth: 106, // (Подбери под свой спрайт) 
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         Tretiy: {
@@ -445,7 +474,8 @@ export const TOWER_CONFIG = {
             width: 96, 
             height: 86, 
             frameWidth: 106, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         SfinksWalk: {
@@ -457,7 +487,8 @@ export const TOWER_CONFIG = {
             width: 224, 
             height: 244, 
             frameWidth: 244, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
         SfinksFky: {
@@ -469,7 +500,8 @@ export const TOWER_CONFIG = {
             width: 224, 
             height: 244, 
             frameWidth: 244, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 35,
         },
 
         Achel: {
@@ -481,7 +513,8 @@ export const TOWER_CONFIG = {
             width: 170, 
             height: 132, 
             frameWidth: 190, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 35,
         },
         
     };

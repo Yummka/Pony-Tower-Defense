@@ -154,18 +154,24 @@ export default class Game {
         // Если игра не запущена (в меню), ничего больше не рисуем
         if (!this.isRunning) return;
 
-        // 2. Рисуем слоты для строительства
+        if (this.isBuilding || this.isSelling) {
+        const size = this.SCALED_BUILD_SLOT_SIZE;
+        const halfSize = size / 2;
+        
         this.scaledBuildSlots.forEach(slot => {
-            if (!slot.occupied) {
-                const size = this.SCALED_BUILD_SLOT_SIZE;
-                const halfSize = size / 2;
-                this.ctx.fillStyle = 'rgba(83, 156, 93, 0.6)';
+            if (!slot.occupied) { // Свободные слоты
+                this.ctx.fillStyle = 'rgba(182, 238, 129, 0.4)'; // Яркий желтый для настройки
                 this.ctx.fillRect(slot.x - halfSize, slot.y - halfSize, size, size);
-                this.ctx.strokeStyle = 'rgba(8, 6, 6, 0.32)';
-                this.ctx.lineWidth = 1;
+                this.ctx.strokeStyle = 'rgba(187, 187, 187, 0.44)';
+                this.ctx.strokeRect(slot.x - halfSize, slot.y - halfSize, size, size);
+            } else if (this.isSelling) { // Занятые слоты (только в режиме продажи)
+                this.ctx.fillStyle = 'rgba(214, 79, 79, 0.4)'; // Яркий красный
+                this.ctx.fillRect(slot.x - halfSize, slot.y - halfSize, size, size);
+                this.ctx.strokeStyle = 'rgba(192, 192, 192, 0.42)';
                 this.ctx.strokeRect(slot.x - halfSize, slot.y - halfSize, size, size);
             }
         });
+    }
 
         // 3. Рисуем все игровые объекты
         this.towers.forEach(tower => tower.draw(this.ctx));
