@@ -133,6 +133,32 @@
     </div>
 </div>
 
+<!-- Всплывающее окно сюжета (для смены времени суток) -->
+    <div id="storyPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50 p-4">
+        <div class="bg-secondary border-2 border-white/50 rounded-xl p-8 text-center text-white max-w-lg w-full shadow-2xl">
+            <h2 id="storyTitle" class="text-3xl font-bold text-yellow-300 mb-6">ВНИМАНИЕ</h2>
+            <p id="storyText" class="text-lg text-gray-200 mb-8 leading-relaxed">
+                <!-- Текст будет меняться через JS -->
+            </p>
+            <button id="closeStoryPopupButton" class="px-8 py-3 bg-primary hover:bg-indigo-600 text-white font-bold rounded-lg shadow-lg transition duration-300 text-lg">
+                Продолжить
+            </button>
+        </div>
+    </div>
+
+<!-- Всплывающее окно сюжета (для смены времени суток) -->
+<div id="story-popup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50 p-4">
+    <div class="bg-secondary border-2 border-white/50 rounded-xl p-8 text-center text-white max-w-lg w-full shadow-2xl">
+        <h2 id="story-title" class="text-3xl font-bold text-yellow-300 mb-6">ЗАГОЛОВОК</h2>
+        <p id="story-text" class="text-lg text-gray-200 mb-8 leading-relaxed">
+            Текст истории...
+        </p>
+        <button id="story-next-btn" class="px-8 py-3 bg-primary hover:bg-indigo-600 text-white font-bold rounded-lg shadow-lg transition duration-300 text-lg">
+            Продолжить
+        </button>
+    </div>
+</div>
+
     <!-- Основной игровой контейнер -->
     <!-- ✅ Новая структура игрового контейнера -->
 <div class="game-container">

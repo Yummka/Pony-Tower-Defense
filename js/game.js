@@ -5,11 +5,11 @@ import Enemy from './entities/Enemy.js';
 import Tower from './entities/Tower.js';
 import Projectile from './entities/Projectile.js'; // Убедись, что Projectile тоже вынесен в отдельный файл
 import { 
-    path, buildSlots, LEVELS_CONFIG, backgroundImage, nightBackground,
+    path, buildSlots, LEVELS_CONFIG, backgroundImage, nightBackground, eveningBackground,
     TOWER_CONFIG, BUILD_SLOT_SIZE, SELL_REFUND_PERCENTAGE, 
     PAUSE_BETWEEN_GROUPS_MS, ENEMY_TYPES,
     originalWidth, originalHeight,
-    backgroundMusic, nightMusic,
+    backgroundMusic, nightMusic, eveningMusic, LEVEL_START_MONEY,
 } from './config.js';
 
 export default class Game {
@@ -32,6 +32,7 @@ export default class Game {
         this.enemies = [];
         this.towers = [];
         this.projectiles = [];
+        this.spawnTimeouts = [];
         
         this.isRunning = false;
         this.isBuilding = false;
@@ -49,7 +50,7 @@ export default class Game {
         this.offsetX = 0;
         this.offsetY = 0;
         this.setupScaling(); // Вычисляем правильные значения
-        
+                
         // Применяем масштабирование к координатам из конфига
         this.scaledPath = path.map(p => this.scaleCoords(p));
         this.scaledBuildSlots = buildSlots.map(slot => {
@@ -151,6 +152,30 @@ export default class Game {
             this.ctx.drawImage(backgroundImage, this.offsetX, this.offsetY, this.originalWidth * this.scale, this.originalHeight * this.scale);
         }
 
+        // 1. Очищаем холст
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // --- ЛОГИКА ЦВЕТА ФОНА ---
+        // Если уровень 3 (Вечер), 4 или 5 (Ночь) — делаем фон темным
+        if (this.currentLevel >= 3 && this.currentLevel <= 5) {
+            this.ctx.fillStyle = '#0d0d1a'; // Очень темный синий (почти черный) для холста
+            document.body.style.backgroundColor = '#000000'; // Черные поля браузера
+        } else {
+            this.ctx.fillStyle = '#1a321a'; // Обычный зеленый для холста
+            document.body.style.backgroundColor = '#3c3c58'; // Обычный цвет меню
+        }
+        
+        // Заливаем холст выбранным цветом
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Рисуем картинку фона (карту)
+        if (this.isBackgroundLoaded) {
+            this.ctx.drawImage(backgroundImage, this.offsetX, this.offsetY, this.originalWidth * this.scale, this.originalHeight * this.scale);
+        }
+
+        // Если игра не запущена (в меню), ничего больше не рисуем
+        if (!this.isRunning) return;
+
         // Если игра не запущена (в меню), ничего больше не рисуем
         if (!this.isRunning) return;
 
@@ -184,26 +209,118 @@ export default class Game {
 
     // --- УПРАВЛЕНИЕ СОСТОЯНИЕМ ИГРЫ ---
 
-    startLevel(levelNumber, options = {}) {
-        // Проверяем, нужно ли показывать интро
-        if (levelNumber === 2 && !options.skipIntro) {
-            this.currentLevel = 2; // Запоминаем уровень
-            this.resetStateForLevelStart(options);
-            this.ui.showFluttershyIntro();
-            return;
-        }
-        if (levelNumber === 3 && !options.skipIntro) {
-            this.currentLevel = 3;
-            this.resetStateForLevelStart(options);
-            this.ui.showRainbowDashIntro();
-            return;
-        }
-        
+    // В файле js/game.js
 
-        // Обычный запуск уровня
+    startLevel(levelNumber, options = {}) {
         this.currentLevel = levelNumber;
         this.resetStateForLevelStart(options);
-        this.startGameAfterIntro();
+
+        this.stopMusic();
+
+        // Настройки по умолчанию (День)
+        let levelBackgroundSrc = 'images/ФПСН.png'; 
+        let levelMusic = backgroundMusic;
+        
+        // Действие по умолчанию: просто начать игру
+        let startAction = () => this.startGame();
+
+        switch (levelNumber) {
+            // --- УРОВЕНЬ 2: ФЛАТТЕРШАЙ ---
+            case 2:
+                startAction = () => this.ui.showFluttershyIntro();
+                break;
+
+            // --- УРОВЕНЬ 3: ВЕЧЕР + РАДУГА + РЭРИТИ ---
+            case 3:
+                // ИСПРАВЛЕНО: Добавлена буква Н в название файла, как в конфиге
+                levelBackgroundSrc = 'images/ФПСНвечер.png'; 
+                levelMusic = eveningMusic; // Кстати, у вас опечатка в импорте (eveningTmusic), но если работает - ок
+                
+                startAction = () => this.ui.showStoryScreen(
+                    "ВЕЧЕРЕЕТ...", 
+                    "Солнце садится. Тени удлиняются.<br>К нам спешит подкрепление, но враги уже близко!",
+                    () => this.ui.showRainbowDashIntro()
+                );
+                break;
+
+            // --- УРОВЕНЬ 4: НОЧЬ ---
+            case 4:
+                // ИСПРАВЛЕНО: Добавлена буква Н в название файла
+                levelBackgroundSrc = 'images/ФПСНночь.png';
+                levelMusic = nightMusic;
+                
+                startAction = () => this.ui.showStoryScreen(
+                    "НАСТУПИЛА НОЧЬ", 
+                    "Тьма окутала Понивилль.<br>Летучие мыши и ночные кошмары выходят на охоту.<br><br>Держите оборону до рассвета!",
+                    () => this.startGame()
+                );
+                break;
+
+            // --- УРОВЕНЬ 6: РАССВЕТ ---
+            case 6:
+                // Фон по умолчанию (День), просто текст
+                startAction = () => this.ui.showStoryScreen(
+                    "РАССВЕТ!", 
+                    "Лучи солнца пробиваются сквозь тучи.<br>Мы пережили эту ночь!<br><br>Но враги не сдаются. В бой!",
+                    () => this.startGame()
+                );
+                break;
+
+            // Остальные уровни (1, 5, 7-10)
+            default:
+                // Используются настройки по умолчанию, в 5 уровне фон ночной
+                if (levelNumber === 5) {
+                    levelBackgroundSrc = 'images/ФПСночь.png';
+                    levelMusic = nightMusic;
+                }
+                break;
+        }
+
+        // Применяем настройки фона
+        // Важно: проверяем именно src, чтобы не перезагружать картинку лишний раз
+        if (!backgroundImage.src.includes(levelBackgroundSrc)) {
+            backgroundImage.src = levelBackgroundSrc;
+        }
+        
+        this.activeMusic = levelMusic;
+
+        // Запускаем логику уровня
+        if (options.skipIntro) {
+            this.startGame();
+        } else {
+            startAction();
+        }
+    }
+
+    // Упрощенный метод для старта игры
+    startGame() {
+        this.isRunning = true;
+        this.ui.showGameScreen();
+        this.playMusic();
+    }
+
+    // В классе Game
+
+    // --- ЗВУКОВАЯ СИСТЕМА ---
+    playMusic() {
+        if (this.activeMusic) {
+            // Пытаемся запустить музыку. Catch нужен, чтобы браузер не ругался на автоплей.
+            this.activeMusic.play().catch(e => console.log("Ждем клика для запуска музыки"));
+        }
+    }
+
+    stopMusic() {
+        // Останавливаем ВСЕ ТРИ трека, чтобы они не накладывались
+        [backgroundMusic, nightMusic, eveningMusic].forEach(track => {
+            track.pause();
+            track.currentTime = 0;
+        });
+    }
+
+    clearAllTimeouts() {
+        // Проходимся по всем сохраненным таймерам и отменяем их
+        this.spawnTimeouts.forEach(id => clearTimeout(id));
+        this.spawnTimeouts = []; // Очищаем массив
     }
 
     startGameAfterIntro() {
@@ -214,7 +331,8 @@ export default class Game {
     }
 
     resetStateForLevelStart(options = {}) {
-        const moneyToKeep = this.money;
+
+        this.clearAllTimeouts(); 
 
         this.isRunning = false;
         this.enemies = [];
@@ -224,12 +342,11 @@ export default class Game {
 
         this.wave = 0;
         this.lives = 10;
-        this.money = 100;
         
-        if (options.keepMoney) {
-            this.money = moneyToKeep;
-        }
-
+        // --- НОВАЯ ЛОГИКА ДЕНЕГ ---
+        // Если для уровня прописаны деньги, берем их. Если нет — 100 по умолчанию.
+        this.money = LEVEL_START_MONEY[this.currentLevel] || 100;
+        
         this.cancelModes();
         this.waveInProgress = false;
         this.allEnemiesScheduled = false;
@@ -259,30 +376,13 @@ export default class Game {
     }
 
     returnToMainMenu() {
+        this.clearAllTimeouts();
         this.isRunning = false;
         this.ui.showMainMenu();
         this.stopMusic();
     }
 
     // Вставьте эти два метода в класс Game в файле js/game.js
-
-    playMusic() {
-        // Проверяем, готова ли музыка к проигрыванию
-        const playPromise = backgroundMusic.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                // Браузеры могут блокировать авто-проигрывание, но наш код сработает,
-                // т.к. музыка включается после клика на кнопку "Уровень".
-                console.log("Музыка начнётся после взаимодействия с сайтом.");
-            });
-        }
-    }
-
-    stopMusic() {
-        backgroundMusic.pause();
-        backgroundMusic.currentTime = 0; // Сбрасываем на начало
-    }
-
     unlockLevels(num) {
         if (num > 0) {
             this.unlockedLevels = num;
@@ -312,6 +412,32 @@ export default class Game {
     }
     
     // --- ЛОГИКА ВОЛН ---
+    triggerNightmareEffect() {
+            // 1. Показываем страшное сообщение
+            this.ui.showStoryScreen(
+                "ВЕЧНАЯ НОЧЬ!", 
+                "Найтмер Мун здесь!<br>Её темная магия усыпила ваши башни!<br><br>Они не могут атаковать и их нельзя продать!",
+                () => this.startGame() // Продолжаем игру после закрытия
+            );
+
+            // 2. Выбираем 7 случайных башен
+            // Создаем копию массива башен, чтобы перемешать его
+            const activeTowers = this.towers.filter(t => !t.isAsleep); // Берем только тех, кто еще не спит
+            
+            // Перемешиваем массив (алгоритм Фишера-Йетса)
+            for (let i = activeTowers.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [activeTowers[i], activeTowers[j]] = [activeTowers[j], activeTowers[i]];
+            }
+
+            // 3. Усыпляем первые 7 (или меньше, если башен всего меньше 7)
+            const countToSleep = Math.min(activeTowers.length, 7);
+            for (let i = 0; i < countToSleep; i++) {
+                activeTowers[i].isAsleep = true;
+            }
+        }
+
+    // В файле js/game.js
 
     startWave() {
         if (this.waveInProgress) return;
@@ -332,15 +458,26 @@ export default class Game {
         const totalEnemiesInWave = enemyGroups.reduce((total, group) => total + group.count, 0);
         let enemiesSpawnedCount = 0;
 
+        // --- ВОТ ПРАВИЛЬНОЕ МЕСТО ДЛЯ ФУНКЦИИ (ОДИН РАЗ) ---
         const scheduleEnemy = (type, delay) => {
-            setTimeout(() => {
+            // Сохраняем ID таймера в переменную timerId
+            const timerId = setTimeout(() => {
                 this.enemies.push(new Enemy(type, this.scaledPath));
+                
+                if (type === 'NightmareMoon') {
+                    this.triggerNightmareEffect();
+                }
+
                 enemiesSpawnedCount++;
                 if (enemiesSpawnedCount === totalEnemiesInWave) {
                     this.allEnemiesScheduled = true;
                 }
             }, delay);
+            
+            // Добавляем этот ID в наш список, чтобы потом можно было отменить
+            this.spawnTimeouts.push(timerId);
         };
+        // ---------------------------------------------------
         
         // Логика спавна с разделением на обычных и сирен
         const sirenGroups = enemyGroups.filter(g => g.type.includes("Siren"));
@@ -391,6 +528,11 @@ export default class Game {
 
             if (towerIndex !== -1) {
                 const tower = this.towers[towerIndex];
+                if (tower.isAsleep) {
+                    console.log("Нельзя продать спящую башню!");
+                    // Можно добавить звук ошибки или мигание, но пока просто выходим
+                    return; 
+                }
                 const refund = Math.floor(TOWER_CONFIG[tower.type].price * SELL_REFUND_PERCENTAGE);
                 this.money += refund;
 
@@ -402,6 +544,7 @@ export default class Game {
                     if (endSlot) endSlot.occupied = false;
                 }
                 
+                        
                 this.towers.splice(towerIndex, 1);
             }
             this.cancelModes();
