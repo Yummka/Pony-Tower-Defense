@@ -501,7 +501,7 @@ export const TOWER_CONFIG = {
             name: "SfinksFky",
             color: "brown",
             speed: 3, // Очень медленный
-            maxHealth: 2000, // Но очень крепкий
+            maxHealth: 1800, // Но очень крепкий
             bounty: 200,
             width: 224, 
             height: 244, 
@@ -514,7 +514,7 @@ export const TOWER_CONFIG = {
             name: "Achel",
             color: "brown",
             speed: 2.5, // Очень медленный
-            maxHealth: 1900, // Но очень крепкий
+            maxHealth: 1500, // Но очень крепкий
             bounty: 180,
             width: 170, 
             height: 132, 
@@ -618,7 +618,7 @@ export const TOWER_CONFIG = {
             name: "NightmareMoon",
             color: "blue",
             speed: 1,
-            maxHealth: 4000,
+            maxHealth: 3500,
             bounty: 300,
             width: 168, 
             height: 126, 
