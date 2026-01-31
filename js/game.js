@@ -119,7 +119,7 @@ export default class Game {
         // 4. Удаляем "мертвых" и "сбежавших" врагов
         this.enemies = this.enemies.filter(enemy => {
             if (enemy.isFinished) {
-                const isBoss = enemy.type === 'Trixie' || enemy.type.includes('Siren') || enemy.type === 'Achel' || enemy.type === 'SfinksFky' || enemy.type === 'NightmareMoon';
+                const isBoss = enemy.type === 'Trixie' || enemy.type.includes('Siren') || enemy.type === 'Achel' || enemy.type === 'SfinksFky' || enemy.type === 'NightmareMoon' || enemy.type === 'SfinksWalk';
                 this.lives -= isBoss ? 5 : 1;
                 if (this.lives <= 0) {
                     this.lives = 0;

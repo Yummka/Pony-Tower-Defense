@@ -12,7 +12,7 @@ export const TOWER_CONFIG = {
         description: {
             damage: "3 (x6/сек)", // Урон * (60 кадров / 10 тикрейт)
             range: 100,
-            speed: "6.0/сек", // 60 / 10
+            speed: "4.0/сек", // 60 / 10
             special: "Наносит урон всем врагам в радиусе атаки непрерывно."
         }
     },
@@ -22,7 +22,7 @@ export const TOWER_CONFIG = {
         description: {
             damage: "7 (x6/сек)",
             range: 80,
-            speed: "6.0/сек",
+            speed: "8.0/сек",
             special: "Надежная и сильная, наносит постоянный урон ближайшему врагу."
         }
     },
@@ -179,7 +179,7 @@ export const TOWER_CONFIG = {
         name: "Trixie",
         color: "turquoise",
         speed: 2,
-        maxHealth: 700,
+        maxHealth: 500,
         bounty: 250,
         width: 80, // Ширина отображения (больше, чем 564/8=70.5)
         height: 94, // Высота отображения
@@ -306,7 +306,7 @@ export const TOWER_CONFIG = {
             name: "Siren1",
             color: "yellow",
             speed: 2, // Очень медленный
-            maxHealth: 1500, // Но очень крепкий
+            maxHealth: 1000, // Но очень крепкий
             bounty: 100,
             width: 160, 
             height: 242, 
@@ -319,7 +319,7 @@ export const TOWER_CONFIG = {
             name: "Siren2",
             color: "yellow",
             speed: 2, // Очень медленный
-            maxHealth: 1500, // Но очень крепкий
+            maxHealth: 1000, // Но очень крепкий
             bounty: 100,
             width: 160, 
             height: 242, 
@@ -332,7 +332,7 @@ export const TOWER_CONFIG = {
             name: "Siren3",
             color: "yellow",
             speed: 2, // Очень медленный
-            maxHealth: 1500, // Но очень крепкий
+            maxHealth: 1000, // Но очень крепкий
             bounty: 100,
             width: 160, 
             height: 242, 
@@ -345,7 +345,7 @@ export const TOWER_CONFIG = {
             name: "SirenP1",
             color: "yellow",
             speed: 2, // Очень медленный
-            maxHealth: 1000, // Но очень крепкий
+            maxHealth: 700, // Но очень крепкий
             bounty: 80,
             width: 70, 
             height: 74, 
@@ -358,7 +358,7 @@ export const TOWER_CONFIG = {
             name: "SirenP2",
             color: "yellow",
             speed: 2, // Очень медленный
-            maxHealth: 1000, // Но очень крепкий
+            maxHealth: 700, // Но очень крепкий
             bounty: 80,
             width: 70, 
             height: 74, 
@@ -371,7 +371,7 @@ export const TOWER_CONFIG = {
             name: "SirenP3",
             color: "yellow",
             speed: 2, // Очень медленный
-            maxHealth: 1000, // Но очень крепкий
+            maxHealth: 700, // Но очень крепкий
             bounty: 80,
             width: 70, 
             height: 74, 
@@ -488,7 +488,7 @@ export const TOWER_CONFIG = {
             name: "SfinksWalk",
             color: "brown",
             speed: 2, // Очень медленный
-            maxHealth: 1900, // Но очень крепкий
+            maxHealth: 1500, // Но очень крепкий
             bounty: 120,
             width: 224, 
             height: 244, 
@@ -501,7 +501,7 @@ export const TOWER_CONFIG = {
             name: "SfinksFky",
             color: "brown",
             speed: 3, // Очень медленный
-            maxHealth: 2000, // Но очень крепкий
+            maxHealth: 1500, // Но очень крепкий
             bounty: 200,
             width: 224, 
             height: 244, 
@@ -514,7 +514,7 @@ export const TOWER_CONFIG = {
             name: "Achel",
             color: "brown",
             speed: 2.5, // Очень медленный
-            maxHealth: 1900, // Но очень крепкий
+            maxHealth: 1200, // Но очень крепкий
             bounty: 180,
             width: 170, 
             height: 132, 
@@ -618,7 +618,7 @@ export const TOWER_CONFIG = {
             name: "NightmareMoon",
             color: "blue",
             speed: 1,
-            maxHealth: 3500,
+            maxHealth: 2500,
             bounty: 300,
             width: 168, 
             height: 126, 
