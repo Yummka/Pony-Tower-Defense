@@ -13,7 +13,10 @@ html, body {
     height: 100%;
     background-color: #3c3c58;
     font-family: 'Press Start 2P', cursive;
-    font-size: 0.80rem; 
+    font-size: 0.80rem;
+    display: flex; 
+    justify-content: center;  /* По центру горизонтально */
+    align-items: center; 
 }
 
 /* --- Игровой контейнер и холст --- */

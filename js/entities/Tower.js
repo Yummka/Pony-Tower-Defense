@@ -21,6 +21,7 @@ export default class Tower {
         this.attackFrame = 0;
         this.image = towerImages[type];
         
+        
         // Свойство сна
         this.isAsleep = false; 
         

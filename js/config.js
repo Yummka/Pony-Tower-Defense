@@ -17,7 +17,7 @@ export const TOWER_CONFIG = {
         }
     },
     'Эппл Джек': {
-        name: 'Эппл Джек', price: 65, range: 80, damage: 7, isMelee: true, damageTickRate: 10,
+        name: 'Эппл Джек', price: 70, range: 80, damage: 7, isMelee: true, damageTickRate: 10,
         frameCount: 21, frameWidth: 100, frameSpeed: 0.3,
         description: {
             damage: "7 (x6/сек)",
@@ -488,7 +488,7 @@ export const TOWER_CONFIG = {
             name: "SfinksWalk",
             color: "brown",
             speed: 2, // Очень медленный
-            maxHealth: 1500, // Но очень крепкий
+            maxHealth: 1900, // Но очень крепкий
             bounty: 120,
             width: 224, 
             height: 244, 
@@ -501,7 +501,7 @@ export const TOWER_CONFIG = {
             name: "SfinksFky",
             color: "brown",
             speed: 3, // Очень медленный
-            maxHealth: 1800, // Но очень крепкий
+            maxHealth: 2000, // Но очень крепкий
             bounty: 200,
             width: 224, 
             height: 244, 
@@ -514,7 +514,7 @@ export const TOWER_CONFIG = {
             name: "Achel",
             color: "brown",
             speed: 2.5, // Очень медленный
-            maxHealth: 1500, // Но очень крепкий
+            maxHealth: 1900, // Но очень крепкий
             bounty: 180,
             width: 170, 
             height: 132, 
@@ -606,7 +606,7 @@ export const TOWER_CONFIG = {
             color: "brow",
             speed: 5, // Очень медленный
             maxHealth: 250, // Но очень крепкий
-            bounty: 3,
+            bounty: 25,
             width: 311, 
             height: 149, 
             frameWidth: 411, // (Подбери под свой спрайт)

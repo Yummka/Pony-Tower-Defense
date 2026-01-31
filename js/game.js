@@ -50,6 +50,13 @@ export default class Game {
         this.offsetX = 0;
         this.offsetY = 0;
         this.setupScaling(); // Вычисляем правильные значения
+
+        // --- СЛУШАТЕЛЬ ИЗМЕНЕНИЯ РАЗМЕРА ОКНА ---
+        window.addEventListener('resize', () => {
+            this.setupScaling(); // 1. Пересчитываем коэффициенты (scale, offsetX)
+            this.recalculatePositions(); // 2. Пересчитываем координаты сетки и пути
+            this.draw(); // 3. Рисуем сразу, чтобы не мигало
+        });
                 
         // Применяем масштабирование к координатам из конфига
         this.scaledPath = path.map(p => this.scaleCoords(p));
@@ -112,7 +119,7 @@ export default class Game {
         // 4. Удаляем "мертвых" и "сбежавших" врагов
         this.enemies = this.enemies.filter(enemy => {
             if (enemy.isFinished) {
-                const isBoss = enemy.type === 'Trixie' || enemy.type.includes('Siren') || enemy.type === 'Achel' || enemy.type === 'SfinksFky';
+                const isBoss = enemy.type === 'Trixie' || enemy.type.includes('Siren') || enemy.type === 'Achel' || enemy.type === 'SfinksFky' || enemy.type === 'NightmareMoon';
                 this.lives -= isBoss ? 5 : 1;
                 if (this.lives <= 0) {
                     this.lives = 0;
@@ -413,29 +420,34 @@ export default class Game {
     
     // --- ЛОГИКА ВОЛН ---
     triggerNightmareEffect() {
-            // 1. Показываем страшное сообщение
-            this.ui.showStoryScreen(
-                "ВЕЧНАЯ НОЧЬ!", 
-                "Найтмер Мун здесь!<br>Её темная магия усыпила ваши башни!<br><br>Они не могут атаковать и их нельзя продать!",
-                () => this.startGame() // Продолжаем игру после закрытия
-            );
+        // 1. СТАВИМ ИГРУ НА ПАУЗУ
+        this.isRunning = false; 
 
-            // 2. Выбираем 7 случайных башен
-            // Создаем копию массива башен, чтобы перемешать его
-            const activeTowers = this.towers.filter(t => !t.isAsleep); // Берем только тех, кто еще не спит
-            
-            // Перемешиваем массив (алгоритм Фишера-Йетса)
-            for (let i = activeTowers.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [activeTowers[i], activeTowers[j]] = [activeTowers[j], activeTowers[i]];
+        // 2. Показываем сообщение
+        this.ui.showStoryScreen(
+            "ВЕЧНАЯ НОЧЬ!", 
+            "Найтмер Мун здесь!<br>Её темная магия усыпила ваших пони!<br><br>Они не могут атаковать и их нельзя продать!",
+            () => {
+                // Эта функция сработает, когда нажмут "Продолжить"
+                this.startGame(); // Снимаем с паузы
             }
+        );
 
-            // 3. Усыпляем первые 7 (или меньше, если башен всего меньше 7)
-            const countToSleep = Math.min(activeTowers.length, 7);
-            for (let i = 0; i < countToSleep; i++) {
-                activeTowers[i].isAsleep = true;
-            }
+        // 3. Выбираем башни
+        const activeTowers = this.towers.filter(t => !t.isAsleep);
+        
+        // Перемешиваем
+        for (let i = activeTowers.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [activeTowers[i], activeTowers[j]] = [activeTowers[j], activeTowers[i]];
         }
+
+        // 4. Усыпляем 10 штук (БЫЛО 7 -> СТАЛО 10)
+        const countToSleep = Math.min(activeTowers.length, 10);
+        for (let i = 0; i < countToSleep; i++) {
+            activeTowers[i].isAsleep = true;
+        }
+    }
 
     // В файле js/game.js
 
@@ -518,6 +530,7 @@ export default class Game {
         const pos = this.getMousePos(event);
         const mouseX = pos.x;
         const mouseY = pos.y;
+        
         
         // --- Логика продажи ---
         if (this.isSelling) {
@@ -635,6 +648,42 @@ export default class Game {
         this.scale = Math.min(this.canvas.width / this.originalWidth, this.canvas.height / this.originalHeight);
         this.offsetX = (this.canvas.width - this.originalWidth * this.scale) / 2;
         this.offsetY = (this.canvas.height - this.originalHeight * this.scale) / 2;
+    }
+
+    recalculatePositions() {
+        // 1. Обновляем размер клеточки
+        this.SCALED_BUILD_SLOT_SIZE = BUILD_SLOT_SIZE * this.scale;
+
+        // 2. Пересчитываем путь врагов (берем оригинальный path из конфига и масштабируем)
+        this.scaledPath = path.map(p => this.scaleCoords(p));
+
+        // 3. Пересчитываем слоты для строительства
+        // Важно: мы не создаем новые слоты, а обновляем координаты старых,
+        // чтобы не потерять информацию о том, занят слот или нет (occupied).
+        if (this.scaledBuildSlots && this.scaledBuildSlots.length === buildSlots.length) {
+            for (let i = 0; i < this.scaledBuildSlots.length; i++) {
+                // Берем оригинальные координаты из конфига (buildSlots)
+                const originalSlot = buildSlots[i];
+                // Применяем новый масштаб
+                const newCoords = this.scaleCoords(originalSlot);
+                
+                // Обновляем координаты существующего слота
+                this.scaledBuildSlots[i].x = newCoords.x;
+                this.scaledBuildSlots[i].y = newCoords.y;
+            }
+        }
+        
+ 
+        this.towers.forEach(tower => {
+            let nearestSlot = null;
+            let minDistance = Infinity;
+            
+            // Ищем, к какому слоту привязана башня
+            for (const slot of this.scaledBuildSlots) {
+                if (slot.occupied) {
+                }
+            }
+        });
     }
 
     scaleCoords(point) {
