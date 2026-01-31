@@ -170,6 +170,30 @@ export default class Enemy {
             this.frameCount = 15;     
             this.frameSpeed = 0.3;
             this.yOffset = -20;
+        }else if (type === "KnightFly") { 
+            this.frameCount = 16;     
+            this.frameSpeed = 0.3;
+            this.yOffset = -20;
+        }else if (type === "FlatWalk") {
+            this.frameCount = 15;     
+            this.frameSpeed = 0.3;
+            this.yOffset = -20;
+        }else if (type === "ZBats") {
+            this.frameCount = 7;     
+            this.frameSpeed = 0.3;
+            this.yOffset = -20;
+        }else if (type === "KBats") {
+            this.frameCount = 7;     
+            this.frameSpeed = 0.3;
+            this.yOffset = -20;
+        }else if (type === "Wolf") {
+            this.frameCount = 21;     
+            this.frameSpeed = 0.6;
+            this.yOffset = -20;
+        }else if (type === "NightmareMoon") {
+            this.frameCount = 29;     
+            this.frameSpeed = 0.3;
+            this.yOffset = -20;
         }
 
 

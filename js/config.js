@@ -88,6 +88,12 @@ export const TOWER_CONFIG = {
     'Рэрити':             createImage('РаритиСтоит.png'),
     'Рэрити Атака':       createImage('РаритиАтака.png'),
     'Рэрити Ульта':       createImage('РаритиУльта.png'),
+    'Пинки Пай Сон':      createImage('ПС.png'),
+    'Эппл Джек Сон':      createImage('ЭС.png'),
+    'Твайлайт Спаркл Сон': createImage('ТС.png'),
+    'Флаттершай Сон':     createImage('ФС.png'),
+    'Радуга Дэш Сон':     createImage('РадС.png'),
+    'Рэрити Сон':         createImage('РарС.png'),
 };
 
 
@@ -521,25 +527,107 @@ export const TOWER_CONFIG = {
             name: "Knight",
             color: "dark blue",
             speed: 2, // Очень медленный
-            maxHealth: 120, // Но очень крепкий
-            bounty: 5,
+            maxHealth: 130, // Но очень крепкий
+            bounty: 15,
             width: 88, 
             height: 78, 
             frameWidth: 108, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
 
-        Knight: {
-            name: "Knight",
+        KnightFly: {
+            name: "KnightFly",
             color: "dark blue",
-            speed: 2, // Очень медленный
+            speed: 2.5, // Очень медленный
             maxHealth: 130, // Но очень крепкий
-            bounty: 5,
+            bounty: 15,
             width: 88, 
             height: 78, 
             frameWidth: 108, // (Подбери под свой спрайт)
-            yOffset: -10
+            yOffset: -10,
+            hitboxRadius: 25,
         },
+
+        FlatWalk: {
+            name: "FlatWalk",
+            color: "dark pink",
+            speed: 2, // Очень медленный
+            maxHealth: 100, // Но очень крепкий
+            bounty: 10,
+            width: 92, 
+            height: 82, 
+            frameWidth: 112, // (Подбери под свой спрайт)
+            yOffset: -10,
+            hitboxRadius: 25,
+        },
+
+        FlatFly: {
+            name: "FlatFly",
+            color: "dark pink",
+            speed: 2.5, // Очень медленный
+            maxHealth: 100, // Но очень крепкий
+            bounty: 10,
+            width: 94, 
+            height: 76, 
+            frameWidth: 114, // (Подбери под свой спрайт)
+            yOffset: -10,
+            hitboxRadius: 25,
+        },
+
+        ZBats: {
+            name: "ZBats",
+            color: "dark pink",
+            speed: 3, // Очень медленный
+            maxHealth: 30, // Но очень крепкий
+            bounty: 3,
+            width: 110, 
+            height: 98, 
+            frameWidth: 130, // (Подбери под свой спрайт)
+            yOffset: -10,
+            hitboxRadius: 25,
+        },
+
+        KBats: {
+            name: "KBats",
+            color: "dark pink",
+            speed: 3, // Очень медленный
+            maxHealth: 30, // Но очень крепкий
+            bounty: 3,
+            width: 110, 
+            height: 98, 
+            frameWidth: 130, // (Подбери под свой спрайт)
+            yOffset: -10,
+            hitboxRadius: 25,
+        },
+
+        Wolf: {
+            name: "Wolf",
+            color: "brow",
+            speed: 5, // Очень медленный
+            maxHealth: 250, // Но очень крепкий
+            bounty: 3,
+            width: 311, 
+            height: 149, 
+            frameWidth: 411, // (Подбери под свой спрайт)
+            yOffset: -10,
+            hitboxRadius: 35,
+        },
+
+        NightmareMoon: {
+            name: "NightmareMoon",
+            color: "blue",
+            speed: 1,
+            maxHealth: 4000,
+            bounty: 300,
+            width: 168, 
+            height: 126, 
+            frameWidth: 178,
+            yOffset: -10,
+            hitboxRadius: 35,
+        },
+        
+        
         
     };
 
@@ -582,6 +670,13 @@ export const TOWER_CONFIG = {
     SfinksFky:       createImage("СфинксЛетит.png"),
     Achel:           createImage("Ачел.png"),
     Knight:          createImage("СтражИдёт.png"),
+    KnightFly:       createImage("СтражЛетит.png"),
+    FlatWalk:        createImage("ФлатБэтИдёт.png"),
+    FlatFly:         createImage("ФлатБэтЛетит.png"),
+    ZBats:           createImage("ЗМыши.png"),
+    KBats:           createImage("КМыши.png"),
+    Wolf:            createImage("ВОЛК2.png"),
+    NightmareMoon:   createImage("НайтмерМун.png"),
 };
 
 
@@ -867,7 +962,8 @@ export const TOWER_CONFIG = {
         // --- КОНФИГУРАЦИЯ И НАСТРОЙКА ---
         
         export const backgroundImage = createImage('ФПСН.png');
-        export const nightBackground = createImage('ФПСночь.png');
+        export const nightBackground = createImage('ФПСНночь.png');
+        export const eveningBackground = createImage('ФПСНвечер.png');
 
 
         export const LEVELS_CONFIG = {
@@ -878,7 +974,7 @@ export const TOWER_CONFIG = {
                             name: "Первая волна",
                             enemies: [
                                 //ShadowBolts Bell  Score
-                                { type: "Knight", count: 5, interval: 500 },
+                                { type: "Grunt", count: 5, interval: 500 },
                         
                             ]
                         },
@@ -1116,7 +1212,80 @@ export const TOWER_CONFIG = {
                                 { type: "SfinksFky", count: 1, interval: 500 },
                             ]
                         }
-                    ]
+                    ],
+
+                    4: [
+                        {
+                            name: "Мыши!",
+                            enemies: [
+                                { type: "ZBats", count: 5, interval: 500 },
+                                { type: "KBats", count: 5, interval: 900 },
+                            ]
+                        },
+                        {
+                            name: "Тени",
+                            enemies: [
+                                { type: "ShadowBolts", count: 5, interval: 500 },
+                            ]
+                        },
+                        {
+                            name: "Тени2",
+                            enemies: [
+                                { type: "ShadowBolts", count: 5, interval: 600 },
+                                { type: "ShadowBolts2", count: 5, interval: 400 },
+                            ]
+                        },
+                        {
+                            name: "Страж",
+                            enemies: [
+                                { type: "Knight", count: 7, interval: 700 },
+                            ]
+                        },
+                        {
+                            name: "Страж и Флат",
+                            enemies: [
+                                { type: "KnightFly", count: 10, interval: 600 },
+                                { type: "FlatWalk", count: 10, interval: 500 },
+                            ]
+                        },
+                        {
+                            name: "Летучие",
+                            enemies: [
+                                { type: "KnightFly", count: 5, interval: 1500 },
+                                { type: "FlatFly", count: 5, interval: 1000 },
+                                { type: "ShadowBolts", count: 5, interval: 400 },
+                                { type: "ShadowBolts2", count: 5, interval: 800 },
+                            ]
+                        },
+                        {
+                            name: "Все вместе",
+                            enemies: [
+                                { type: "ZBats", count: 10, interval: 500 },
+                                { type: "FlatFly", count: 10, interval: 300 },
+                                { type: "KBats", count: 2, interval: 900 },
+                            ]
+                        },
+                        {
+                            name: "Большие проблемы",
+                            enemies: [
+                                { type: "Wolf", count: 3, interval: 300 },
+                            ]
+                        },
+                        {
+                            name: "Волки и леталки",
+                            enemies: [
+                                { type: "Wolf", count: 3, interval: 300 },
+                                { type: "KnightFly", count: 8, interval: 300 },
+                                { type: "FlatFly", count: 8, interval: 100 },
+                            ]
+                        },
+                        {
+                            name: "Финал (Босс)",
+                            enemies: [
+                                { type: "NightmareMoon", count: 1, interval: 1000 },
+                            ]
+                        }
+                    ],
                 };
 
                 // --- МУЗЫКА И ЗВУКИ ---
@@ -1128,6 +1297,19 @@ backgroundMusic.volume = 0.4;     // Устанавливаем громкост
 export const nightMusic = new Audio('audio/Night.mp3');
 nightMusic.loop = true;
 nightMusic.volume = 0.4;
+
+export const eveningMusic = new Audio('audio/Evening.mp3'); // Ночь и Вечер
+nightMusic.loop = true;
+nightMusic.volume = 0.4;
+
+export const LEVEL_START_MONEY = {
+    1: 100, // Легкий старт
+    2: 120, // Нужно купить Флаттершай
+    3: 150, // Сложный уровень
+    4: 200, // Для Найтмер Мун нужно много защиты
+    5: 250,
+    6: 300,
+}
 
 
 

@@ -46,6 +46,11 @@ export default class UIManager {
         this.fluttershyIntroPopup = document.getElementById('fluttershyIntroPopup');
         this.rainbowDashIntroPopup = document.getElementById('rainbowDashIntroPopup');
         this.rarityIntroPopup = document.getElementById('rarityIntroPopup');
+
+        // Внутри constructor(game)
+        this.storyPopup = document.getElementById('storyPopup');
+        this.storyTitle = document.getElementById('storyTitle');
+        this.storyText = document.getElementById('storyText');
         
         // --- 2. Привязываем все обработчики событий ---
         this.bindEvents();
@@ -61,6 +66,15 @@ export default class UIManager {
         // Передаем события с канваса напрямую в game, он сам разберется с координатами
         this.canvas.addEventListener('mousemove', (e) => this.game.handleMouseMove(e));
         this.canvas.addEventListener('click', (e) => this.game.handleCanvasClick(e));
+
+         document.getElementById('closeStoryPopupButton').addEventListener('click', () => {
+            this.storyPopup.classList.add('hidden');
+            if (this.onStoryClose) {
+                this.onStoryClose(); // Выполняем то, что запланировали (открыть Радугу или начать игру)
+            } else {
+                this.game.startGame(); // По умолчанию просто старт
+            }
+        });
 
         // Отмена режимов по клавише Escape
         document.addEventListener('keydown', (e) => {
@@ -87,9 +101,9 @@ export default class UIManager {
         });
         
         // Кнопки после интро
-        document.getElementById('startLevelAfterIntroButton').addEventListener('click', () => this.game.startGameAfterIntro());
+        document.getElementById('startLevelAfterIntroButton').addEventListener('click', () => this.game.startGame());
         document.getElementById('startLevelAfterRDIntroButton').addEventListener('click', () => this.showRarityIntro());
-        document.getElementById('startLevelAfterRarityIntroButton').addEventListener('click', () => this.game.startGameAfterIntro());
+        document.getElementById('startLevelAfterRarityIntroButton').addEventListener('click', () => this.game.startGame());
 
         
     }
@@ -178,37 +192,55 @@ export default class UIManager {
     // --- 4. Методы для управления экранами и попапами ---
 
     showMainMenu() {
-        this.mainMenu.classList.remove('hidden');
-        this.canvas.classList.add('hidden');
-        this.hideAllPopups();
-        
-        // Логика создания кнопок уровней (из старой функции drawMainMenu)
-        this.levelSelection.innerHTML = ''; // Очищаем старые кнопки
-        const totalLevels = 3;
-        for (let i = 1; i <= totalLevels; i++) {
-            const isUnlocked = i <= this.game.unlockedLevels;
-            const button = document.createElement('button');
-            button.textContent = `Уровень ${i}`;
-            button.className = 'w-full px-6 py-4 font-semibold rounded-lg shadow-lg transition duration-300 text-xl';
+    this.mainMenu.classList.remove('hidden');
+    this.canvas.classList.add('hidden');
+    this.hideAllPopups();
+    
+    this.levelSelection.innerHTML = '';
+    
+    // ИЗМЕНЕНИЕ: Теперь 10 уровней
+    const totalLevels = 10; 
+    
+    // Создаем сетку для кнопок, если их много
+    this.levelSelection.className = "grid grid-cols-2 gap-4 w-full max-w-lg"; // Используем Grid вместо flex col
 
-            if (isUnlocked) {
-                button.classList.add('bg-money', 'hover:bg-green-700', 'text-white');
-                button.onclick = () => this.game.startLevel(i);
-            } else {
-                button.classList.add('bg-gray-500', 'text-gray-300', 'cursor-not-allowed', 'opacity-70');
-                button.textContent += ' 🔒';
-            }
-            this.levelSelection.appendChild(button);
+    for (let i = 1; i <= totalLevels; i++) {
+        const isUnlocked = i <= this.game.unlockedLevels;
+        const button = document.createElement('button');
+        button.textContent = `Ур. ${i}`; // Сократил текст для компактности
+        // Стили
+        button.className = 'px-4 py-3 font-semibold rounded-lg shadow-lg transition duration-300 text-sm md:text-base';
+
+        if (isUnlocked) {
+            button.classList.add('bg-money', 'hover:bg-green-700', 'text-white');
+            button.onclick = () => this.game.startLevel(i);
+        } else {
+            button.classList.add('bg-gray-500', 'text-gray-300', 'cursor-not-allowed', 'opacity-70');
+            button.textContent += ' 🔒';
         }
+        this.levelSelection.appendChild(button);
     }
+}
 
     showGameScreen() {
         this.mainMenu.classList.add('hidden');
         this.canvas.classList.remove('hidden');
         this.hideAllPopups();
     }
+
+    showStoryScreen(title, text, nextAction) {
+        this.mainMenu.classList.add('hidden');
+        this.storyTitle.textContent = title;
+        this.storyText.innerHTML = text; 
+        
+        // Запоминаем, что делать при нажатии кнопки "Продолжить"
+        this.onStoryClose = nextAction;
+
+        this.storyPopup.classList.remove('hidden');
+    }
     
     hideAllPopups() {
+        this.storyPopup.classList.add('hidden');
         this.winPopup.classList.add('hidden');
         this.losePopup.classList.add('hidden');
         this.fluttershyIntroPopup.classList.add('hidden');
