@@ -5,11 +5,11 @@ import Enemy from './entities/Enemy.js';
 import Tower from './entities/Tower.js';
 import Projectile from './entities/Projectile.js'; // Убедись, что Projectile тоже вынесен в отдельный файл
 import { 
-    path, buildSlots, LEVELS_CONFIG, backgroundImage, nightBackground, eveningBackground,
+    path, buildSlots, LEVELS_CONFIG, backgroundImage, nightBackground, eveningBackground, morningBackground,
     TOWER_CONFIG, BUILD_SLOT_SIZE, SELL_REFUND_PERCENTAGE, 
     PAUSE_BETWEEN_GROUPS_MS, ENEMY_TYPES,
     originalWidth, originalHeight,
-    backgroundMusic, nightMusic, eveningMusic, LEVEL_START_MONEY,
+    backgroundMusic, nightMusic, eveningMusic, LEVEL_START_MONEY, morningMusic,
 } from './config.js';
 
 export default class Game {
@@ -119,7 +119,7 @@ export default class Game {
         // 4. Удаляем "мертвых" и "сбежавших" врагов
         this.enemies = this.enemies.filter(enemy => {
             if (enemy.isFinished) {
-                const isBoss = enemy.type === 'Trixie' || enemy.type.includes('Siren') || enemy.type === 'Achel' || enemy.type === 'SfinksFky' || enemy.type === 'NightmareMoon' || enemy.type === 'SfinksWalk';
+                const isBoss = enemy.type === 'Trixie' || enemy.type.includes('Siren') || enemy.type === 'Achel' || enemy.type === 'SfinksFky' || enemy.type === 'NightmareMoon' || enemy.type === 'SfinksWalk' || enemy.type === 'Crizalis';
                 this.lives -= isBoss ? 5 : 1;
                 if (this.lives <= 0) {
                     this.lives = 0;
@@ -150,32 +150,24 @@ export default class Game {
     }
     
     draw() {
-        // 1. Очищаем холст и рисуем фон
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.fillStyle = '#1a321a';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-        if (this.isBackgroundLoaded) {
-            this.ctx.drawImage(backgroundImage, this.offsetX, this.offsetY, this.originalWidth * this.scale, this.originalHeight * this.scale);
-        }
-
         // 1. Очищаем холст
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // --- ЛОГИКА ЦВЕТА ФОНА ---
-        // Если уровень 3 (Вечер), 4 или 5 (Ночь) — делаем фон темным
-        if (this.currentLevel >= 3 && this.currentLevel <= 5) {
-            this.ctx.fillStyle = '#0d0d1a'; // Очень темный синий (почти черный) для холста
+        // --- ЛОГИКА ЦВЕТА ФОНА (Подложка) ---
+        // Если уровень 3 (Вечер), 4 (Ночь) или 5 (Утро с темным фоном если надо) — делаем фон темным
+        // Обрати внимание: я расширил диапазон, чтобы на 3, 4 и 5 уровне фон был темным
+        if (this.currentLevel >= 3 && this.currentLevel <= 4) {
+            this.ctx.fillStyle = '#0d0d1a'; // Очень темный синий
             document.body.style.backgroundColor = '#000000'; // Черные поля браузера
         } else {
-            this.ctx.fillStyle = '#1a321a'; // Обычный зеленый для холста
+            this.ctx.fillStyle = '#1a321a'; // Обычный зеленый
             document.body.style.backgroundColor = '#3c3c58'; // Обычный цвет меню
         }
         
         // Заливаем холст выбранным цветом
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Рисуем картинку фона (карту)
+        // 2. Рисуем картинку карты (Фон)
         if (this.isBackgroundLoaded) {
             this.ctx.drawImage(backgroundImage, this.offsetX, this.offsetY, this.originalWidth * this.scale, this.originalHeight * this.scale);
         }
@@ -183,34 +175,32 @@ export default class Game {
         // Если игра не запущена (в меню), ничего больше не рисуем
         if (!this.isRunning) return;
 
-        // Если игра не запущена (в меню), ничего больше не рисуем
-        if (!this.isRunning) return;
-
+        // 3. Рисуем сетку строительства
         if (this.isBuilding || this.isSelling) {
-        const size = this.SCALED_BUILD_SLOT_SIZE;
-        const halfSize = size / 2;
-        
-        this.scaledBuildSlots.forEach(slot => {
-            if (!slot.occupied) { // Свободные слоты
-                this.ctx.fillStyle = 'rgba(182, 238, 129, 0.4)'; // Яркий желтый для настройки
-                this.ctx.fillRect(slot.x - halfSize, slot.y - halfSize, size, size);
-                this.ctx.strokeStyle = 'rgba(187, 187, 187, 0.44)';
-                this.ctx.strokeRect(slot.x - halfSize, slot.y - halfSize, size, size);
-            } else if (this.isSelling) { // Занятые слоты (только в режиме продажи)
-                this.ctx.fillStyle = 'rgba(214, 79, 79, 0.4)'; // Яркий красный
-                this.ctx.fillRect(slot.x - halfSize, slot.y - halfSize, size, size);
-                this.ctx.strokeStyle = 'rgba(192, 192, 192, 0.42)';
-                this.ctx.strokeRect(slot.x - halfSize, slot.y - halfSize, size, size);
-            }
-        });
-    }
+            const size = this.SCALED_BUILD_SLOT_SIZE;
+            const halfSize = size / 2;
+            
+            this.scaledBuildSlots.forEach(slot => {
+                if (!slot.occupied) { // Свободные слоты
+                    this.ctx.fillStyle = 'rgba(182, 238, 129, 0.4)'; // Яркий желтый
+                    this.ctx.fillRect(slot.x - halfSize, slot.y - halfSize, size, size);
+                    this.ctx.strokeStyle = 'rgba(187, 187, 187, 0.44)';
+                    this.ctx.strokeRect(slot.x - halfSize, slot.y - halfSize, size, size);
+                } else if (this.isSelling) { // Занятые слоты (красные)
+                    this.ctx.fillStyle = 'rgba(214, 79, 79, 0.4)'; // Яркий красный
+                    this.ctx.fillRect(slot.x - halfSize, slot.y - halfSize, size, size);
+                    this.ctx.strokeStyle = 'rgba(192, 192, 192, 0.42)';
+                    this.ctx.strokeRect(slot.x - halfSize, slot.y - halfSize, size, size);
+                }
+            });
+        }
 
-        // 3. Рисуем все игровые объекты
+        // 4. Рисуем игровые объекты
         this.towers.forEach(tower => tower.draw(this.ctx));
         this.enemies.forEach(enemy => enemy.draw(this.ctx));
         this.projectiles.forEach(p => p.draw(this.ctx));
         
-        // 4. Рисуем "призрачную" башню, если нужно
+        // 5. Рисуем "призрачную" башню (которую мы держим мышкой)
         this.drawGhostTower();
     }
 
@@ -264,8 +254,10 @@ export default class Game {
                 break;
 
             // --- УРОВЕНЬ 6: РАССВЕТ ---
-            case 6:
-                // Фон по умолчанию (День), просто текст
+            case 5:
+                levelBackgroundSrc = 'images/ФПСНутро.png';
+                levelMusic = morningMusic;
+                startAction = () => this.ui.showLunaIntro();
                 startAction = () => this.ui.showStoryScreen(
                     "РАССВЕТ!", 
                     "Лучи солнца пробиваются сквозь тучи.<br>Мы пережили эту ночь!<br><br>Но враги не сдаются. В бой!",
@@ -318,11 +310,12 @@ export default class Game {
 
     stopMusic() {
         // Останавливаем ВСЕ ТРИ трека, чтобы они не накладывались
-        [backgroundMusic, nightMusic, eveningMusic].forEach(track => {
+        [backgroundMusic, nightMusic, eveningMusic, morningMusic].forEach(track => {
             track.pause();
             track.currentTime = 0;
         });
     }
+
 
     clearAllTimeouts() {
         // Проходимся по всем сохраненным таймерам и отменяем их
@@ -335,6 +328,64 @@ export default class Game {
         this.ui.showGameScreen();
         this.ui.update();
         this.playMusic();
+    }
+
+    removeTower(tower) {
+        // Освобождаем слот
+        if (tower.slotIndex !== undefined && this.scaledBuildSlots[tower.slotIndex]) {
+            this.scaledBuildSlots[tower.slotIndex].occupied = false;
+        }
+        // Удаляем из массива
+        const index = this.towers.indexOf(tower);
+        if (index > -1) {
+            this.towers.splice(index, 1);
+        }
+    }
+
+    // В файле js/game.js (внутри class Game)
+
+    getSpawnPointOnPath(towerX, towerY) {
+        let minDistance = Infinity;
+        let bestPoint = { x: 0, y: 0 };
+        let bestIndex = 0;
+
+        // Проходим по всем отрезкам пути (от точки i до точки i+1)
+        // scaledPath должен быть уже определен!
+        if (!this.scaledPath || this.scaledPath.length < 2) return { point: {x: towerX, y: towerY}, pathIndex: 0 };
+
+        for (let i = 0; i < this.scaledPath.length - 1; i++) {
+            const p1 = this.scaledPath[i];
+            const p2 = this.scaledPath[i + 1];
+
+            // Вектор отрезка
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            const lengthSq = dx * dx + dy * dy; // Квадрат длины отрезка
+
+            // Если длина отрезка 0 (точки совпадают), пропускаем
+            if (lengthSq === 0) continue;
+
+            // Проекция точки (башни) на отрезок (параметр t от 0 до 1)
+            let t = ((towerX - p1.x) * dx + (towerY - p1.y) * dy) / lengthSq;
+
+            // Ограничиваем t, чтобы точка не вылетала за пределы отрезка
+            t = Math.max(0, Math.min(1, t));
+
+            // Координаты проекции
+            const projX = p1.x + t * dx;
+            const projY = p1.y + t * dy;
+
+            // Расстояние от башни до этой точки на дороге
+            const dist = Math.sqrt(Math.pow(towerX - projX, 2) + Math.pow(towerY - projY, 2));
+
+            if (dist < minDistance) {
+                minDistance = dist;
+                bestPoint = { x: projX, y: projY };
+                bestIndex = i; // Враг пойдет к точке i+1
+            }
+        }
+
+        return { point: bestPoint, pathIndex: bestIndex };
     }
 
     resetStateForLevelStart(options = {}) {
@@ -449,7 +500,29 @@ export default class Game {
         }
     }
 
-    // В файле js/game.js
+    triggerChrysalisEffect() {
+        console.log("Кризалис начинает ритуал!");
+
+        const activeTowers = [...this.towers];
+        
+        // Перемешиваем
+        for (let i = activeTowers.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [activeTowers[i], activeTowers[j]] = [activeTowers[j], activeTowers[i]];
+        }
+
+        // Выбираем 5-10 штук
+        let count = Math.floor(Math.random() * (15 - 5 + 1)) + 5;
+        count = Math.min(count, activeTowers.length);
+
+        for (let i = 0; i < count; i++) {
+            const tower = activeTowers[i];
+            // ВМЕСТО УДАЛЕНИЯ, ЗАПУСКАЕМ АНИМАЦИЮ
+            tower.isTransforming = true;
+            tower.transformFrame = 0;
+            // Можно добавить звук превращения, если есть
+        }
+    }
 
     startWave() {
         if (this.waveInProgress) return;
@@ -470,14 +543,18 @@ export default class Game {
         const totalEnemiesInWave = enemyGroups.reduce((total, group) => total + group.count, 0);
         let enemiesSpawnedCount = 0;
 
-        // --- ВОТ ПРАВИЛЬНОЕ МЕСТО ДЛЯ ФУНКЦИИ (ОДИН РАЗ) ---
+        // --- ФУНКЦИЯ СПАВНА (ОБЪЯВЛЕНА ОДИН РАЗ) ---
         const scheduleEnemy = (type, delay) => {
-            // Сохраняем ID таймера в переменную timerId
             const timerId = setTimeout(() => {
                 this.enemies.push(new Enemy(type, this.scaledPath));
                 
+                // Проверка на Найтмер Мун
                 if (type === 'NightmareMoon') {
                     this.triggerNightmareEffect();
+                }
+                // Проверка на Кризалис
+                if (type === 'Crizalis') {
+                    this.triggerChrysalisEffect();
                 }
 
                 enemiesSpawnedCount++;
@@ -486,12 +563,10 @@ export default class Game {
                 }
             }, delay);
             
-            // Добавляем этот ID в наш список, чтобы потом можно было отменить
             this.spawnTimeouts.push(timerId);
         };
-        // ---------------------------------------------------
+        // -------------------------------------------
         
-        // Логика спавна с разделением на обычных и сирен
         const sirenGroups = enemyGroups.filter(g => g.type.includes("Siren"));
         const normalGroups = enemyGroups.filter(g => !g.type.includes("Siren"));
 
@@ -601,6 +676,36 @@ export default class Game {
             } else {
                 this.cancelModes();
             }
+        }
+    }
+
+    finalizeTransformation(tower) {
+        if (!this.scaledPath) return; 
+
+        const spawnInfo = this.getSpawnPointOnPath(tower.x, tower.y);
+        
+        // Создаем врага
+        // Убедитесь, что 'PereWalk' есть в конфиге!
+        const changeling = new Enemy('PereWalk', this.scaledPath);
+        
+        // Ставим на дорогу
+        changeling.x = spawnInfo.point.x;
+        changeling.y = spawnInfo.point.y;
+        
+        // Задаем следующую цель
+        changeling.pathIndex = spawnInfo.pathIndex;
+
+        this.enemies.push(changeling);
+
+        // 2. Освобождаем слот
+        if (tower.slotIndex !== undefined && this.scaledBuildSlots[tower.slotIndex]) {
+            this.scaledBuildSlots[tower.slotIndex].occupied = false;
+        }
+
+        // 3. Удаляем башню
+        const index = this.towers.indexOf(tower);
+        if (index > -1) {
+            this.towers.splice(index, 1);
         }
     }
 

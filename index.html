@@ -133,6 +133,25 @@
     </div>
 </div>
 
+<!-- Всплывающее окно интро Луны -->
+    <div id="lunaIntroPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50 p-4">
+        <div class="bg-secondary border-2 border-blue-500/50 rounded-xl p-8 text-center text-white max-w-2xl w-full shadow-2xl flex flex-col md:flex-row items-center gap-8">
+            <!-- Замените src на вашу картинку Луны -->
+            <img src="images/ЛунаСтоит.png" alt="Luna" class="w-32 h-32 object-contain">
+            <div>
+                <h2 class="text-2xl font-bold text-blue-300 mb-4">ЛУНА ВЕРНУЛАСЬ!</h2>
+                <p class="text-left text-gray-300 mb-6">
+                    Чары Найтмер Мун разрушены! <b>Принцесса Луна</b> теперь на нашей стороне.
+                    <br><br>
+                    Она слишком сильна, чтобы стоять в обороне постоянно. Призовите её за <b>Золото</b>, чтобы она обрушила на врагов <b>Гнев Луны</b> (урон по всей карте), а затем улетела восстанавливать силы.
+                </p>
+                <button id="startLevelAfterLunaIntroButton" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-300">
+                    Начать уровень!
+                </button>
+            </div>
+        </div>
+    </div>
+
 <!-- Всплывающее окно сюжета (для смены времени суток) -->
     <div id="storyPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50 p-4">
         <div class="bg-secondary border-2 border-white/50 rounded-xl p-8 text-center text-white max-w-lg w-full shadow-2xl">
@@ -189,6 +208,7 @@
             <button class="buy-btn tower-select-button" data-tower-type="Флаттершай" data-cost="55" id="fluttershy-buy-button">Флаттершай (55💰)</button>
             <button class="buy-btn tower-select-button" data-tower-type="Радуга Дэш" data-cost="80" id="rainbowdash-buy-button" style="display: none;">Радуга Дэш (80💰)</button>
             <button class="buy-btn tower-select-button" data-tower-type="Рэрити" data-cost="75" id="rarity-buy-button" style="display: none;">Рэрити (75💰)</button>
+            <!-- <button class="buy-btn tower-select-button" data-tower-type="Принцесса Луна" data-cost="500" id="luna-buy-button" style="display: none;">Луна (500💰)</button> -->
         </div>
 
         <div id="tower-info-panel" class="hidden">

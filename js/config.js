@@ -72,28 +72,50 @@ export const TOWER_CONFIG = {
             special: "Снайпер. Когда враги подходят слишком близко, впадает в истерику и оглушает всех вокруг."
         }
     },
+    // 'Принцесса Луна': {
+    //     name: 'Принцесса Луна', price: 500, range: 0, damage: 2000, 
+    //     isSummon: true, // Флаг, что это призыв, а не башня
+    //     lifespan: 120, // Сколько кадров она на экране (2 секунды при 60fps)
+    //     attackDelay: 60, // Через сколько кадров нанесет урон (через 1 сек)
+    //     description: {
+    //         damage: "2000 (ВСЕМ!)",
+    //         range: "Вся карта",
+    //         speed: "Одноразово",
+    //         special: "Прилетает, наносит колоссальный урон всем врагам на карте и улетает."
+    //     }
+    // },
+
+
 };
 
         export const towerImages = {
-    'Пинки Пай':          createImage('пинки стоит.png'),
-    'Пинки Пай Атака':    createImage('пинки.png'),
-    'Эппл Джек':          createImage('эпл стоит.png'),
-    'Эппл Джек Атака':    createImage('ЭплДрака.png'),
-    'Твайлайт Спаркл':    createImage('Тстоит.png'),
-    'Твайлайт Спаркл Атака': createImage('ТвайЛайтАтака.png'),
-    'Флаттершай':         createImage('Флат_стоит.png'),
-    'Флаттершай Атака':   createImage('Флат_атака.png'),
-    'Радуга Дэш':         createImage('РадугаСтоит.png'),
-    'Радуга Дэш Атака':   createImage('РадугаАтака.png'),
-    'Рэрити':             createImage('РаритиСтоит.png'),
-    'Рэрити Атака':       createImage('РаритиАтака.png'),
-    'Рэрити Ульта':       createImage('РаритиУльта.png'),
-    'Пинки Пай Сон':      createImage('ПС.png'),
-    'Эппл Джек Сон':      createImage('ЭС.png'),
-    'Твайлайт Спаркл Сон': createImage('ТС.png'),
-    'Флаттершай Сон':     createImage('ФС.png'),
-    'Радуга Дэш Сон':     createImage('РадС.png'),
-    'Рэрити Сон':         createImage('РарС.png'),
+    'Пинки Пай':                    createImage('пинки стоит.png'),
+    'Пинки Пай Атака':              createImage('пинки.png'),
+    'Эппл Джек':                    createImage('эпл стоит.png'),
+    'Эппл Джек Атака':              createImage('ЭплДрака.png'),
+    'Твайлайт Спаркл':              createImage('Тстоит.png'),
+    'Твайлайт Спаркл Атака':        createImage('ТвайЛайтАтака.png'),
+    'Флаттершай':                   createImage('Флат_стоит.png'),
+    'Флаттершай Атака':             createImage('Флат_атака.png'),
+    'Радуга Дэш':                   createImage('РадугаСтоит.png'),
+    'Радуга Дэш Атака':             createImage('РадугаАтака.png'),
+    'Рэрити':                       createImage('РаритиСтоит.png'),
+    'Рэрити Атака':                 createImage('РаритиАтака.png'),
+    'Рэрити Ульта':                 createImage('РаритиУльта.png'),
+    'Пинки Пай Сон':                createImage('ПС.png'),
+    'Эппл Джек Сон':                createImage('ЭС.png'),
+    'Твайлайт Спаркл Сон':          createImage('ТС.png'),
+    'Флаттершай Сон':               createImage('ФС.png'),
+    'Радуга Дэш Сон':               createImage('РадС.png'),
+    'Рэрити Сон':                   createImage('РарС.png'),
+    'Пинки Пай Превращение':        createImage('ПМ.png'),
+    'Эппл Джек Превращение':        createImage('ЭМ.png'),
+    'Твайлайт Спаркл Превращение':  createImage('ТМ.png'),
+    'Флаттершай Превращение':       createImage('ФМ.png'),
+    'Радуга Дэш Превращение':       createImage('РадМ.png'),
+    'Рэрити Превращение':           createImage('РарМ.png'),
+    'Принцесса Луна':               createImage('ЛунаСтоит.png'),
+    'Принцесса Луна Атака':         createImage('ЛунаАтака.png'),
 };
 
 
@@ -527,7 +549,7 @@ export const TOWER_CONFIG = {
             name: "Knight",
             color: "dark blue",
             speed: 2, // Очень медленный
-            maxHealth: 130, // Но очень крепкий
+            maxHealth: 120, // Но очень крепкий
             bounty: 15,
             width: 88, 
             height: 78, 
@@ -540,7 +562,7 @@ export const TOWER_CONFIG = {
             name: "KnightFly",
             color: "dark blue",
             speed: 2.5, // Очень медленный
-            maxHealth: 130, // Но очень крепкий
+            maxHealth: 120, // Но очень крепкий
             bounty: 15,
             width: 88, 
             height: 78, 
@@ -618,7 +640,7 @@ export const TOWER_CONFIG = {
             name: "NightmareMoon",
             color: "blue",
             speed: 1,
-            maxHealth: 2500,
+            maxHealth: 2200,
             bounty: 300,
             width: 168, 
             height: 126, 
@@ -627,6 +649,122 @@ export const TOWER_CONFIG = {
             hitboxRadius: 35,
         },
         
+        DogS: {
+            name: "DogS",
+            color: "blue",
+            speed: 4.5,
+            maxHealth: 110,
+            bounty: 10,
+            width: 102, 
+            height: 102, 
+            frameWidth: 122,
+            yOffset: -10,
+            hitboxRadius: 25,
+        },
+
+        DogM: {
+            name: "DogM",
+            color: "blue",
+            speed: 2.5,
+            maxHealth: 140,
+            bounty: 10,
+            width: 106, 
+            height: 90, 
+            frameWidth: 106,
+            yOffset: -10,
+            hitboxRadius: 25,
+        },
+
+        DogL: {
+            name: "DogL",
+            color: "blue",
+            speed: 1,
+            maxHealth: 160,
+            bounty: 10,
+            width: 122, 
+            height: 122, 
+            frameWidth: 122,
+            yOffset: -10,
+            hitboxRadius: 25,
+        },
+
+        Parasprits: {
+            name: "Parasprits",
+            color: "blue",
+            speed: 3,
+            maxHealth: 30,
+            bounty: 5,
+            width: 92, 
+            height: 92, 
+            frameWidth: 102,
+            yOffset: -10,
+            hitboxRadius: 25,
+        },
+
+        Manticora: {
+            name: "Manticora",
+            color: "blue",
+            speed: 2.5,
+            maxHealth: 200,
+            bounty: 20,
+            width: 132, 
+            height: 104, 
+            frameWidth: 158,
+            yOffset: -10,
+            hitboxRadius: 25,
+        },
+
+        PereWalk: {
+            name: "PereWalk",
+            color: "black",
+            speed: 2.5,
+            maxHealth: 140,
+            bounty: 15,
+            width: 92, 
+            height: 82, 
+            frameWidth: 112,
+            yOffset: -10,
+            hitboxRadius: 25,
+        },
+
+        PereFly: {
+            name: "PereFly",
+            color: "black",
+            speed: 3.5,
+            maxHealth: 140,
+            bounty: 15,
+            width: 64, 
+            height: 80, 
+            frameWidth: 74,
+            yOffset: -10,
+            hitboxRadius: 25,
+        },
+
+        GildaFly: {
+            name: "GildaFly",
+            color: "pink",
+            speed: 3.5, // Очень медленный
+            maxHealth: 100, // Но очень крепкий
+            bounty: 7,
+            width: 112, 
+            height: 128, 
+            frameWidth: 132, // (Подбери под свой спрайт)
+            yOffset: -10,
+            hitboxRadius: 25,
+        },
+
+        Crizalis: {
+            name: "Crizalis",
+            color: "black",
+            speed: 3, // Очень медленный
+            maxHealth: 2500, // Но очень крепкий
+            bounty: 300,
+            width: 78, 
+            height: 110, 
+            frameWidth: 98, // (Подбери под свой спрайт)
+            yOffset: -10,
+            hitboxRadius: 25,
+        },
         
         
     };
@@ -677,6 +815,17 @@ export const TOWER_CONFIG = {
     KBats:           createImage("КМыши.png"),
     Wolf:            createImage("ВОЛК2.png"),
     NightmareMoon:   createImage("НайтмерМун.png"),
+    DogS:            createImage("СобакаБыстрая.png"),
+    DogM:            createImage("СобакаСредняя.png"),
+    DogL:            createImage("СобакаМедленная.png"),
+    Parasprits:      createImage("Парасприты.png"),
+    Manticora:       createImage("Мантикора.png"),
+    PereWalk:        createImage("ПеревёртышИдёт.png"),
+    PereFly:         createImage("ПеревёртышЛетит.png"),
+    GildaFly:        createImage("ГрилдаЛетит.png"),
+    Crizalis:        createImage("Кризалис.png"),
+
+
 };
 
 
@@ -964,6 +1113,7 @@ export const TOWER_CONFIG = {
         export const backgroundImage = createImage('ФПСН.png');
         export const nightBackground = createImage('ФПСНночь.png');
         export const eveningBackground = createImage('ФПСНвечер.png');
+        export const morningBackground = createImage('ФПСНутро.png');
 
 
         export const LEVELS_CONFIG = {
@@ -1286,6 +1436,90 @@ export const TOWER_CONFIG = {
                             ]
                         }
                     ],
+
+                    5: [
+                        {
+                            name: "Тени",
+                            enemies: [
+                                { type: "Parasprits", count: 7, interval: 500 },
+                            ]
+                        },
+                        {
+                            name: "Тени2",
+                            enemies: [
+                                { type: "Manticora", count: 5, interval: 600 },
+                                { type: "GildaFly", count: 5, interval: 700 },
+                            ]
+                        },
+                        {
+                            name: "Мыши!",
+                            enemies: [
+                                { type: "DogS", count: 5, interval: 500 },
+                                { type: "DogL", count: 5, interval: 900 },
+                                { type: "DogM", count: 5, interval: 700 },
+                            ]
+                        },
+                        {
+                            name: "Страж",
+                            enemies: [
+                                { type: "Wolf", count: 5, interval: 700 },
+                                { type: "GildaFly", count: 10, interval: 700 },
+                            ]
+                        },
+                        {
+                            name: "Страж и Флат",
+                            enemies: [
+                                { type: "PereWalk", count: 10, interval: 600 },
+                                { type: "DogS", count: 10, interval: 500 },
+                                { type: "Parasprits", count: 5, interval: 200 },
+                            ]
+                        },
+                        {
+                            name: "Летучие",
+                            enemies: [
+                                { type: "PereWalk", count: 8, interval: 1500 },
+                                { type: "PereFly", count: 8, interval: 1000 },
+                                { type: "Manticora", count: 5, interval: 400 },
+                                { type: "DogM", count: 5, interval: 800 },
+                            ]
+                        },
+                        {
+                            name: "Все вместе",
+                            enemies: [
+                                { type: "DogS", count: 7, interval: 500 },
+                                { type: "DogL", count: 7, interval: 900 },
+                                { type: "DogM", count: 7, interval: 700 },
+                                { type: "PereWalk", count: 9, interval: 1200 },
+                                { type: "PereFly", count: 9, interval: 1000 },
+                            ]
+                        },
+                        {
+                            name: "Большие проблемы",
+                            enemies: [
+                                { type: "Wolf", count: 7, interval: 300 },
+                                { type: "PereWalk", count: 10, interval: 500 },
+                                { type: "PereFly", count: 10, interval: 700 },
+                                { type: "Parasprits", count: 10, interval: 500 },
+                            ]
+                        },
+                        {
+                            name: "Волки и леталки",
+                            enemies: [
+                                { type: "DogS", count: 10, interval: 500 },
+                                { type: "DogL", count: 10, interval: 900 },
+                                { type: "DogM", count: 10, interval: 700 },
+                                { type: "Wolf", count: 3, interval: 300 },
+                            ]
+                        },
+                        {
+                            name: "Финал (Босс)",
+                            enemies: [
+                                { type: "Crizalis", count: 1, interval: 1000 },
+                                { type: "PereWalk", count: 15, interval: 500 },
+                                { type: "PereFly", count: 15, interval: 700 },
+                            ]
+                        }
+                    ],
                 };
 
                 // --- МУЗЫКА И ЗВУКИ ---
@@ -1299,6 +1533,10 @@ nightMusic.loop = true;
 nightMusic.volume = 0.4;
 
 export const eveningMusic = new Audio('audio/Evening.mp3'); // Ночь и Вечер
+nightMusic.loop = true;
+nightMusic.volume = 0.4;
+
+export const morningMusic = new Audio('audio/Morning.mp3'); // Ночь и Вечер
 nightMusic.loop = true;
 nightMusic.volume = 0.4;
 
