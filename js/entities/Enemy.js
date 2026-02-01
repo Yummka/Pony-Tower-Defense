@@ -194,6 +194,42 @@ export default class Enemy {
             this.frameCount = 29;     
             this.frameSpeed = 0.3;
             this.yOffset = -20;
+        }else if (type === "DogS") {
+            this.frameCount = 16;     
+            this.frameSpeed = 0.3;
+            this.yOffset = -20;
+        }else if (type === "DogM") {
+            this.frameCount = 15;     
+            this.frameSpeed = 0.3;
+            this.yOffset = -20;
+        }else if (type === "DogL") {
+            this.frameCount = 16;     
+            this.frameSpeed = 0.3;
+            this.yOffset = -20;
+        }else if (type === "Parasprits") {
+            this.frameCount = 8;     
+            this.frameSpeed = 0.2;
+            this.yOffset = -20;
+        }else if (type === "Manticora") {
+            this.frameCount = 11;     
+            this.frameSpeed = 0.3;
+            this.yOffset = -20;
+        }else if (type === "PereWalk") {
+            this.frameCount = 15;     
+            this.frameSpeed = 0.3;
+            this.yOffset = -20;
+        }else if (type === "PereFly") {
+            this.frameCount = 18;     
+            this.frameSpeed = 0.3;
+            this.yOffset = -20;
+        }else if (type === "GildaFly") {
+            this.frameCount = 11;     
+            this.frameSpeed = 0.2;
+            this.yOffset = -20;
+        }else if (type === "Crizalis") {
+            this.frameCount = 21;     
+            this.frameSpeed = 0.3;
+            this.yOffset = -20;
         }
 
 

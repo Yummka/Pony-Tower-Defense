@@ -47,6 +47,7 @@ export default class UIManager {
         this.rainbowDashIntroPopup = document.getElementById('rainbowDashIntroPopup');
         this.rarityIntroPopup = document.getElementById('rarityIntroPopup');
 
+
         // Внутри constructor(game)
         this.storyPopup = document.getElementById('storyPopup');
         this.storyTitle = document.getElementById('storyTitle');
@@ -104,6 +105,7 @@ export default class UIManager {
         document.getElementById('startLevelAfterIntroButton').addEventListener('click', () => this.game.startGame());
         document.getElementById('startLevelAfterRDIntroButton').addEventListener('click', () => this.showRarityIntro());
         document.getElementById('startLevelAfterRarityIntroButton').addEventListener('click', () => this.game.startGame());
+        document.getElementById('startLevelAfterLunaIntroButton').addEventListener('click', () => this.game.startGame());
 
         
     }
@@ -155,6 +157,14 @@ export default class UIManager {
 
         const rarityButton = document.getElementById('rarity-buy-button');
         if (rarityButton) rarityButton.style.display = (this.game.currentLevel >= 3) ? 'flex' : 'none'; // И тут тоже!
+
+        // Добавьте логику отображения кнопки (например, с 5 уровня)
+        const lunaButton = document.getElementById('luna-buy-button');
+        if (lunaButton) lunaButton.style.display = (this.game.currentLevel >= 5) ? 'flex' : 'none';
+
+        // Добавьте стиль для кнопки Луны (синий/ночной) в CSS, если хотите, или через класс
+        if (lunaButton) lunaButton.style.borderColor = '#60a5fa'; // Голубая рамка
+        if (lunaButton) lunaButton.style.backgroundColor = '#1e3a8a'; // Темно-синий фон
     }
     
     updateBuildModeStatus() {
@@ -271,5 +281,9 @@ export default class UIManager {
     showRarityIntro() {
         this.rainbowDashIntroPopup.classList.add('hidden');
         this.rarityIntroPopup.classList.remove('hidden');
+    }
+    showLunaIntro() {
+    this.mainMenu.classList.add('hidden');
+    this.lunaIntroPopup.classList.remove('hidden');
     }
 }
