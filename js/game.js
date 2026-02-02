@@ -98,7 +98,7 @@ export default class Game {
 
         // 2. Обновляем все снаряды и обрабатываем попадания
         this.projectiles = this.projectiles.filter(projectile => {
-            const result = projectile.update();
+            const result = projectile.update(this.scale)
             if (result === true) { return false; } // Снаряд уничтожается (обычное попадание)
             else if (result && result.type === 'aoe') {
                 // Обработка АОЕ-взрыва
@@ -119,7 +119,7 @@ export default class Game {
         
 
         // 3. Обновляем всех врагов
-        this.enemies.forEach(enemy => enemy.update());
+        this.enemies.forEach(enemy => enemy.update(this.scale));
 
         // 4. Удаляем "мертвых" и "сбежавших" врагов
         this.enemies = this.enemies.filter(enemy => {

@@ -240,12 +240,12 @@ export default class Enemy {
     // ------------------------------------
     // МЕТОД ДВИЖЕНИЯ (update остается без изменений)
     // ------------------------------------
-    update() {
+    update(scale = 1) { 
         if (this.isFinished) return;
 
         if (this.stunDuration > 0) {
-        this.stunDuration--; // Уменьшаем длительность стана
-        return; // Враг в стане, он ничего не делает в этот кадр (не двигается, не анимируется)
+            this.stunDuration--; 
+            return; 
         }
 
         const target = this.path[this.pathIndex + 1];
@@ -263,31 +263,28 @@ export default class Enemy {
                 this.currentSpeed = this.baseSpeed;
             }
 
-            if (distance < this.currentSpeed) {
-                // Достигли точки, переходим к следующей
+            // --- ВАЖНОЕ ИЗМЕНЕНИЕ ---
+            // Умножаем скорость на масштаб!
+            const realSpeed = this.currentSpeed * scale; 
+            // ------------------------
+
+            if (distance < realSpeed) {
                 this.x = target.x;
                 this.y = target.y;
                 this.pathIndex++;
             } else {
-                // Двигаемся к следующей точке
-                const velocityX = (dx / distance) * this.currentSpeed;
-                const velocityY = (dy / distance) * this.currentSpeed;
+                const velocityX = (dx / distance) * realSpeed; // Используем realSpeed
+                const velocityY = (dy / distance) * realSpeed; // Используем realSpeed
                 
-                // Обновляем направление для анимации
-                if (velocityX > 0) {
-                    this.lastDirection = 1; // Вправо
-                } else if (velocityX < 0) {
-                    this.lastDirection = -1; // Влево
-                }
+                if (velocityX > 0) this.lastDirection = 1; 
+                else if (velocityX < 0) this.lastDirection = -1; 
 
                 this.x += velocityX;
                 this.y += velocityY;
                 
-                // Обновляем кадр анимации
                 this.frame = (this.frame + this.frameSpeed) % this.frameCount;
             }
         } else {
-            // Достигли конца пути
             this.isFinished = true;
         }
     }

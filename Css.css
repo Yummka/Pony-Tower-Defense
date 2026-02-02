@@ -321,21 +321,38 @@ html, body {
     /* 3. Описание башни (всплывающее окно) */
     /* На телефоне оно будет появляться сверху по центру, а не сбоку */
     #tower-info-panel {
-        width: 200px;
+        width: 160px; /* Делаем поуже */
         top: auto;
-        bottom: 110%; /* Появляется НАД кнопками */
+        bottom: 15%; /* Поднимаем чуть выше кнопок */
         right: 50%;
-        transform: translateX(50%); /* Центрируем */
-        font-size: 0.7rem;
+        transform: translateX(50%);
+        font-size: 0.6rem; /* Шрифт мельче */
+        padding: 8px; /* Меньше отступы */
+        border-radius: 8px;
     }
     
     #tower-info-panel:not(.hidden) {
-        transform: translateX(50%); /* Оставляем центрирование при показе */
+        transform: translateX(50%);
     }
 
     #info-tower-img {
-        width: 40px;
-        height: 40px;
+        width: 32px; /* Картинка меньше */
+        height: 32px;
+    }
+
+    #info-tower-name {
+        font-size: 0.7rem; /* Имя башни мельче */
+    }
+
+    #tower-info-panel .info-stats {
+        gap: 2px;
+        margin-bottom: 5px;
+    }
+
+    #tower-info-panel .info-special {
+        font-size: 0.55rem;
+        padding: 4px;
+        line-height: 1.2;
     }
     
     /* 4. Всплывающие окна (Победа, Интро) - делаем чуть меньше */
@@ -351,4 +368,5 @@ html, body {
     p.text-lg {
         font-size: 0.8rem; /* Текст меньше */
     }
+
 }
