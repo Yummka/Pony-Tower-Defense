@@ -4,12 +4,13 @@ import UIManager from './uiManager.js';
 import Enemy from './entities/Enemy.js';
 import Tower from './entities/Tower.js';
 import Projectile from './entities/Projectile.js'; // Убедись, что Projectile тоже вынесен в отдельный файл
+import LunaEffect from './entities/LunaEffect.js';
 import { 
     path, buildSlots, LEVELS_CONFIG, backgroundImage, nightBackground, eveningBackground, morningBackground,
     TOWER_CONFIG, BUILD_SLOT_SIZE, SELL_REFUND_PERCENTAGE, 
     PAUSE_BETWEEN_GROUPS_MS, ENEMY_TYPES,
-    originalWidth, originalHeight,
-    backgroundMusic, nightMusic, eveningMusic, LEVEL_START_MONEY, morningMusic,
+    originalWidth, originalHeight, 
+    backgroundMusic, nightMusic, eveningMusic, LEVEL_START_MONEY, morningMusic, 
 } from './config.js';
 
 export default class Game {
@@ -33,6 +34,7 @@ export default class Game {
         this.towers = [];
         this.projectiles = [];
         this.spawnTimeouts = [];
+        this.effects = [];
         
         this.isRunning = false;
         this.isBuilding = false;
@@ -91,6 +93,8 @@ export default class Game {
 
         // 1. Обновляем все башни
         this.towers.forEach(tower => tower.update(this.enemies, this.projectiles));
+        this.effects.forEach(eff => eff.update(this.enemies));
+        this.effects = this.effects.filter(eff => eff.state !== 'finished');
 
         // 2. Обновляем все снаряды и обрабатываем попадания
         this.projectiles = this.projectiles.filter(projectile => {
@@ -112,6 +116,7 @@ export default class Game {
             }
             return true; // Снаряд продолжает лететь
         });
+        
 
         // 3. Обновляем всех врагов
         this.enemies.forEach(enemy => enemy.update());
@@ -197,8 +202,9 @@ export default class Game {
 
         // 4. Рисуем игровые объекты
         this.towers.forEach(tower => tower.draw(this.ctx));
-        this.enemies.forEach(enemy => enemy.draw(this.ctx));
+        this.enemies.forEach(enemy => enemy.draw(this.ctx, this.scale)); 
         this.projectiles.forEach(p => p.draw(this.ctx));
+        this.effects.forEach(eff => eff.draw(this.ctx));
         
         // 5. Рисуем "призрачную" башню (которую мы держим мышкой)
         this.drawGhostTower();
@@ -255,13 +261,17 @@ export default class Game {
 
             // --- УРОВЕНЬ 6: РАССВЕТ ---
             case 5:
-                levelBackgroundSrc = 'images/ФПСНутро.png';
-                levelMusic = morningMusic;
-                startAction = () => this.ui.showLunaIntro();
+                // Прямая ссылка на файл, чтобы проверить, работает ли он
+                levelBackgroundSrc = 'images/ФПСНутро.png'; 
+                
+                // Если с музыкой проблема, временно поставь старую, чтобы проверить, запустится ли игра
+                // levelMusic = backgroundMusic; 
+                levelMusic = morningMusic; 
+
                 startAction = () => this.ui.showStoryScreen(
                     "РАССВЕТ!", 
                     "Лучи солнца пробиваются сквозь тучи.<br>Мы пережили эту ночь!<br><br>Но враги не сдаются. В бой!",
-                    () => this.startGame()
+                    () => this.ui.showLunaIntro()
                 );
                 break;
 
@@ -639,11 +649,20 @@ export default class Game {
             return;
         }
 
-        // --- Логика установки второй точки для патруля ---
+        // 2. Установка патруля (для Радуги)
         if (this.isPlacingPatrolPoint) {
             const nearestSlot = this.findNearestFreeSlot(mouseX, mouseY);
+            
             if (nearestSlot && this.patrolTowerRef) {
+                // Запоминаем координаты
                 this.patrolTowerRef.patrolEnd = { x: nearestSlot.x, y: nearestSlot.y };
+                
+                // --- ВАЖНО: Запоминаем ИНДЕКС слота второй точки ---
+                // Это нужно, чтобы при изменении экрана точка не "уехала"
+                const slotIndex = this.scaledBuildSlots.indexOf(nearestSlot);
+                this.patrolTowerRef.patrolEndSlotIndex = slotIndex;
+                // --------------------------------------------------
+                
                 nearestSlot.occupied = true;
                 this.cancelModes();
             }
@@ -652,13 +671,37 @@ export default class Game {
         
         // --- Логика строительства ---
         if (this.isBuilding) {
+            const towerType = this.selectedTowerType;
+            const config = TOWER_CONFIG[towerType];
+
+            // 1. ЕСЛИ ЭТО СПОСОБНОСТЬ (ЛУНА)
+            if (config.isAbility) {
+                if (this.money >= config.price) {
+                    this.money -= config.price;
+                    
+                    // Создаем эффект Луны в точке клика (mouseX, mouseY)
+                    this.effects.push(new LunaEffect(mouseX, mouseY, this, config));
+                    
+                    this.cancelModes(); // Сбрасываем курсор
+                } else {
+                    console.log("Не хватает денег!");
+                }
+                return; // ВАЖНО: Выходим, чтобы не искать слоты
+            }
+
+            // 2. ЕСЛИ ЭТО ОБЫЧНАЯ БАШНЯ
             const nearestSlot = this.findNearestFreeSlot(mouseX, mouseY);
+            
             if (nearestSlot) {
-                const towerType = this.selectedTowerType;
-                const price = TOWER_CONFIG[towerType].price;
+                const slotIndex = this.scaledBuildSlots.indexOf(nearestSlot);
+                const price = config.price;
+                
                 if (this.money >= price) {
                     this.money -= price;
-                    const newTower = new Tower(nearestSlot.x, nearestSlot.y, towerType, this); // Передаем ссылку на игру
+                    
+                    // Создаем башню (передаем slotIndex!)
+                    const newTower = new Tower(nearestSlot.x, nearestSlot.y, towerType, this, slotIndex);
+                    
                     this.towers.push(newTower);
                     nearestSlot.occupied = true;
 
@@ -674,6 +717,7 @@ export default class Game {
                     this.cancelModes();
                 }
             } else {
+                // Если кликнули мимо слота - отменяем стройку
                 this.cancelModes();
             }
         }
@@ -682,24 +726,34 @@ export default class Game {
     finalizeTransformation(tower) {
         if (!this.scaledPath) return; 
 
+        // 1. Создаем врага
         const spawnInfo = this.getSpawnPointOnPath(tower.x, tower.y);
-        
-        // Создаем врага
-        // Убедитесь, что 'PereWalk' есть в конфиге!
         const changeling = new Enemy('PereWalk', this.scaledPath);
         
-        // Ставим на дорогу
         changeling.x = spawnInfo.point.x;
         changeling.y = spawnInfo.point.y;
-        
-        // Задаем следующую цель
         changeling.pathIndex = spawnInfo.pathIndex;
 
         this.enemies.push(changeling);
 
-        // 2. Освобождаем слот
+        // 2. ОСВОБОЖДАЕМ СЛОТ (УСИЛЕННАЯ ЛОГИКА)
+        let slotFreed = false;
+
+        // Попытка А: По индексу (быстро)
         if (tower.slotIndex !== undefined && this.scaledBuildSlots[tower.slotIndex]) {
             this.scaledBuildSlots[tower.slotIndex].occupied = false;
+            slotFreed = true;
+        }
+
+        // Попытка Б: Если индекс не сработал, ищем слот по координатам (медленно, но надежно)
+        if (!slotFreed) {
+            for (const slot of this.scaledBuildSlots) {
+                // Если координаты совпадают (с небольшой погрешностью)
+                if (Math.abs(slot.x - tower.x) < 5 && Math.abs(slot.y - tower.y) < 5) {
+                    slot.occupied = false;
+                    break;
+                }
+            }
         }
 
         // 3. Удаляем башню
@@ -759,33 +813,49 @@ export default class Game {
         // 1. Обновляем размер клеточки
         this.SCALED_BUILD_SLOT_SIZE = BUILD_SLOT_SIZE * this.scale;
 
-        // 2. Пересчитываем путь врагов (берем оригинальный path из конфига и масштабируем)
+        // 2. Пересчитываем путь врагов
         this.scaledPath = path.map(p => this.scaleCoords(p));
 
-        // 3. Пересчитываем слоты для строительства
-        // Важно: мы не создаем новые слоты, а обновляем координаты старых,
-        // чтобы не потерять информацию о том, занят слот или нет (occupied).
+        // 3. Пересчитываем координаты слотов (сетку)
+        // Мы берем ОРИГИНАЛЬНЫЕ координаты из конфига (buildSlots) и умножаем на новый масштаб
         if (this.scaledBuildSlots && this.scaledBuildSlots.length === buildSlots.length) {
             for (let i = 0; i < this.scaledBuildSlots.length; i++) {
-                // Берем оригинальные координаты из конфига (buildSlots)
                 const originalSlot = buildSlots[i];
-                // Применяем новый масштаб
                 const newCoords = this.scaleCoords(originalSlot);
                 
-                // Обновляем координаты существующего слота
+                // Обновляем координаты в текущей сетке
                 this.scaledBuildSlots[i].x = newCoords.x;
                 this.scaledBuildSlots[i].y = newCoords.y;
             }
         }
         
- 
+        // --- 4. ГЛАВНОЕ: ДВИГАЕМ УЖЕ ПОСТРОЕННЫЕ БАШНИ ---
         this.towers.forEach(tower => {
-            let nearestSlot = null;
-            let minDistance = Infinity;
-            
-            // Ищем, к какому слоту привязана башня
-            for (const slot of this.scaledBuildSlots) {
-                if (slot.occupied) {
+            // Если у башни сохранен индекс слота (где она стоит)
+            if (tower.slotIndex !== undefined && this.scaledBuildSlots[tower.slotIndex]) {
+                const newPos = this.scaledBuildSlots[tower.slotIndex];
+                
+                // Телепортируем башню на новые координаты этого слота
+                tower.x = newPos.x;
+                tower.y = newPos.y;
+
+                // Если это Радуга Дэш, обновляем её точку старта
+                if (tower.isPatrolTower) {
+                    tower.patrolStart = { x: newPos.x, y: newPos.y };
+                    
+                    // Если она сейчас не летит, двигаем и текущую позицию
+                    if (!tower.patrolEnd) {
+                        tower.patrolCurrentPos = { x: newPos.x, y: newPos.y };
+                    }
+                }
+            }
+
+            // Если это Радуга Дэш и у неё есть точка финиша (второй слот)
+            if (tower.isPatrolTower && tower.patrolEndSlotIndex !== undefined) {
+                const endSlot = this.scaledBuildSlots[tower.patrolEndSlotIndex];
+                if (endSlot) {
+                    // Обновляем точку финиша
+                    tower.patrolEnd = { x: endSlot.x, y: endSlot.y };
                 }
             }
         });
@@ -827,6 +897,21 @@ export default class Game {
         const nearestSlot = this.findNearestFreeSlot(this.mouse.x, this.mouse.y);
         if (nearestSlot) {
             const config = TOWER_CONFIG[this.selectedTowerType];
+
+            if (config.isAbility) {
+                const x = this.mouse.x;
+                const y = this.mouse.y;
+                const radius = config.aoeRadius * this.scale;
+
+                this.ctx.beginPath();
+                this.ctx.arc(x, y, radius, 0, Math.PI * 2);
+                this.ctx.fillStyle = 'rgba(100, 200, 255, 0.3)'; // Синий круг
+                this.ctx.strokeStyle = 'white';
+                this.ctx.lineWidth = 2;
+                this.ctx.fill();
+                this.ctx.stroke();
+                return;
+            }
             const canAfford = this.money >= config.price;
             
             const x = nearestSlot.x; 

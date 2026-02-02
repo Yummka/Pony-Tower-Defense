@@ -276,3 +276,79 @@ html, body {
 #fluttershy-buy-button {
     display: none; /* Изначально скрыта, JS ее покажет */
 }
+
+/* Css.css - добавьте в конец */
+
+/* --- АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ (Маленькие экраны) --- */
+@media (max-width: 768px) {
+    
+    /* 1. Уменьшаем левую панель информации */
+    #info-panel {
+        top: 10px;
+        left: 10px;
+        padding: 8px;
+        gap: 5px;
+        max-width: 140px; /* Ограничиваем ширину */
+    }
+    
+    #info-panel .stat {
+        font-size: 0.6rem; /* Уменьшаем шрифт */
+        min-width: auto;
+    }
+    
+    #info-panel .action-btn {
+        font-size: 0.6rem;
+        padding: 5px 0;
+    }
+
+    /* 2. Кнопки внизу покомпактнее */
+    #towers-panel {
+        padding: 5px 0 10px 0;
+    }
+
+    .buy-btn {
+        min-width: 60px; /* Кнопки уже */
+        font-size: 0.55rem; /* Шрифт меньше */
+        padding: 5px;
+    }
+
+    .tower-buttons-group {
+        gap: 5px; /* Меньше отступы между кнопками */
+        flex-wrap: wrap; /* Разрешаем кнопкам перенос на 2 строки если не влазят */
+        padding: 0 10px;
+    }
+
+    /* 3. Описание башни (всплывающее окно) */
+    /* На телефоне оно будет появляться сверху по центру, а не сбоку */
+    #tower-info-panel {
+        width: 200px;
+        top: auto;
+        bottom: 110%; /* Появляется НАД кнопками */
+        right: 50%;
+        transform: translateX(50%); /* Центрируем */
+        font-size: 0.7rem;
+    }
+    
+    #tower-info-panel:not(.hidden) {
+        transform: translateX(50%); /* Оставляем центрирование при показе */
+    }
+
+    #info-tower-img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    /* 4. Всплывающие окна (Победа, Интро) - делаем чуть меньше */
+    .bg-secondary.rounded-xl {
+        max-width: 90vw; /* 90% ширины экрана */
+        padding: 15px;
+    }
+    
+    h2.text-3xl {
+        font-size: 1.2rem; /* Заголовки меньше */
+    }
+    
+    p.text-lg {
+        font-size: 0.8rem; /* Текст меньше */
+    }
+}

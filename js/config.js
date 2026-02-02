@@ -72,18 +72,21 @@ export const TOWER_CONFIG = {
             special: "Снайпер. Когда враги подходят слишком близко, впадает в истерику и оглушает всех вокруг."
         }
     },
-    // 'Принцесса Луна': {
-    //     name: 'Принцесса Луна', price: 500, range: 0, damage: 2000, 
-    //     isSummon: true, // Флаг, что это призыв, а не башня
-    //     lifespan: 120, // Сколько кадров она на экране (2 секунды при 60fps)
-    //     attackDelay: 60, // Через сколько кадров нанесет урон (через 1 сек)
-    //     description: {
-    //         damage: "2000 (ВСЕМ!)",
-    //         range: "Вся карта",
-    //         speed: "Одноразово",
-    //         special: "Прилетает, наносит колоссальный урон всем врагам на карте и улетает."
-    //     }
-    // },
+
+    'Принцесса Луна': {
+        name: 'Принцесса Луна', 
+        price: 500, 
+        range: 0, // Не используется для прицела
+        damage: 3000, 
+        isAbility: true, // НОВЫЙ ФЛАГ
+        aoeRadius: 250, // Радиус взрыва (примерно 5 клеток)
+        description: {
+            damage: "3000 (В зоне)",
+            range: "Выбор цели",
+            speed: "Одноразово",
+            special: "Выберите место на карте. Луна прилетит и обрушит мощный удар по площади."
+        }
+    },
 
 
 };
@@ -115,7 +118,7 @@ export const TOWER_CONFIG = {
     'Радуга Дэш Превращение':       createImage('РадМ.png'),
     'Рэрити Превращение':           createImage('РарМ.png'),
     'Принцесса Луна':               createImage('ЛунаСтоит.png'),
-    'Принцесса Луна Атака':         createImage('ЛунаАтака.png'),
+    'Принцесса Луна Атака':         createImage('ЛунаАтака2.png'),
 };
 
 
@@ -827,6 +830,30 @@ export const TOWER_CONFIG = {
 
 
 };
+
+export const enemyImagesSlow = {}; // Коллекция для замедления (Х)
+export const enemyImagesStun = {}; // Коллекция для стана (С)
+
+// Пробегаем по всем обычным картинкам и создаем варианты
+for (const key in enemyImages) {
+    const originalImg = enemyImages[key];
+    // Берем полный путь (это надежнее)
+    const originalPath = originalImg.src; 
+    
+    if (originalPath) {
+        // Создаем путь для Замедления (добавляем Х перед .png)
+        // Внимание: Здесь используется русская Х
+        const slowPath = originalPath.replace('.png', 'Х.png');
+        enemyImagesSlow[key] = new Image();
+        enemyImagesSlow[key].src = slowPath;
+
+        // Создаем путь для Стана (добавляем С перед .png)
+        // Внимание: Здесь используется русская С
+        const stunPath = originalPath.replace('.png', 'С.png');
+        enemyImagesStun[key] = new Image();
+        enemyImagesStun[key].src = stunPath;
+    }
+}
 
 
          export const path = [

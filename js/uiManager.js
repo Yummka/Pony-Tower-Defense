@@ -1,18 +1,16 @@
 // Файл: js/uiManager.js
 
-// Импортируем TOWER_CONFIG и towerImages, так как они нужны для отображения информации о башнях
 import { TOWER_CONFIG, towerImages } from './config.js';
 
 export default class UIManager {
     constructor(game) {
-        this.game = game; // Сохраняем ссылку на главный объект игры, чтобы отправлять ему команды
+        this.game = game; 
 
-        // --- 1. Находим все DOM-элементы ОДИН РАЗ при создании ---
-        // Это эффективно, так как мы не ищем их каждый кадр
+        // --- 1. Находим все DOM-элементы ---
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
 
-        // Панель статистики и управления
+        // Панель статистики
         this.moneyDisplay = document.getElementById('moneyDisplay');
         this.livesDisplay = document.getElementById('livesDisplay');
         this.waveDisplay = document.getElementById('waveDisplay');
@@ -25,7 +23,7 @@ export default class UIManager {
         this.selectedTowerNameDisplay = document.getElementById('selectedTowerName');
         this.towerSelectButtons = document.querySelectorAll('.tower-select-button');
 
-        // Панель информации о башне
+        // Панель информации
         this.towerInfoPanel = document.getElementById('tower-info-panel');
         this.infoTowerImg = document.getElementById('info-tower-img');
         this.infoTowerName = document.getElementById('info-tower-name');
@@ -34,7 +32,7 @@ export default class UIManager {
         this.infoTowerSpeed = document.getElementById('info-tower-speed');
         this.infoTowerSpecial = document.getElementById('info-tower-special');
 
-        // Главное меню и экраны конца игры
+        // Меню и экраны
         this.mainMenu = document.getElementById('mainMenu');
         this.levelSelection = document.getElementById('levelSelection');
         this.winPopup = document.getElementById('win-popup');
@@ -42,49 +40,46 @@ export default class UIManager {
         this.winMoneyDisplay = document.getElementById('win-money-stat');
         this.winLivesDisplay = document.getElementById('win-lives-stat');
         
-        // Интро-попапы
+        // Интро-попапы (ВОТ ТУТ БЫЛА ОШИБКА)
         this.fluttershyIntroPopup = document.getElementById('fluttershyIntroPopup');
         this.rainbowDashIntroPopup = document.getElementById('rainbowDashIntroPopup');
         this.rarityIntroPopup = document.getElementById('rarityIntroPopup');
+        
+        // --- ДОБАВЛЕНО: Теперь JS знает про Луну ---
+        this.lunaIntroPopup = document.getElementById('lunaIntroPopup');
 
-
-        // Внутри constructor(game)
+        // Сюжетное окно
         this.storyPopup = document.getElementById('storyPopup');
         this.storyTitle = document.getElementById('storyTitle');
         this.storyText = document.getElementById('storyText');
         
-        // --- 2. Привязываем все обработчики событий ---
+        // --- 2. Привязываем обработчики ---
         this.bindEvents();
     }
 
     bindEvents() {
-        // Когда кнопка нажата, UIManager не решает, что делать, а просто
-        // говорит объекту game: "Эй, пользователь нажал кнопку 'Новая волна'".
         this.startWaveButton.addEventListener('click', () => this.game.startWave());
         this.ingameMenuButton.addEventListener('click', () => this.game.returnToMainMenu());
         this.sellTowerButton.addEventListener('click', () => this.game.toggleSellMode());
 
-        // Передаем события с канваса напрямую в game, он сам разберется с координатами
         this.canvas.addEventListener('mousemove', (e) => this.game.handleMouseMove(e));
         this.canvas.addEventListener('click', (e) => this.game.handleCanvasClick(e));
 
          document.getElementById('closeStoryPopupButton').addEventListener('click', () => {
             this.storyPopup.classList.add('hidden');
             if (this.onStoryClose) {
-                this.onStoryClose(); // Выполняем то, что запланировали (открыть Радугу или начать игру)
+                this.onStoryClose(); 
             } else {
-                this.game.startGame(); // По умолчанию просто старт
+                this.game.startGame(); 
             }
         });
 
-        // Отмена режимов по клавише Escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 this.game.cancelModes();
             }
         });
 
-        // Кнопки покупки башен
         this.towerSelectButtons.forEach(button => {
             button.addEventListener('click', (event) => {
                 const type = event.currentTarget.getAttribute('data-tower-type');
@@ -92,27 +87,22 @@ export default class UIManager {
             });
         });
 
-        // Кнопки на экранах победы/поражения/интро
         document.getElementById('next-level-button').addEventListener('click', () => this.game.startNextLevel());
         document.getElementById('restart-button').addEventListener('click', () => this.game.restartCurrentLevel());
         document.getElementById('main-menu-button').addEventListener('click', () => this.game.returnToMainMenu());
-        // Обработчик для старой кнопки, которая может быть на обеих панелях
+        
         document.querySelectorAll('#returnToMenuButton').forEach(btn => {
             btn.addEventListener('click', () => this.game.returnToMainMenu());
         });
         
-        // Кнопки после интро
         document.getElementById('startLevelAfterIntroButton').addEventListener('click', () => this.game.startGame());
         document.getElementById('startLevelAfterRDIntroButton').addEventListener('click', () => this.showRarityIntro());
         document.getElementById('startLevelAfterRarityIntroButton').addEventListener('click', () => this.game.startGame());
-        document.getElementById('startLevelAfterLunaIntroButton').addEventListener('click', () => this.game.startGame());
-
         
+        // --- ДОБАВЛЕНО: Кнопка старта после Луны ---
+        document.getElementById('startLevelAfterLunaIntroButton').addEventListener('click', () => this.game.startGame());
     }
 
-    // --- 3. Методы для обновления интерфейса (их будет вызывать Game) ---
-
-    // Главный метод обновления, который вызывает все остальные
     update() {
         this.updateStats();
         this.updateButtons();
@@ -129,7 +119,6 @@ export default class UIManager {
     updateButtons() {
         this.startWaveButton.disabled = this.game.waveInProgress;
 
-        // Обновляем состояние кнопок покупки (активна/неактивна/выбрана)
         this.towerSelectButtons.forEach(button => {
             const type = button.getAttribute('data-tower-type');
             const price = TOWER_CONFIG[type].price;
@@ -137,7 +126,6 @@ export default class UIManager {
             button.classList.toggle('selected', this.game.isBuilding && this.game.selectedTowerType === type);
         });
 
-        // Обновляем кнопку продажи и курсор
         if (this.game.isSelling) {
             this.sellTowerButton.classList.add('active');
             this.sellTowerButton.textContent = 'Отмена (Esc)';
@@ -148,23 +136,21 @@ export default class UIManager {
             this.canvas.style.cursor = this.game.isBuilding ? 'crosshair' : 'default';
         }
         
-        // Показываем/скрываем кнопки пони в зависимости от уровня
         const fluttershyButton = document.getElementById('fluttershy-buy-button');
-        if (fluttershyButton) fluttershyButton.style.display = (this.game.currentLevel >= 2) ? 'flex' : 'none'; // ИЗМЕНЕНО
+        if (fluttershyButton) fluttershyButton.style.display = (this.game.currentLevel >= 2) ? 'flex' : 'none';
 
         const rainbowDashButton = document.getElementById('rainbowdash-buy-button');
-        if (rainbowDashButton) rainbowDashButton.style.display = (this.game.currentLevel >= 3) ? 'flex' : 'none'; // Тут уже правильно!
+        if (rainbowDashButton) rainbowDashButton.style.display = (this.game.currentLevel >= 3) ? 'flex' : 'none';
 
         const rarityButton = document.getElementById('rarity-buy-button');
-        if (rarityButton) rarityButton.style.display = (this.game.currentLevel >= 3) ? 'flex' : 'none'; // И тут тоже!
+        if (rarityButton) rarityButton.style.display = (this.game.currentLevel >= 3) ? 'flex' : 'none';
 
-        // Добавьте логику отображения кнопки (например, с 5 уровня)
         const lunaButton = document.getElementById('luna-buy-button');
-        if (lunaButton) lunaButton.style.display = (this.game.currentLevel >= 5) ? 'flex' : 'none';
-
-        // Добавьте стиль для кнопки Луны (синий/ночной) в CSS, если хотите, или через класс
-        if (lunaButton) lunaButton.style.borderColor = '#60a5fa'; // Голубая рамка
-        if (lunaButton) lunaButton.style.backgroundColor = '#1e3a8a'; // Темно-синий фон
+        if (lunaButton) {
+            lunaButton.style.display = (this.game.currentLevel >= 5) ? 'flex' : 'none';
+            lunaButton.style.borderColor = '#60a5fa'; 
+            lunaButton.style.backgroundColor = '#1e3a8a';
+        }
     }
     
     updateBuildModeStatus() {
@@ -198,39 +184,33 @@ export default class UIManager {
         this.towerInfoPanel.classList.remove('hidden');
     }
 
-
-    // --- 4. Методы для управления экранами и попапами ---
-
     showMainMenu() {
-    this.mainMenu.classList.remove('hidden');
-    this.canvas.classList.add('hidden');
-    this.hideAllPopups();
-    
-    this.levelSelection.innerHTML = '';
-    
-    // ИЗМЕНЕНИЕ: Теперь 10 уровней
-    const totalLevels = 10; 
-    
-    // Создаем сетку для кнопок, если их много
-    this.levelSelection.className = "grid grid-cols-2 gap-4 w-full max-w-lg"; // Используем Grid вместо flex col
+        this.mainMenu.classList.remove('hidden');
+        this.canvas.classList.add('hidden');
+        this.hideAllPopups();
+        
+        this.levelSelection.innerHTML = '';
+        
+        const totalLevels = 10; 
+        
+        this.levelSelection.className = "grid grid-cols-2 gap-4 w-full max-w-lg";
 
-    for (let i = 1; i <= totalLevels; i++) {
-        const isUnlocked = i <= this.game.unlockedLevels;
-        const button = document.createElement('button');
-        button.textContent = `Ур. ${i}`; // Сократил текст для компактности
-        // Стили
-        button.className = 'px-4 py-3 font-semibold rounded-lg shadow-lg transition duration-300 text-sm md:text-base';
+        for (let i = 1; i <= totalLevels; i++) {
+            const isUnlocked = i <= this.game.unlockedLevels;
+            const button = document.createElement('button');
+            button.textContent = `Ур. ${i}`; 
+            button.className = 'px-4 py-3 font-semibold rounded-lg shadow-lg transition duration-300 text-sm md:text-base';
 
-        if (isUnlocked) {
-            button.classList.add('bg-money', 'hover:bg-green-700', 'text-white');
-            button.onclick = () => this.game.startLevel(i);
-        } else {
-            button.classList.add('bg-gray-500', 'text-gray-300', 'cursor-not-allowed', 'opacity-70');
-            button.textContent += ' 🔒';
+            if (isUnlocked) {
+                button.classList.add('bg-money', 'hover:bg-green-700', 'text-white');
+                button.onclick = () => this.game.startLevel(i);
+            } else {
+                button.classList.add('bg-gray-500', 'text-gray-300', 'cursor-not-allowed', 'opacity-70');
+                button.textContent += ' 🔒';
+            }
+            this.levelSelection.appendChild(button);
         }
-        this.levelSelection.appendChild(button);
     }
-}
 
     showGameScreen() {
         this.mainMenu.classList.add('hidden');
@@ -242,10 +222,7 @@ export default class UIManager {
         this.mainMenu.classList.add('hidden');
         this.storyTitle.textContent = title;
         this.storyText.innerHTML = text; 
-        
-        // Запоминаем, что делать при нажатии кнопки "Продолжить"
         this.onStoryClose = nextAction;
-
         this.storyPopup.classList.remove('hidden');
     }
     
@@ -256,6 +233,9 @@ export default class UIManager {
         this.fluttershyIntroPopup.classList.add('hidden');
         this.rainbowDashIntroPopup.classList.add('hidden');
         this.rarityIntroPopup.classList.add('hidden');
+        
+        // --- ДОБАВЛЕНО: Скрытие Луны ---
+        if(this.lunaIntroPopup) this.lunaIntroPopup.classList.add('hidden');
     }
 
     showWinScreen() {
@@ -282,8 +262,16 @@ export default class UIManager {
         this.rainbowDashIntroPopup.classList.add('hidden');
         this.rarityIntroPopup.classList.remove('hidden');
     }
+
+    // --- ДОБАВЛЕНО: Метод показа Луны ---
     showLunaIntro() {
-    this.mainMenu.classList.add('hidden');
-    this.lunaIntroPopup.classList.remove('hidden');
+        this.mainMenu.classList.add('hidden');
+        // Проверяем, существует ли элемент, чтобы не было ошибки
+        if(this.lunaIntroPopup) {
+            this.lunaIntroPopup.classList.remove('hidden');
+        } else {
+            console.error("Не найден попап Луны!");
+            this.game.startGame(); // Если ошибка, просто начинаем игру
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { ENEMY_TYPES, enemyImages } from '../config.js';
+import { ENEMY_TYPES, enemyImages, enemyImagesSlow, enemyImagesStun, } from '../config.js';
 
 export default class Enemy {
     constructor(type, path) {
@@ -295,102 +295,79 @@ export default class Enemy {
     // ------------------------------------
     // МЕТОД ОТРИСОВКИ (С КОРРЕКТНЫМ Y-ОФФСЕТОМ)
     // ------------------------------------
-    draw(ctx) {
-        const img = enemyImages[this.type];
+    // В файле js/entities/Enemy.js
+
+    // В файле Enemy.js
+
+    // Добавили аргумент 'scale'
+    draw(ctx, scale = 1) { 
+        let img;
+        
+        if (this.stunDuration > 0) img = enemyImagesStun[this.type];
+        else if (this.slowDuration > 0) img = enemyImagesSlow[this.type];
+        else img = enemyImages[this.type];
+
+        if (!img || !img.complete || img.naturalWidth === 0) img = enemyImages[this.type];
+
         const cfg = ENEMY_TYPES[this.type];
-
-
         
-        
-
+        // --- МАСШТАБИРОВАНИЕ ---
+        // Умножаем размеры на масштаб
+        const drawWidth = this.width * scale;
+        const drawHeight = this.height * scale;
+        const drawYOffset = this.yOffset * scale;
 
         if (img && img.complete) {
-            // Отрисовка врага с анимацией
             const frameWidth = cfg.frameWidth || (img.width / this.frameCount); 
             let frameX;
 
             if (this.type === 'Snail') {
-                // Инвертируем порядок кадров для Снейла: от последнего к первому
-                // this.frameCount - 1 дает индекс последнего кадра.
                 const invertedFrame = (this.frameCount - 1) - Math.floor(this.frame);
                 frameX = invertedFrame * frameWidth;
             } else {
-                // Для всех остальных врагов - обычный порядок (слева направо)
                 frameX = Math.floor(this.frame) * frameWidth;
             }
             
             ctx.save();
-            // ПРИМЕНЕНИЕ ОФФСЕТА: изменяем позицию Y
-            ctx.translate(this.x, this.y + this.yOffset); 
+            // Используем отмасштабированный сдвиг
+            ctx.translate(this.x, this.y + drawYOffset); 
 
-            // Если движется влево, отражаем изображение
             if (this.lastDirection === -1) {
                 ctx.scale(-1, 1);
             }
             
-            // Отрисовка кадра
             ctx.drawImage(
-                img,
-                frameX, 0, frameWidth, img.height, // Источник (спрайт-лист)
-                -this.width / 2, -this.height / 2, // Цель (центрирование)
-                this.width, this.height
+                img, 
+                frameX, 0, frameWidth, img.height, 
+                -drawWidth / 2, -drawHeight / 2, // Используем новые размеры
+                drawWidth, drawHeight           // Используем новые размеры
             );
             
-            if (this.stunDuration > 0) {
-                ctx.globalAlpha = 0.5; // 50% прозрачность
-                ctx.fillStyle = '#ff0'; // Ярко-желтый
-                ctx.fillRect(
-                    -this.width / 2, -this.height / 2,
-                    this.width, this.height
-                );
-                ctx.globalAlpha = 1.0; // ВАЖНО: Сбрасываем прозрачность!
-            }
-
-            if (this.slowDuration > 0) {
-                // Рисуем полупрозрачный синий "фильтр" поверх врага
-                // Используем те же координаты, что и у drawImage
-                ctx.globalAlpha = 0.4; // 40% прозрачность
-                ctx.fillStyle = '#00f'; // Чисто синий
-                
-                // Мы все еще в "отраженном" пространстве, поэтому координаты те же
-                ctx.fillRect(
-                    -this.width / 2, -this.height / 2, // x, y (центрирование)
-                    this.width, this.height              // ширина, высота
-                );
-                // ВАЖНО: Сбрасываем прозрачность обратно на 1.0!
-                ctx.globalAlpha = 1.0; 
-            }
-
             ctx.restore();
         } else {
-            // Заливка цветом, если изображение не загружено
             ctx.fillStyle = this.color;
             ctx.beginPath();
-            ctx.arc(this.x, this.y, 15, 0, Math.PI * 2); 
+            ctx.arc(this.x, this.y, 15 * scale, 0, Math.PI * 2); 
             ctx.fill();
         }
         
-        // >>> ШКАЛА ЗДОРОВЬЯ <<<
-        const barWidth = 40;     
-        const barHeight = 5;     
-        const barOffset = 25;    
+        // >>> ШКАЛА ЗДОРОВЬЯ (Тоже масштабируем) <<<
+        const barWidth = 40 * scale;     
+        const barHeight = 5 * scale;     
+        const barOffset = 25 * scale;    
 
         const barX = this.x - barWidth / 2;
-        // ПРИМЕНЕНИЕ ОФФСЕТА: сдвигаем шкалу вместе с врагом
-        const barY = (this.y - barOffset) + this.yOffset; 
+        const barY = (this.y - barOffset) + drawYOffset; 
 
-        const healthRatio = this.currentHealth / this.maxHealth;
+        const healthRatio = Math.max(0, this.currentHealth / this.maxHealth);
         const currentBarWidth = barWidth * healthRatio;
         
-        // A. Задний фон (для рамки)
         ctx.fillStyle = 'black';
         ctx.fillRect(barX - 1, barY - 1, barWidth + 2, barHeight + 2);
 
-        // B. Рисуем оставшуюся часть (КРАСНЫЙ фон)
         ctx.fillStyle = 'red';
         ctx.fillRect(barX, barY, barWidth, barHeight);
 
-        // C. Рисуем текущее здоровье (ЗЕЛЕНЫЙ)
         ctx.fillStyle = 'lime';
         ctx.fillRect(barX, barY, currentBarWidth, barHeight);
     }
