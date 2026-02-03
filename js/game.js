@@ -10,7 +10,8 @@ import {
     TOWER_CONFIG, BUILD_SLOT_SIZE, SELL_REFUND_PERCENTAGE, 
     PAUSE_BETWEEN_GROUPS_MS, ENEMY_TYPES,
     originalWidth, originalHeight, 
-    backgroundMusic, nightMusic, eveningMusic, LEVEL_START_MONEY, morningMusic, 
+    backgroundMusic, nightMusic, eveningMusic, LEVEL_START_MONEY, morningMusic,
+    towerImages, 
 } from './config.js';
 
 export default class Game {
@@ -158,21 +159,26 @@ export default class Game {
         // 1. Очищаем холст
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // --- ЛОГИКА ЦВЕТА ФОНА (Подложка) ---
-        // Если уровень 3 (Вечер), 4 (Ночь) или 5 (Утро с темным фоном если надо) — делаем фон темным
-        // Обрати внимание: я расширил диапазон, чтобы на 3, 4 и 5 уровне фон был темным
-        if (this.currentLevel >= 3 && this.currentLevel <= 4) {
-            this.ctx.fillStyle = '#0d0d1a'; // Очень темный синий
-            document.body.style.backgroundColor = '#000000'; // Черные поля браузера
-        } else {
-            this.ctx.fillStyle = '#1a321a'; // Обычный зеленый
-            document.body.style.backgroundColor = '#3c3c58'; // Обычный цвет меню
-        }
-        
-        // Заливаем холст выбранным цветом
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        // --- ЦВЕТА ФОНА ---
+        let bgColor;
 
-        // 2. Рисуем картинку карты (Фон)
+        // Ночь (4) и Вечер (3)
+        if (this.currentLevel === 3 || this.currentLevel === 4) {
+             bgColor = '#08141e'; // Темно-синий, почти черный (подходит под ночную карту)
+        } 
+        // Утро (5), День (1, 2)
+        else {
+             bgColor = '#346927'; // Насыщенный зеленый (цвет травы с твоих скриншотов)
+        }
+
+        // Красим подложку
+        this.ctx.fillStyle = bgColor;
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Красим сам браузер (чтобы убрать белые/серые полосы за пределами канваса)
+        document.body.style.backgroundColor = bgColor; 
+
+        // 2. Рисуем картинку
         if (this.isBackgroundLoaded) {
             this.ctx.drawImage(backgroundImage, this.offsetX, this.offsetY, this.originalWidth * this.scale, this.originalHeight * this.scale);
         }
@@ -406,6 +412,7 @@ export default class Game {
         this.enemies = [];
         this.towers = [];
         this.projectiles = [];
+        this.effects = [];
         this.scaledBuildSlots.forEach(slot => slot.occupied = false);
 
         this.wave = 0;
@@ -870,9 +877,14 @@ export default class Game {
     
     getMousePos(event) {
         const rect = this.canvas.getBoundingClientRect();
+        
+        // Эта формула учитывает растяжение канваса и границы
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
+
         return { 
-            x: event.clientX - rect.left, 
-            y: event.clientY - rect.top 
+            x: (event.clientX - rect.left) * scaleX, 
+            y: (event.clientY - rect.top) * scaleY 
         };
     }
 
@@ -893,7 +905,31 @@ export default class Game {
 
     drawGhostTower() {
         if (!this.isBuilding || !this.selectedTowerType) return;
+        const config = TOWER_CONFIG[this.selectedTowerType];
     
+        if (config.isAbility) {
+            const x = this.mouse.x;
+            const y = this.mouse.y;
+            
+            // А. Рисуем картинку прицела
+            const img = towerImages['Прицел'];
+            if (img && img.complete) {
+                // Размер прицела (подстраивается под масштаб экрана)
+                const size = 448 * this.scale; 
+                this.ctx.drawImage(img, x - size / 2, y - size / 2, size, size);
+            }
+
+            // Б. Рисуем тонкий контур радиуса ВЗРЫВА (чтобы понимать зону поражения)
+            // Но убираем заливку, чтобы не было похоже на "радиус атаки башни"
+            const radius = config.aoeRadius * this.scale;
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, radius, 0, Math.PI * 2);
+            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; // Полупрозрачный белый контур
+            this.ctx.lineWidth = 2;
+            this.ctx.stroke(); // Только контур, без fill()
+            
+            return; // Выходим, чтобы не рисовать зеленые квадраты
+        }
         const nearestSlot = this.findNearestFreeSlot(this.mouse.x, this.mouse.y);
         if (nearestSlot) {
             const config = TOWER_CONFIG[this.selectedTowerType];

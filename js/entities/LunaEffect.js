@@ -1,4 +1,4 @@
-import { towerImages } from '../config.js';
+import { towerImages, playSound } from '../config.js'; // Убедитесь, что playSound импортирован
 
 export default class LunaEffect {
     constructor(targetX, targetY, game, config) {
@@ -8,16 +8,14 @@ export default class LunaEffect {
         this.damage = config.damage;
         this.aoeRadius = config.aoeRadius * game.scale; 
         
-        // Старт за экраном
         this.x = game.canvas.width + 200;
         this.y = -200;
         
         this.speed = 20 * game.scale; 
-        this.state = 'fly_in'; // fly_in, attack, fly_out, finished
+        this.state = 'fly_in'; 
         
         this.timer = 0;
         
-        // --- АНИМАЦИЯ ---
         this.frame = 0;
         this.totalFrames = 29; 
         this.frameWidth = 146; 
@@ -29,7 +27,6 @@ export default class LunaEffect {
     }
 
     update(enemies) {
-        // Крутим анимацию всегда
         this.frame += this.animSpeed;
         if (this.frame >= this.totalFrames) this.frame = 0;
 
@@ -49,18 +46,24 @@ export default class LunaEffect {
         }
         else if (this.state === 'attack') {
             this.timer++;
+            
             // Удар на 20-м кадре
             if (this.timer === 20) {
+                
+                // --- ИСПРАВЛЕНИЕ: ЗВУК ОДИН РАЗ (ДО ЦИКЛА) ---
+                playSound('Принцесса Луна'); 
+                console.log("BOOM! Luna strikes.");
+                // ---------------------------------------------
+
                 enemies.forEach(e => {
                     const dist = Math.sqrt(Math.pow(e.x - this.x, 2) + Math.pow(e.y - this.y, 2));
                     if (dist < this.aoeRadius) {
                         e.currentHealth -= this.damage;
-                        e.stunDuration += 120; // 2 секунды стана
+                        e.stunDuration += 120; 
                     }
                 });
             }
             
-            // Ждем 60 кадров (1 сек) и улетаем
             if (this.timer > 120) {
                 this.state = 'fly_out';
             }
@@ -81,12 +84,8 @@ export default class LunaEffect {
         if (img && img.complete) {
             ctx.save();
             ctx.translate(this.x, this.y);
-            
-            // --- ОТРАЖЕНИЕ ПО ГОРИЗОНТАЛИ ---
             ctx.scale(-1, 1); 
-            // -------------------------------
 
-            // --- ОТРИСОВКА КАДРА ---
             const sx = Math.floor(this.frame) * this.frameWidth; 
             
             ctx.drawImage(
@@ -95,7 +94,6 @@ export default class LunaEffect {
                 -this.renderWidth/2, -this.renderHeight/2, this.renderWidth, this.renderHeight 
             );
             
-            // Эффекты взрыва
             if (this.state === 'attack') {
                 if (this.timer >= 15 && this.timer <= 25) {
                     ctx.globalAlpha = 0.6;

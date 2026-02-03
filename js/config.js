@@ -7,12 +7,12 @@ function createImage(filename) {
 
 export const TOWER_CONFIG = {
     'Пинки Пай': {
-        name: 'Пинки Пай', price: 45, range: 110, damage: 3.5, isMelee: true, damageTickRate: 10,
+        name: 'Пинки Пай', price: 45, range: 110, damage: 3.5, isMelee: true, damageTickRate: 6,
         frameCount: 12, frameWidth: 112, frameSpeed: 0.8,
         description: {
             damage: "3.5 (x6/сек)", // Урон * (60 кадров / 10 тикрейт)
             range: 110,
-            speed: "4.0/сек", // 60 / 10
+            speed: "10.0/сек", // 60 / 10
             special: "Наносит урон всем врагам в радиусе атаки непрерывно."
         }
     },
@@ -65,6 +65,7 @@ export const TOWER_CONFIG = {
         ultStunDuration: 200, ultRadius: 150,
         attackFrameCount: 20, attackFrameWidth: 108, attackFrameSpeed: 0.5,
         ultFrameCount: 25, ultFrameWidth: 70, ultFrameSpeed: 0.2,
+        projectileType: 'needle',
         description: {
             damage: 25,
             range: 180,
@@ -119,7 +120,34 @@ export const TOWER_CONFIG = {
     'Рэрити Превращение':           createImage('РарМ.png'),
     'Принцесса Луна':               createImage('ЛунаСтоит.png'),
     'Принцесса Луна Атака':         createImage('ЛунаАтака2.png'),
+    'Иголка':                       createImage('Иголка.png'),
+    'Прицел':                       createImage('Прицел.png'),
 };
+
+export const towerSounds = {
+    'Пинки Пай':          new Audio('audio/Писк.mp3'),
+    'Эппл Джек':          new Audio('audio/Удар.mp3'),
+    'Твайлайт Спаркл':    new Audio('audio/Магия.mp3'),
+    'Флаттершай':         new Audio('audio/Милота.mp3'),
+    'Радуга Дэш':         new Audio('audio/Крылья.mp3'),
+    'Рэрити':             new Audio('audio/Бросок.mp3'),
+    'Принцесса Луна':     new Audio('audio/Взрыв.mp3'),
+};
+
+export function playSound(name) {
+    const originalSound = towerSounds[name];
+    
+    if (originalSound) {
+        // Создаем копию звука, чтобы можно было играть их одновременно
+        const soundClone = originalSound.cloneNode();
+        soundClone.volume = 0.3; // Громкость
+        
+        // Запускаем
+        soundClone.play().catch(e => {
+            // Ошибки автоплея игнорируем
+        });
+    }
+}
 
 
 
@@ -1572,7 +1600,7 @@ export const LEVEL_START_MONEY = {
     2: 120, // Нужно купить Флаттершай
     3: 150, // Сложный уровень
     4: 200, // Для Найтмер Мун нужно много защиты
-    5: 250,
+    5: 500,
     6: 300,
 }
 
