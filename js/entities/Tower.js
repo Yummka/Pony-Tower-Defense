@@ -28,6 +28,17 @@ export default class Tower {
         
         this.isAsleep = false; 
 
+        this.isSupport = config.isSupport || false;
+        
+        // Для баффов (если эту башню баффнули)
+        this.buffTimer = 0;
+        this.baseDamage = config.damage;
+        this.baseRange = config.range * this.game.scale;
+        this.baseFireRate = config.fireRate || 0;
+        
+        // Флаг, что это башня (для снаряда)
+        this.isTower = true;
+
         // Для трансформации
         this.isTransforming = false;
         this.transformFrame = 0;
@@ -101,7 +112,16 @@ export default class Tower {
     update(enemies, projectiles) {
         if (this.isAsleep) return;
 
-        // Трансформация
+        // 1. БАФФЫ (СВЕЧЕНИЕ)
+        if (this.buffTimer > 0) {
+            this.buffTimer--;
+            if (this.buffTimer % 10 < 5) this.color = 'gold'; else this.color = TOWER_CONFIG[this.type].color || 'white';
+            if (this.buffTimer <= 0) {
+                this.damage = this.baseDamage;
+            }
+        }
+
+        // 2. ТРАНСФОРМАЦИЯ (Кризалис эффект)
         if (this.isTransforming) {
             this.transformFrame += this.transformSpeed;
             if (this.transformFrame >= this.transformMaxFrames) {
@@ -112,7 +132,7 @@ export default class Tower {
 
         const config = TOWER_CONFIG[this.type];
 
-        // --- РАДУГА ДЭШ ---
+        // 3. РАДУГА ДЭШ (ПАТРУЛЬ)
         if (this.isPatrolTower) {
             if (!this.patrolEnd) return;
             let targetPoint = this.patrolDirection === 1 ? this.patrolEnd : this.patrolStart;
@@ -126,13 +146,13 @@ export default class Tower {
                 this.patrolCurrentPos.x += (dx / distance) * this.patrolSpeed;
                 this.patrolCurrentPos.y += (dy / distance) * this.patrolSpeed;
             }
+            // Радуга машет крыльями всегда, пока летит
             this.attackFrame = (this.attackFrame + config.frameSpeed) % config.frameCount;
             this.facingDirection = dx > 0 ? 1 : -1;
-            
-            // Звук крыльев (не каждый кадр, а раз в полсекунды)
+
             this.soundTimer++;
             if(this.soundTimer > 30) {
-                 playSound(this.type); // Можно включить, если звук крыльев не раздражает
+                 playSound(this.type);
                  this.soundTimer = 0;
             }
 
@@ -142,11 +162,62 @@ export default class Tower {
                     enemy.currentHealth -= this.auraDamage; 
                 }
             });
-            this.isAttacking = true;
+            // Для Радуги isAttacking не используется для логики анимации в draw, так как у нее отдельный блок
             return;
         }
 
-        // --- РЭРИТИ ---
+        // 4. ДЁРПИ (ПОДДЕРЖКА) - ✅ ИСПРАВЛЕННАЯ ЛОГИКА
+        if (this.isSupport) {
+            // Если идет анимация броска - проигрываем её
+            if (this.isAttacking) {
+                this.attackFrame += 0.3; // Скорость анимации
+                // Если анимация закончилась (12 кадров)
+                if (this.attackFrame >= 12) {
+                    this.isAttacking = false; // Перестаем атаковать
+                    this.attackFrame = 0; // Сброс на стойку
+                }
+                return; // Пока идет анимация, новую атаку не начинаем
+            }
+
+            // Если не атакуем, тикает кулдаун
+            if (this.cooldown > 0) {
+                this.cooldown--;
+                this.attackFrame = 0; // Стоим смирно
+            } else {
+                // Кулдаун прошел, ищем цель
+                const isMiss = Math.random() < config.missChance;
+                let target = null;
+
+                if (isMiss) {
+                    // Ищем врага
+                    const possibleEnemies = enemies.filter(e => !e.isFinished && e.currentHealth > 0 && Math.sqrt(Math.pow(e.x - this.x, 2) + Math.pow(e.y - this.y, 2)) < this.range);
+                    if (possibleEnemies.length > 0) {
+                        target = possibleEnemies[Math.floor(Math.random() * possibleEnemies.length)];
+                    }
+                } else {
+                    // Ищем башню
+                    const allies = this.game.towers.filter(t => t !== this && t.buffTimer <= 0 && !t.isSupport && Math.sqrt(Math.pow(t.x - this.x, 2) + Math.pow(t.y - this.y, 2)) < this.range);
+                    if (allies.length > 0) {
+                        target = allies[Math.floor(Math.random() * allies.length)];
+                    }
+                }
+
+                // БРОСОК!
+                if (target) {
+                    this.isAttacking = true; // Включаем флаг анимации
+                    this.attackFrame = 0;    // Начинаем с 0 кадра
+                    
+                    const muffinConfig = { ...config, projectileType: 'muffin' };
+                    projectiles.push(new Projectile(this.x, this.y, target, muffinConfig, this.game));
+                    
+                    playSound(this.type);
+                    this.cooldown = config.fireRate; 
+                }
+            }
+            return; // Выход для Дёрпи
+        }
+
+        // 5. РЭРИТИ (СНАЙПЕР)
         if (this.isSniper) {
             if (this.isUlting) {
                 this.ultFrame += config.ultFrameSpeed;
@@ -168,12 +239,12 @@ export default class Tower {
                         enemy.stunDuration = Math.max(enemy.stunDuration, config.ultStunDuration);
                     }
                 });
-                playSound(this.type); // Звук истерики (Бросок или другой)
+                playSound(this.type);
                 return;
             }
         }
         
-        // --- ПИНКИ ПАЙ (Melee AoE) ---
+        // 6. ПИНКИ ПАЙ (АОЕ)
         if (this.type === 'Пинки Пай') {
             this.isAttacking = false;
             let enemiesInRange = false;
@@ -185,7 +256,7 @@ export default class Tower {
             }
             
             if (enemiesInRange) {
-                this.isAttacking = true;
+                this.isAttacking = true; // Пинки атакует, пока есть враги
                 if (this.damageCooldown > 0) this.damageCooldown--;
                 if (this.damageCooldown <= 0) {
                     enemies.forEach(enemy => {
@@ -193,14 +264,18 @@ export default class Tower {
                             enemy.currentHealth -= this.damage;
                         }
                     });
-                    playSound(this.type); // Звук атаки Пинки
+                    playSound(this.type);
                     this.damageCooldown = this.damageTickRate;
                 }
+            } else {
+                this.isAttacking = false;
+                this.attackFrame = 0;
             }
         }
 
-        // --- ОСТАЛЬНЫЕ (Melee Single и Ranged) ---
-        if (this.type !== 'Пинки Пай') {
+        // 7. ОСТАЛЬНЫЕ БАШНИ (ЭППЛ, ТВАЙЛАЙТ, ФЛАТТЕРШАЙ)
+        if (this.type !== 'Пинки Пай' && !this.isSupport) {
+            // Проверка цели
             if (this.target) {
                 const distance = Math.sqrt(Math.pow(this.target.x - this.x, 2) + Math.pow(this.target.y - this.y, 2));
                 if (this.target.currentHealth <= 0 || this.target.isFinished || distance > this.range) {
@@ -213,15 +288,14 @@ export default class Tower {
             
             this.facingDirection = this.target ? ((this.target.x > this.x) ? 1 : -1) : -1;
             
-            // Логика визуальной атаки для обычных башен (ближний бой)
+            // Флаги анимации
             if (this.isMelee) {
-                 this.isAttacking = !!this.target;
+                 this.isAttacking = !!this.target; // Ближний бой атакует, если есть цель
             } else {
-                 // Для дальнего боя (Рэрити) флаг isAttacking управляется через isShootingVisual
-                 this.isAttacking = this.isShootingVisual;
+                 this.isAttacking = this.isShootingVisual; // Дальний бой (Рэрити) - если идет выстрел
             }
 
-            // Ближний бой (Эппл, Твайлайт, Флаттершай)
+            // Атака Ближний бой
             if (this.isMelee && this.target) {
                 if (this.damageCooldown > 0) this.damageCooldown--;
                 if (this.damageCooldown <= 0) {
@@ -230,11 +304,11 @@ export default class Tower {
                     } else {
                         this.target.currentHealth -= this.damage;
                     }
-                    playSound(this.type); // ЗВУК УДАРА
+                    playSound(this.type);
                     this.damageCooldown = this.damageTickRate;
                 }
             } 
-            // Дальний бой (Рэрити)
+            // Атака Дальний бой (Рэрити)
             else if (this.target) {
                 if (this.cooldown > 0) this.cooldown--;
                 if (this.cooldown <= 0) {
@@ -244,27 +318,26 @@ export default class Tower {
             }
         }
         
-        // --- ПРОИГРЫВАНИЕ АНИМАЦИИ ---
-        // 1. Для дальнего боя (Рэрити): проигрываем анимацию один раз при выстреле
-        if (!this.isMelee && !this.isPatrolTower && this.isShootingVisual) {
+        // --- ОБЩАЯ ЛОГИКА АНИМАЦИИ ---
+        // 1. Снайпер (Рэрити) / Дёрпи (уже обработана выше, но для страховки)
+        if ((!this.isMelee && !this.isPatrolTower && this.isShootingVisual)) {
             const frameSpeed = config.attackFrameSpeed || config.frameSpeed;
             const frameCount = config.attackFrameCount || config.frameCount;
             this.attackFrame += frameSpeed;
             
-            // Если анимация закончилась, останавливаем её
             if (this.attackFrame >= frameCount) {
                 this.attackFrame = 0;
-                this.isShootingVisual = false; // Перестаем махать рогом
+                this.isShootingVisual = false;
             }
         }
-        // 2. Для ближнего боя и Радуги: крутим анимацию, пока есть атака
-        else if ((this.isMelee || this.isPatrolTower) && this.isAttacking) {
+        // 2. Ближний бой (Пинки, Эппл)
+        else if ((this.isMelee) && this.isAttacking) {
             const frameSpeed = config.attackFrameSpeed || config.frameSpeed;
             const frameCount = config.attackFrameCount || config.frameCount;
             this.attackFrame = (this.attackFrame + frameSpeed) % frameCount; 
         } 
-        // 3. Иначе сброс
-        else if (!this.isShootingVisual) {
+        // 3. Сброс, если не Дёрпи и не патруль
+        else if (!this.isSupport && !this.isPatrolTower && !this.isShootingVisual && !this.isAttacking) {
             this.attackFrame = 0;
         }
     }
@@ -272,10 +345,10 @@ export default class Tower {
     shoot(projectiles) {
         const config = TOWER_CONFIG[this.type];
         if (this.target) { 
-            projectiles.push(new Projectile(this.x, this.y, this.target, config));
-            playSound(this.type); // ЗВУК ВЫСТРЕЛА
+            // ✅ ИЗМЕНЕНИЕ: Передаем this.game
+            projectiles.push(new Projectile(this.x, this.y, this.target, config, this.game));
+            playSound(this.type); 
             
-            // Запускаем анимацию выстрела (для Рэрити)
             this.isShootingVisual = true;
             this.attackFrame = 0;
         }

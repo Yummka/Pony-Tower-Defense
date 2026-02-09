@@ -31,6 +31,7 @@ export default class UIManager {
         this.infoTowerRange = document.getElementById('info-tower-range');
         this.infoTowerSpeed = document.getElementById('info-tower-speed');
         this.infoTowerSpecial = document.getElementById('info-tower-special');
+        
 
         // Меню и экраны
         this.mainMenu = document.getElementById('mainMenu');
@@ -44,6 +45,7 @@ export default class UIManager {
         this.fluttershyIntroPopup = document.getElementById('fluttershyIntroPopup');
         this.rainbowDashIntroPopup = document.getElementById('rainbowDashIntroPopup');
         this.rarityIntroPopup = document.getElementById('rarityIntroPopup');
+        this.derpyIntroPopup = document.getElementById('derpyIntroPopup');
         
         // --- ДОБАВЛЕНО: Теперь JS знает про Луну ---
         this.lunaIntroPopup = document.getElementById('lunaIntroPopup');
@@ -98,6 +100,14 @@ export default class UIManager {
         document.getElementById('startLevelAfterIntroButton').addEventListener('click', () => this.game.startGame());
         document.getElementById('startLevelAfterRDIntroButton').addEventListener('click', () => this.showRarityIntro());
         document.getElementById('startLevelAfterRarityIntroButton').addEventListener('click', () => this.game.startGame());
+        document.getElementById('startLevelAfterDerpyButton').addEventListener('click', () => {
+            this.derpyIntroPopup.classList.add('hidden'); // Скрываем Дёрпи
+            this.showStoryScreen(
+                "КРИСТАЛЬНАЯ ИМПЕРИЯ", 
+                "Король Сомбра вернулся!<br>Холодный ветер приносит тени и рабов.<br><br>Защитите империю!",
+                () => this.game.startGame()
+            );
+        });;
         
         // --- ДОБАВЛЕНО: Кнопка старта после Луны ---
         document.getElementById('startLevelAfterLunaIntroButton').addEventListener('click', () => this.game.startGame());
@@ -145,12 +155,16 @@ export default class UIManager {
         const rarityButton = document.getElementById('rarity-buy-button');
         if (rarityButton) rarityButton.style.display = (this.game.currentLevel >= 3) ? 'flex' : 'none';
 
+
         const lunaButton = document.getElementById('luna-buy-button');
         if (lunaButton) {
             lunaButton.style.display = (this.game.currentLevel >= 5) ? 'flex' : 'none';
             lunaButton.style.borderColor = '#60a5fa'; 
             lunaButton.style.backgroundColor = '#1e3a8a';
         }
+        
+        const derpyButton = document.getElementById('derpy-buy-button');
+        if (derpyButton) derpyButton.style.display = (this.game.currentLevel >= 6) ? 'flex' : 'none';
     }
     
     updateBuildModeStatus() {
@@ -274,4 +288,9 @@ export default class UIManager {
             this.game.startGame(); // Если ошибка, просто начинаем игру
         }
     }
+    showDerpyIntro() {
+    this.mainMenu.classList.add('hidden');
+    this.derpyIntroPopup.classList.remove('hidden');
+    }
+
 }
