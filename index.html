@@ -152,6 +152,24 @@
         </div>
     </div>
 
+    <!-- Интро Дёрпи -->
+    <div id="derpyIntroPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 p-4">
+        <div class="bg-secondary border-4 border-gray-400 rounded-xl p-8 text-center text-white max-w-2xl w-full shadow-2xl flex flex-col md:flex-row items-center gap-8">
+            <img src="images/ДёрпиСтоит.png" alt="Derpy" class="w-32 h-32 object-contain animate-bounce">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-200 mb-4">НОВАЯ ПОНИ: ДЁРПИ!</h2>
+                <p class="text-left text-gray-300 mb-6">
+                    Я принесла вам маффины!<br><br>
+                    <b>Дёрпи</b> — башня поддержки. Она кидает вкусные маффины, которые <b>усиливают</b> ваши башни (урон и скорость).<br>
+                    <span class="text-red-400 text-sm">Но будьте осторожны: иногда она промахивается и кормит врагов, делая их сильнее!</span>
+                </p>
+                <button id="startLevelAfterDerpyButton" class="w-full px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg shadow-lg transition duration-300">
+                    Спасибо, Дёрпи!
+                </button>
+            </div>
+        </div>
+    </div>
+
 <!-- Всплывающее окно сюжета (для смены времени суток) -->
     <div id="storyPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50 p-4">
         <div class="bg-secondary border-2 border-white/50 rounded-xl p-8 text-center text-white max-w-lg w-full shadow-2xl">
@@ -196,6 +214,7 @@
             <button class="buy-btn tower-select-button" data-tower-type="Радуга Дэш" data-cost="80" id="rainbowdash-buy-button" style="display: none;">Радуга Дэш (80💰)</button>
             <button class="buy-btn tower-select-button" data-tower-type="Рэрити" data-cost="75" id="rarity-buy-button" style="display: none;">Рэрити (75💰)</button>
             <button class="buy-btn tower-select-button" data-tower-type="Принцесса Луна" data-cost="500" id="luna-buy-button" style="display: none;">Луна (500💰)</button>
+            <button class="buy-btn tower-select-button" data-tower-type="Дёрпи" data-cost="100" id="derpy-buy-button" style="display: none;">Дёрпи (100💰)</button>
         </div>
 
         <div id="tower-info-panel" class="hidden">

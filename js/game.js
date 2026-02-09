@@ -3,15 +3,17 @@
 import UIManager from './uiManager.js';
 import Enemy from './entities/Enemy.js';
 import Tower from './entities/Tower.js';
-import Projectile from './entities/Projectile.js'; // Убедись, что Projectile тоже вынесен в отдельный файл
+import Projectile from './entities/Projectile.js';
 import LunaEffect from './entities/LunaEffect.js';
+import FloatingText from './entities/FloatingText.js';
 import { 
-    path, buildSlots, LEVELS_CONFIG, backgroundImage, nightBackground, eveningBackground, morningBackground,
+    path, buildSlots, LEVELS_CONFIG, backgroundImage, nightBackground, eveningBackground, morningBackground, crystalBackground,
     TOWER_CONFIG, BUILD_SLOT_SIZE, SELL_REFUND_PERCENTAGE, 
     PAUSE_BETWEEN_GROUPS_MS, ENEMY_TYPES,
     originalWidth, originalHeight, 
-    backgroundMusic, nightMusic, eveningMusic, LEVEL_START_MONEY, morningMusic,
+    backgroundMusic, nightMusic, eveningMusic, crystalMusic, LEVEL_START_MONEY, morningMusic,
     towerImages, 
+    pathLevel6, buildSlotsLevel6, path as defaultPath, buildSlots as defaultBuildSlots,
 } from './config.js';
 
 export default class Game {
@@ -36,6 +38,7 @@ export default class Game {
         this.projectiles = [];
         this.spawnTimeouts = [];
         this.effects = [];
+        this.floatingTexts = [];
         
         this.isRunning = false;
         this.isBuilding = false;
@@ -45,6 +48,10 @@ export default class Game {
         this.selectedTowerType = null;
         this.waveInProgress = false;
         this.allEnemiesScheduled = false;
+
+        // По умолчанию загружаем стандартную карту (Ур. 1)
+        this.currentRawPath = defaultPath;
+        this.currentRawSlots = JSON.parse(JSON.stringify(defaultBuildSlots));
 
         this.mouse = { x: 0, y: 0 };
 
@@ -61,13 +68,8 @@ export default class Game {
             this.draw(); // 3. Рисуем сразу, чтобы не мигало
         });
                 
-        // Применяем масштабирование к координатам из конфига
-        this.scaledPath = path.map(p => this.scaleCoords(p));
-        this.scaledBuildSlots = buildSlots.map(slot => {
-            const scaled = this.scaleCoords(slot);
-            return { ...slot, x: scaled.x, y: scaled.y, occupied: false }; // Сбрасываем occupied
-        });
-        this.SCALED_BUILD_SLOT_SIZE = BUILD_SLOT_SIZE * this.scale;
+        // Первая инициализация путей (вызовет recalculatePositions внутри)
+        this.recalculatePositions();
 
         // --- Запуск игры ---
         this.isBackgroundLoaded = false;
@@ -89,6 +91,10 @@ export default class Game {
         requestAnimationFrame(() => this.gameLoop());
     }
 
+    showFloatingText(x, y, text, color) {
+        this.floatingTexts.push(new FloatingText(x, y, text, color));
+    }
+
     update() {
         if (!this.isRunning) return; // Если игра на паузе (в меню), ничего не обновляем
 
@@ -96,6 +102,8 @@ export default class Game {
         this.towers.forEach(tower => tower.update(this.enemies, this.projectiles));
         this.effects.forEach(eff => eff.update(this.enemies));
         this.effects = this.effects.filter(eff => eff.state !== 'finished');
+        this.floatingTexts.forEach(text => text.update());
+        this.floatingTexts = this.floatingTexts.filter(text => text.life > 0);
 
         // 2. Обновляем все снаряды и обрабатываем попадания
         this.projectiles = this.projectiles.filter(projectile => {
@@ -125,7 +133,7 @@ export default class Game {
         // 4. Удаляем "мертвых" и "сбежавших" врагов
         this.enemies = this.enemies.filter(enemy => {
             if (enemy.isFinished) {
-                const isBoss = enemy.type === 'Trixie' || enemy.type.includes('Siren') || enemy.type === 'Achel' || enemy.type === 'SfinksFky' || enemy.type === 'NightmareMoon' || enemy.type === 'SfinksWalk' || enemy.type === 'Crizalis';
+                const isBoss = enemy.type === 'Trixie' || enemy.type.includes('Siren') || enemy.type === 'Achel' || enemy.type === 'SfinksFky' || enemy.type === 'NightmareMoon' || enemy.type === 'SfinksWalk' || enemy.type === 'Crizalis' || enemy.type === 'KingSombra' || enemy.type === 'TrueChrysalis';
                 this.lives -= isBoss ? 5 : 1;
                 if (this.lives <= 0) {
                     this.lives = 0;
@@ -135,8 +143,27 @@ export default class Game {
             }
             if (enemy.currentHealth <= 0) {
                 this.money += enemy.bounty;
+                if (enemy.type === 'SombraCrystal') {
+                    // Ищем Сомбру на карте
+                    const sombra = this.enemies.find(e => e.type === 'KingSombra');
+                    if (sombra) {
+                        // Наносим 2000 урона (или 1/5 от его здоровья)
+                        sombra.currentHealth -= 2000; 
+                        console.log(`Кристалл разрушен! Здоровье Сомбры: ${sombra.currentHealth}`);
+                        
+                        // Визуальный эффект (можно просто звук)
+                        // playSound('CrystalBreak'); 
+                        
+                        // Освобождаем слот!
+                        // Находим слот по координатам кристалла
+                        const slot = this.scaledBuildSlots.find(s => s.x === enemy.x && s.y === enemy.y);
+                        if (slot) slot.occupied = false;
+                    }
+                }
                 return false; // Удаляем врага
             }
+
+            
             return true; // Оставляем врага в игре
         });
         
@@ -165,7 +192,9 @@ export default class Game {
         // Ночь (4) и Вечер (3)
         if (this.currentLevel === 3 || this.currentLevel === 4) {
              bgColor = '#08141e'; // Темно-синий, почти черный (подходит под ночную карту)
-        } 
+        } else if (this.currentLevel === 6) {
+                bgColor = '#494885'; // Светло-сиреневый (Light Lilac)
+        }
         // Утро (5), День (1, 2)
         else {
              bgColor = '#346927'; // Насыщенный зеленый (цвет травы с твоих скриншотов)
@@ -211,6 +240,7 @@ export default class Game {
         this.enemies.forEach(enemy => enemy.draw(this.ctx, this.scale)); 
         this.projectiles.forEach(p => p.draw(this.ctx));
         this.effects.forEach(eff => eff.draw(this.ctx));
+        this.floatingTexts.forEach(text => text.draw(this.ctx));
         
         // 5. Рисуем "призрачную" башню (которую мы держим мышкой)
         this.drawGhostTower();
@@ -222,8 +252,24 @@ export default class Game {
 
     startLevel(levelNumber, options = {}) {
         this.currentLevel = levelNumber;
-        this.resetStateForLevelStart(options);
+        
+        // --- ПЕРЕКЛЮЧЕНИЕ КАРТЫ ---
+        if (levelNumber === 6) {
+            // Для 6 уровня грузим новую карту
+            this.currentRawPath = pathLevel6;
+            this.currentRawSlots = JSON.parse(JSON.stringify(buildSlotsLevel6));
+            backgroundImage.src = 'images/ФПСНкристалл.png';
+        } else {
+            // Для остальных уровней - стандартная
+            this.currentRawPath = defaultPath;
+            this.currentRawSlots = JSON.parse(JSON.stringify(defaultBuildSlots));
+            backgroundImage.src = 'images/ФПСН.png';
+        }
 
+        // ВАЖНО: Пересчитываем координаты под текущий размер экрана с новыми данными
+        this.recalculatePositions();
+
+        this.resetStateForLevelStart(options);
         this.stopMusic();
 
         // Настройки по умолчанию (День)
@@ -234,72 +280,59 @@ export default class Game {
         let startAction = () => this.startGame();
 
         switch (levelNumber) {
-            // --- УРОВЕНЬ 2: ФЛАТТЕРШАЙ ---
-            case 2:
-                startAction = () => this.ui.showFluttershyIntro();
-                break;
-
-            // --- УРОВЕНЬ 3: ВЕЧЕР + РАДУГА + РЭРИТИ ---
+            case 2: startAction = () => this.ui.showFluttershyIntro(); break;
             case 3:
-                // ИСПРАВЛЕНО: Добавлена буква Н в название файла, как в конфиге
                 levelBackgroundSrc = 'images/ФПСНвечер.png'; 
-                levelMusic = eveningMusic; // Кстати, у вас опечатка в импорте (eveningTmusic), но если работает - ок
-                
+                levelMusic = eveningMusic; 
                 startAction = () => this.ui.showStoryScreen(
                     "ВЕЧЕРЕЕТ...", 
                     "Солнце садится. Тени удлиняются.<br>К нам спешит подкрепление, но враги уже близко!",
                     () => this.ui.showRainbowDashIntro()
                 );
                 break;
-
-            // --- УРОВЕНЬ 4: НОЧЬ ---
             case 4:
-                // ИСПРАВЛЕНО: Добавлена буква Н в название файла
                 levelBackgroundSrc = 'images/ФПСНночь.png';
                 levelMusic = nightMusic;
-                
                 startAction = () => this.ui.showStoryScreen(
                     "НАСТУПИЛА НОЧЬ", 
                     "Тьма окутала Понивилль.<br>Летучие мыши и ночные кошмары выходят на охоту.<br><br>Держите оборону до рассвета!",
                     () => this.startGame()
                 );
                 break;
-
-            // --- УРОВЕНЬ 6: РАССВЕТ ---
             case 5:
-                // Прямая ссылка на файл, чтобы проверить, работает ли он
                 levelBackgroundSrc = 'images/ФПСНутро.png'; 
-                
-                // Если с музыкой проблема, временно поставь старую, чтобы проверить, запустится ли игра
-                // levelMusic = backgroundMusic; 
                 levelMusic = morningMusic; 
-
                 startAction = () => this.ui.showStoryScreen(
                     "РАССВЕТ!", 
                     "Лучи солнца пробиваются сквозь тучи.<br>Мы пережили эту ночь!<br><br>Но враги не сдаются. В бой!",
                     () => this.ui.showLunaIntro()
                 );
                 break;
-
-            // Остальные уровни (1, 5, 7-10)
+            case 6:
+                levelBackgroundSrc = 'images/ФПСНкристалл.png'; 
+                            levelMusic = crystalMusic; 
+                            // Запускаем сначала Дёрпи. Когда нажмут кнопку, сработает код выше и покажет Историю.
+                            startAction = () => this.ui.showDerpyIntro(); 
+                break;
+            case 7:
+                levelBackgroundSrc = 'images/ФПСНкристалл.png'; 
+                            levelMusic = crystalMusic; 
+                            // Запускаем сначала Дёрпи. Когда нажмут кнопку, сработает код выше и покажет Историю.
+                break;
             default:
-                // Используются настройки по умолчанию, в 5 уровне фон ночной
-                if (levelNumber === 5) {
+                if (levelNumber === 5) { // Запасной вариант
                     levelBackgroundSrc = 'images/ФПСночь.png';
                     levelMusic = nightMusic;
                 }
                 break;
         }
 
-        // Применяем настройки фона
-        // Важно: проверяем именно src, чтобы не перезагружать картинку лишний раз
         if (!backgroundImage.src.includes(levelBackgroundSrc)) {
             backgroundImage.src = levelBackgroundSrc;
         }
         
         this.activeMusic = levelMusic;
 
-        // Запускаем логику уровня
         if (options.skipIntro) {
             this.startGame();
         } else {
@@ -326,7 +359,7 @@ export default class Game {
 
     stopMusic() {
         // Останавливаем ВСЕ ТРИ трека, чтобы они не накладывались
-        [backgroundMusic, nightMusic, eveningMusic, morningMusic].forEach(track => {
+        [backgroundMusic, nightMusic, eveningMusic, morningMusic, crystalMusic].forEach(track => {
             track.pause();
             track.currentTime = 0;
         });
@@ -413,7 +446,10 @@ export default class Game {
         this.towers = [];
         this.projectiles = [];
         this.effects = [];
-        this.scaledBuildSlots.forEach(slot => slot.occupied = false);
+        // Сбрасываем занятость только если массив слотов существует
+        if (this.scaledBuildSlots) {
+            this.scaledBuildSlots.forEach(slot => slot.occupied = false);
+        }
 
         this.wave = 0;
         this.lives = 10;
@@ -540,6 +576,41 @@ export default class Game {
             // Можно добавить звук превращения, если есть
         }
     }
+    // В game.js, метод spawnSombraCrystals
+    spawnSombraCrystals() {
+        console.log("Призываю кристаллы Сомбры!");
+        const crystalCount = 5;
+        
+        // 1. Ищем свободные слоты
+        // Важно: проверяем существование массива, чтобы не было ошибки
+        if (!this.scaledBuildSlots || this.scaledBuildSlots.length === 0) return;
+
+        const availableSlots = this.scaledBuildSlots.filter(slot => !slot.occupied);
+        
+        // 2. Перемешиваем
+        availableSlots.sort(() => Math.random() - 0.5);
+
+        // 3. Ставим кристаллы
+        for (let i = 0; i < Math.min(crystalCount, availableSlots.length); i++) {
+            const slot = availableSlots[i];
+            
+            // ВАЖНО: передаем пустой массив [] в качестве пути
+            const crystal = new Enemy('SombraCrystal', []); 
+            
+            // Координаты берем из слота
+            crystal.x = slot.x;
+            crystal.y = slot.y;
+            
+            // Занимаем слот
+            slot.occupied = true;
+            
+            // Добавляем в игру
+            this.enemies.push(crystal);
+        }
+        
+        // Сообщение игроку (без паузы)
+        console.log("Кристаллы появились!");
+    }
 
     startWave() {
         if (this.waveInProgress) return;
@@ -572,6 +643,10 @@ export default class Game {
                 // Проверка на Кризалис
                 if (type === 'Crizalis') {
                     this.triggerChrysalisEffect();
+                }
+                if (type === 'KingSombra') {
+                    this.spawnSombraCrystals(); // Спавним кристаллы
+                    //this.ui.showStoryScreen("СОМБРА!", "Уничтожьте его Темные Кристаллы, чтобы нанести урон!", () => this.startGame());
                 }
 
                 enemiesSpawnedCount++;
@@ -611,7 +686,6 @@ export default class Game {
     }
 
     // --- ОБРАБОТЧИКИ ВВОДА ---
-
     handleMouseMove(event) {
         const pos = this.getMousePos(event);
         this.mouse.x = pos.x;
@@ -622,7 +696,6 @@ export default class Game {
         const pos = this.getMousePos(event);
         const mouseX = pos.x;
         const mouseY = pos.y;
-        
         
         // --- Логика продажи ---
         if (this.isSelling) {
@@ -635,21 +708,17 @@ export default class Game {
                 const tower = this.towers[towerIndex];
                 if (tower.isAsleep) {
                     console.log("Нельзя продать спящую башню!");
-                    // Можно добавить звук ошибки или мигание, но пока просто выходим
                     return; 
                 }
                 const refund = Math.floor(TOWER_CONFIG[tower.type].price * SELL_REFUND_PERCENTAGE);
                 this.money += refund;
 
-                // Освобождаем слот(ы)
                 const startSlot = this.scaledBuildSlots.find(s => s.x === tower.x && s.y === tower.y);
                 if (startSlot) startSlot.occupied = false;
                 if (tower.isPatrolTower && tower.patrolEnd) {
                     const endSlot = this.scaledBuildSlots.find(s => s.x === tower.patrolEnd.x && s.y === tower.patrolEnd.y);
                     if (endSlot) endSlot.occupied = false;
                 }
-                
-                        
                 this.towers.splice(towerIndex, 1);
             }
             this.cancelModes();
@@ -661,15 +730,9 @@ export default class Game {
             const nearestSlot = this.findNearestFreeSlot(mouseX, mouseY);
             
             if (nearestSlot && this.patrolTowerRef) {
-                // Запоминаем координаты
                 this.patrolTowerRef.patrolEnd = { x: nearestSlot.x, y: nearestSlot.y };
-                
-                // --- ВАЖНО: Запоминаем ИНДЕКС слота второй точки ---
-                // Это нужно, чтобы при изменении экрана точка не "уехала"
                 const slotIndex = this.scaledBuildSlots.indexOf(nearestSlot);
                 this.patrolTowerRef.patrolEndSlotIndex = slotIndex;
-                // --------------------------------------------------
-                
                 nearestSlot.occupied = true;
                 this.cancelModes();
             }
@@ -685,15 +748,12 @@ export default class Game {
             if (config.isAbility) {
                 if (this.money >= config.price) {
                     this.money -= config.price;
-                    
-                    // Создаем эффект Луны в точке клика (mouseX, mouseY)
                     this.effects.push(new LunaEffect(mouseX, mouseY, this, config));
-                    
-                    this.cancelModes(); // Сбрасываем курсор
+                    this.cancelModes(); 
                 } else {
                     console.log("Не хватает денег!");
                 }
-                return; // ВАЖНО: Выходим, чтобы не искать слоты
+                return;
             }
 
             // 2. ЕСЛИ ЭТО ОБЫЧНАЯ БАШНЯ
@@ -705,10 +765,7 @@ export default class Game {
                 
                 if (this.money >= price) {
                     this.money -= price;
-                    
-                    // Создаем башню (передаем slotIndex!)
                     const newTower = new Tower(nearestSlot.x, nearestSlot.y, towerType, this, slotIndex);
-                    
                     this.towers.push(newTower);
                     nearestSlot.occupied = true;
 
@@ -724,7 +781,6 @@ export default class Game {
                     this.cancelModes();
                 }
             } else {
-                // Если кликнули мимо слота - отменяем стройку
                 this.cancelModes();
             }
         }
@@ -745,25 +801,19 @@ export default class Game {
 
         // 2. ОСВОБОЖДАЕМ СЛОТ (УСИЛЕННАЯ ЛОГИКА)
         let slotFreed = false;
-
-        // Попытка А: По индексу (быстро)
         if (tower.slotIndex !== undefined && this.scaledBuildSlots[tower.slotIndex]) {
             this.scaledBuildSlots[tower.slotIndex].occupied = false;
             slotFreed = true;
         }
 
-        // Попытка Б: Если индекс не сработал, ищем слот по координатам (медленно, но надежно)
         if (!slotFreed) {
             for (const slot of this.scaledBuildSlots) {
-                // Если координаты совпадают (с небольшой погрешностью)
                 if (Math.abs(slot.x - tower.x) < 5 && Math.abs(slot.y - tower.y) < 5) {
                     slot.occupied = false;
                     break;
                 }
             }
         }
-
-        // 3. Удаляем башню
         const index = this.towers.indexOf(tower);
         if (index > -1) {
             this.towers.splice(index, 1);
@@ -777,8 +827,6 @@ export default class Game {
             this.ui.updateTowerInfoPanel(null); // Скрываем, если не хватает денег
             return;
         }
-        
-        // Если кликнули по уже выбранной (отмена)
         if (this.isBuilding && this.selectedTowerType === type) {
             this.cancelModes();
         } else { // Если выбрали новую
@@ -803,7 +851,7 @@ export default class Game {
         this.selectedTowerType = null;
         this.isPlacingPatrolPoint = false;
         this.patrolTowerRef = null;
-        this.ui.updateTowerInfoPanel(null); // <<< ДОБАВЬТЕ ЭТУ СТРОКУ
+        this.ui.updateTowerInfoPanel(null); 
     }
     
     // --- ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ---
@@ -820,20 +868,28 @@ export default class Game {
         // 1. Обновляем размер клеточки
         this.SCALED_BUILD_SLOT_SIZE = BUILD_SLOT_SIZE * this.scale;
 
-        // 2. Пересчитываем путь врагов
-        this.scaledPath = path.map(p => this.scaleCoords(p));
+        // 2. Пересчитываем путь врагов (на основе ТЕКУЩЕГО ВЫБРАННОГО ПУТИ)
+        this.scaledPath = this.currentRawPath.map(p => this.scaleCoords(p));
 
-        // 3. Пересчитываем координаты слотов (сетку)
-        // Мы берем ОРИГИНАЛЬНЫЕ координаты из конфига (buildSlots) и умножаем на новый масштаб
-        if (this.scaledBuildSlots && this.scaledBuildSlots.length === buildSlots.length) {
-            for (let i = 0; i < this.scaledBuildSlots.length; i++) {
-                const originalSlot = buildSlots[i];
+        // 3. Пересчитываем координаты слотов (на основе ТЕКУЩИХ ВЫБРАННЫХ СЛОТОВ)
+        // ВАЖНО: Мы пересоздаем массив scaledBuildSlots на основе currentRawSlots
+        if (this.currentRawSlots) {
+             this.scaledBuildSlots = this.currentRawSlots.map((originalSlot, index) => {
                 const newCoords = this.scaleCoords(originalSlot);
                 
-                // Обновляем координаты в текущей сетке
-                this.scaledBuildSlots[i].x = newCoords.x;
-                this.scaledBuildSlots[i].y = newCoords.y;
-            }
+                // Сохраняем статус occupied, если он был (хотя при смене уровня все сбрасывается)
+                // Но при ресайзе окна это важно
+                let wasOccupied = false;
+                if (this.scaledBuildSlots && this.scaledBuildSlots[index]) {
+                    wasOccupied = this.scaledBuildSlots[index].occupied;
+                }
+
+                return {
+                    x: newCoords.x,
+                    y: newCoords.y,
+                    occupied: wasOccupied // Переносим статус
+                };
+             });
         }
         
         // --- 4. ГЛАВНОЕ: ДВИГАЕМ УЖЕ ПОСТРОЕННЫЕ БАШНИ ---
@@ -910,52 +966,27 @@ export default class Game {
         if (config.isAbility) {
             const x = this.mouse.x;
             const y = this.mouse.y;
-            
-            // А. Рисуем картинку прицела
             const img = towerImages['Прицел'];
             if (img && img.complete) {
-                // Размер прицела (подстраивается под масштаб экрана)
                 const size = 448 * this.scale; 
                 this.ctx.drawImage(img, x - size / 2, y - size / 2, size, size);
             }
-
-            // Б. Рисуем тонкий контур радиуса ВЗРЫВА (чтобы понимать зону поражения)
-            // Но убираем заливку, чтобы не было похоже на "радиус атаки башни"
             const radius = config.aoeRadius * this.scale;
             this.ctx.beginPath();
             this.ctx.arc(x, y, radius, 0, Math.PI * 2);
-            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'; // Полупрозрачный белый контур
+            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
             this.ctx.lineWidth = 2;
-            this.ctx.stroke(); // Только контур, без fill()
-            
-            return; // Выходим, чтобы не рисовать зеленые квадраты
+            this.ctx.stroke(); 
+            return;
         }
         const nearestSlot = this.findNearestFreeSlot(this.mouse.x, this.mouse.y);
         if (nearestSlot) {
             const config = TOWER_CONFIG[this.selectedTowerType];
-
-            if (config.isAbility) {
-                const x = this.mouse.x;
-                const y = this.mouse.y;
-                const radius = config.aoeRadius * this.scale;
-
-                this.ctx.beginPath();
-                this.ctx.arc(x, y, radius, 0, Math.PI * 2);
-                this.ctx.fillStyle = 'rgba(100, 200, 255, 0.3)'; // Синий круг
-                this.ctx.strokeStyle = 'white';
-                this.ctx.lineWidth = 2;
-                this.ctx.fill();
-                this.ctx.stroke();
-                return;
-            }
             const canAfford = this.money >= config.price;
-            
             const x = nearestSlot.x; 
             const y = nearestSlot.y;
             const size = this.SCALED_BUILD_SLOT_SIZE;
             const halfSize = size / 2;
-    
-            // Радиус
             this.ctx.beginPath();
             this.ctx.arc(x, y, config.range * this.scale, 0, Math.PI * 2);
             this.ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
@@ -963,8 +994,6 @@ export default class Game {
             this.ctx.lineWidth = 2;
             this.ctx.fill();
             this.ctx.stroke();
-    
-            // Слот
             this.ctx.fillStyle = canAfford ? 'rgba(170, 255, 170, 0.4)' : 'rgba(255, 170, 170, 0.4)';
             this.ctx.fillRect(x - halfSize, y - halfSize, size, size);
         }

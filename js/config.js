@@ -7,7 +7,7 @@ function createImage(filename) {
 
 export const TOWER_CONFIG = {
     'Пинки Пай': {
-        name: 'Пинки Пай', price: 45, range: 110, damage: 3.5, isMelee: true, damageTickRate: 6,
+        name: 'Пинки Пай', price: 45, range: 110, damage: 2, isMelee: true, damageTickRate: 6,
         frameCount: 12, frameWidth: 112, frameSpeed: 0.8,
         description: {
             damage: "3.5 (x6/сек)", // Урон * (60 кадров / 10 тикрейт)
@@ -89,6 +89,22 @@ export const TOWER_CONFIG = {
         }
     },
 
+    'Дёрпи': {
+        name: 'Дёрпи Хувс', price: 100, range: 250, damage: 0, 
+        isSupport: true, // Флаг поддержки
+        fireRate: 200, // Очень медленная (раз в 3-4 секунды)
+        buffDuration: 300, // Бафф длится 5 секунд
+        missChance: 0.15, // 15% шанс промазать
+        frameCount: 12, frameWidth: 106, frameSpeed: 0.3,
+        projectileType: 'maffin', // Используем маффин как снаряд
+        description: {
+            damage: "Бафф",
+            range: 250,
+            speed: "Редко",
+            special: "Кидает маффины. Баффает башни (Урон/Скор.), но может случайно усилить врага!"
+        }
+    },
+
 
 };
 
@@ -122,6 +138,9 @@ export const TOWER_CONFIG = {
     'Принцесса Луна Атака':         createImage('ЛунаАтака2.png'),
     'Иголка':                       createImage('Иголка.png'),
     'Прицел':                       createImage('Прицел.png'),
+    'Дёрпи':                        createImage('ДёрпиСтоит.png'),
+    'Дёрпи Атака':                  createImage('ДёрпиАтака.png'),
+    'Маффин':                       createImage('Маффин.png'), // Снаряд
 };
 
 export const towerSounds = {
@@ -132,6 +151,7 @@ export const towerSounds = {
     'Радуга Дэш':         new Audio('audio/Крылья.mp3'),
     'Рэрити':             new Audio('audio/Бросок.mp3'),
     'Принцесса Луна':     new Audio('audio/Взрыв.mp3'),
+    'Дёрпи':              new Audio('audio/Помидор.mp3'),
 };
 
 export function playSound(name) {
@@ -796,6 +816,70 @@ export function playSound(name) {
             yOffset: -10,
             hitboxRadius: 25,
         },
+
+         SlaveSpell1: {
+        name: "Mind Controlled", // Было "Одержимый"
+        color: "green", speed: 2.5, maxHealth: 200, bounty: 20,
+        width: 84, height: 89, frameWidth: 84, hitboxRadius: 25
+    },
+    SlaveSpell2: {
+        name: "Mind Controlled", // Было "Одержимый"
+        color: "green", speed: 2.5, maxHealth: 200, bounty: 20,
+        width: 96, height: 85, frameWidth: 106, hitboxRadius: 30
+    },
+    SlaveSpell3: {
+        name: "Mind Controlled", // Было "Одержимый"
+        color: "green", speed: 2.5, maxHealth: 200, bounty: 20,
+        width: 78, height: 92, frameWidth: 78, hitboxRadius: 25
+    },
+    SlaveSpell4: {
+        name: "Mind Controlled", // Было "Одержимый"
+        color: "green", speed: 2.5, maxHealth: 200, bounty: 20,
+        width: 106, height: 88, frameWidth: 116, hitboxRadius: 25
+    },
+    SlaveChains: {
+        name: "Crystal Slave", // Было "Узник"
+        color: "grey", speed: 1.0, maxHealth: 700, bounty: 25,
+        width: 318, height: 96, frameWidth: 318, hitboxRadius: 50
+    },
+    ShadowPony: {
+        name: "ShadowPony", // Было "Тень"
+        color: "black", speed: 4.0, maxHealth: 300, bounty: 35,
+        width: 75, height: 96, frameWidth: 74, hitboxRadius: 25, yOffset: -20
+    },
+    Shadow: {
+        name: "Shadow", // Было "Тень"
+        color: "black", speed: 4.0, maxHealth: 1000, bounty: 40,
+        width: 463, height: 237, frameWidth: 563, hitboxRadius: 30, yOffset: -20
+    },
+    KingSombra: {
+        name: "King Sombra", 
+        color: "purple", speed: 1.0, maxHealth: 15000, bounty: 500,
+        width: 114, height: 130, frameWidth: 114, hitboxRadius: 50, yOffset: -30
+    },
+
+    // --- КРИЗАЛИС ---
+    FakeCadence: {
+        name: "Cadence?", // Было "Принцесса Каденс?"
+        color: "pink", speed: 1.5, maxHealth: 5500, bounty: 400,
+        width: 120, height: 106, frameWidth: 120, hitboxRadius: 35,
+        isStealth: true, 
+        yOffset: -20
+    },
+    TrueChrysalis: {
+        name: "Queen Chrysalis", // Было "Королева Кризалис"
+        color: "black", speed: 1.0, maxHealth: 6000, bounty: 400,
+        width: 98, height: 122, frameWidth: 98, hitboxRadius: 50,
+        isStealth: false,
+        yOffset: -40
+    },
+    SombraCrystal: {
+        name: "Dark Crystal", 
+        color: "purple", speed: 0, maxHealth: 2000, bounty: 100, // Скорость 0
+        width: 50, height: 65, frameWidth: 50, hitboxRadius: 30,
+        isStatic: true, // НОВЫЙ ФЛАГ: Стоит на месте
+        frameCount: 1
+    },
         
         
     };
@@ -855,6 +939,18 @@ export function playSound(name) {
     PereFly:         createImage("ПеревёртышЛетит.png"),
     GildaFly:        createImage("ГрилдаЛетит.png"),
     Crizalis:        createImage("Кризалис.png"),
+    SlaveSpell1:      createImage("ПР.png"),   // Раб под чарами
+    SlaveSpell2:      createImage("ВР.png"),   // Раб под чарами
+    SlaveSpell3:      createImage("ТР.png"),   // Раб под чарами
+    SlaveSpell4:      createImage("ЧР.png"),   // Раб под чарами
+    SlaveChains:     createImage("РабыСЦепями.png"),    // Раб в цепях
+    ShadowPony:      createImage("ШедоуПони.png"),  // Теневой пони
+    Shadow:          createImage("Шедоу.png"),  // Теневой пони
+    FakeCadence:     createImage("КаденсДляКризалис.png"), // Лже-Каденс
+    TrueChrysalis:   createImage("КризалисИдёт.png"), // Истинная форма
+    KingSombra:       createImage("Сомбра.png"),
+    SombraCrystal:    createImage("КристаллСомбры.png"),
+    CadenceTransform: createImage("КризалиТ.png"),
 
 
 };
@@ -1154,6 +1250,173 @@ for (const key in enemyImages) {
         ];
 
 
+        export const pathLevel6 = [
+    { x: 0, y: 850 }, // Старт снизу слева
+    { x: 200, y: 850 },  // Вверх до упора
+    { x: 200, y: 225 },  // Вправо
+    { x: 410, y: 225 },  // Вниз
+    { x: 410, y: 575 },  // Вправо
+    { x: 1300, y: 575 },  // Вверх
+    { x: 1300, y: 775 }, // Вправо
+    { x: 900, y: 775 }, // Выход снизу справа
+    { x: 900, y: 225 },  // Вверх
+    { x: 1536, y: 225 }, // Вправо
+];
+
+export const buildSlotsLevel6 = [
+    // 1. Самая левая колонка (слева от первой дороги)
+    { x: 29, y: 950, occupied: false }, { x: 79, y: 950, occupied: false },
+    { x: 129, y: 950, occupied: false }, { x: 179, y: 950, occupied: false },
+    { x: 229, y: 950, occupied: false }, { x: 279, y: 950, occupied: false },
+
+    { x: 29, y: 800, occupied: false }, { x: 79, y: 800, occupied: false },
+    { x: 129, y: 800, occupied: false },
+
+    // 2. Между первой и второй дорогой (в центре "U")
+    { x: 129, y: 750, occupied: false }, { x: 129, y: 700, occupied: false },
+    { x: 129, y: 650, occupied: false }, { x: 129, y: 600, occupied: false },
+    { x: 129, y: 550, occupied: false }, { x: 129, y: 500, occupied: false },
+    { x: 129, y: 450, occupied: false }, { x: 129, y: 400, occupied: false },
+    { x: 129, y: 350, occupied: false }, { x: 129, y: 300, occupied: false },
+    { x: 129, y: 250, occupied: false }, { x: 129, y: 200, occupied: false },
+
+    { x: 179, y: 150, occupied: false }, { x: 229, y: 150, occupied: false },
+    { x: 329, y: 150, occupied: false }, { x: 379, y: 150, occupied: false },
+    { x: 429, y: 150, occupied: false }, { x: 479, y: 150, occupied: false },
+    { x: 279, y: 150, occupied: false }, { x: 129, y: 150, occupied: false },
+
+    { x: 479, y: 700, occupied: false },
+    { x: 479, y: 650, occupied: false }, { x: 479, y: 500, occupied: false },
+    { x: 479, y: 450, occupied: false }, { x: 479, y: 400, occupied: false },
+    { x: 479, y: 350, occupied: false }, { x: 479, y: 300, occupied: false },
+    { x: 479, y: 250, occupied: false }, { x: 479, y: 200, occupied: false },
+
+    { x: 529, y: 500, occupied: false }, { x: 529, y: 150, occupied: false },
+    { x: 529, y: 450, occupied: false }, { x: 529, y: 400, occupied: false },
+    { x: 529, y: 350, occupied: false }, { x: 529, y: 300, occupied: false },
+    { x: 529, y: 250, occupied: false }, { x: 529, y: 200, occupied: false },
+    
+    { x: 829, y: 500, occupied: false }, { x: 829, y: 150, occupied: false },
+    { x: 829, y: 450, occupied: false }, { x: 829, y: 400, occupied: false },
+    { x: 829, y: 350, occupied: false }, { x: 829, y: 300, occupied: false },
+    { x: 829, y: 250, occupied: false }, { x: 829, y: 200, occupied: false },
+    { x: 779, y: 500, occupied: false }, { x: 779, y: 150, occupied: false },
+    { x: 779, y: 450, occupied: false }, { x: 779, y: 400, occupied: false },
+    { x: 779, y: 350, occupied: false }, { x: 779, y: 300, occupied: false },
+    { x: 779, y: 250, occupied: false }, { x: 779, y: 200, occupied: false },
+
+    { x: 729, y: 500, occupied: false },
+    { x: 729, y: 450, occupied: false }, { x: 729, y: 400, occupied: false },
+    { x: 729, y: 350, occupied: false }, { x: 729, y: 300, occupied: false },
+    
+    { x: 679, y: 500, occupied: false },
+    { x: 679, y: 450, occupied: false }, { x: 679, y: 400, occupied: false },
+    { x: 679, y: 350, occupied: false }, { x: 679, y: 300, occupied: false },
+
+    { x: 629, y: 500, occupied: false },
+    { x: 629, y: 450, occupied: false }, { x: 629, y: 400, occupied: false },
+    { x: 629, y: 350, occupied: false }, { x: 629, y: 300, occupied: false },
+
+    { x: 579, y: 500, occupied: false },
+    { x: 579, y: 450, occupied: false }, { x: 579, y: 400, occupied: false },
+    { x: 579, y: 350, occupied: false }, { x: 579, y: 300, occupied: false },
+
+    { x: 429, y: 700, occupied: false }, { x: 429, y: 650, occupied: false },
+    { x: 379, y: 700, occupied: false }, { x: 379, y: 650, occupied: false },
+    { x: 329, y: 700, occupied: false }, { x: 329, y: 650, occupied: false },
+    { x: 529, y: 700, occupied: false }, { x: 579, y: 650, occupied: false },
+    { x: 629, y: 700, occupied: false }, { x: 679, y: 650, occupied: false },
+    { x: 729, y: 700, occupied: false }, { x: 779, y: 650, occupied: false },
+    { x: 579, y: 700, occupied: false }, { x: 529, y: 650, occupied: false },
+    { x: 679, y: 700, occupied: false }, { x: 629, y: 650, occupied: false },
+    { x: 779, y: 700, occupied: false }, { x: 729, y: 650, occupied: false },
+    { x: 829, y: 650, occupied: false }, { x: 829, y: 700, occupied: false },
+
+    { x: 279, y: 900, occupied: false }, { x: 279, y: 850, occupied: false },
+    { x: 279, y: 800, occupied: false }, { x: 279, y: 750, occupied: false },
+    { x: 279, y: 700, occupied: false }, { x: 279, y: 650, occupied: false },
+    { x: 279, y: 600, occupied: false }, { x: 279, y: 550, occupied: false },
+    { x: 279, y: 500, occupied: false },
+    { x: 279, y: 450, occupied: false }, { x: 279, y: 400, occupied: false },
+    { x: 279, y: 350, occupied: false }, { x: 279, y: 300, occupied: false },
+    { x: 329, y: 500, occupied: false },
+    { x: 329, y: 450, occupied: false }, { x: 329, y: 400, occupied: false },
+    { x: 329, y: 350, occupied: false }, { x: 329, y: 300, occupied: false },
+    { x: 329, y: 600, occupied: false }, { x: 329, y: 550, occupied: false },
+    { x: 429, y: 750, occupied: false },
+    { x: 379, y: 800, occupied: false }, { x: 379, y: 750, occupied: false },
+    { x: 329, y: 900, occupied: false }, { x: 329, y: 850, occupied: false },
+    { x: 329, y: 800, occupied: false }, { x: 329, y: 750, occupied: false },
+
+    { x: 779, y: 750, occupied: false }, { x: 729, y: 750, occupied: false },
+    { x: 779, y: 800, occupied: false }, { x: 729, y: 800, occupied: false },
+    { x: 779, y: 850, occupied: false }, 
+    { x: 829, y: 750, occupied: false }, { x: 829, y: 800, occupied: false },
+    { x: 879, y: 850, occupied: false }, { x: 829, y: 850, occupied: false },
+
+    { x: 929, y: 850, occupied: false }, { x: 979, y: 850, occupied: false },
+    { x: 1029, y: 850, occupied: false }, { x: 1079, y: 850, occupied: false },
+    { x: 1129, y: 850, occupied: false }, { x: 1179, y: 850, occupied: false },
+    { x: 1229, y: 850, occupied: false }, { x: 1279, y: 850, occupied: false },
+    { x: 1329, y: 850, occupied: false }, { x: 1379, y: 850, occupied: false },
+
+    { x: 1379, y: 800, occupied: false }, { x: 1379, y: 700, occupied: false },
+    { x: 1379, y: 750, occupied: false },
+    { x: 1379, y: 600, occupied: false }, { x: 1379, y: 650, occupied: false },
+    { x: 1379, y: 500, occupied: false }, { x: 1379, y: 550, occupied: false },
+    { x: 1379, y: 400, occupied: false }, { x: 1379, y: 450, occupied: false },
+    { x: 1379, y: 300, occupied: false }, { x: 1379, y: 350, occupied: false },
+
+    { x: 1429, y: 350, occupied: false }, { x: 1479, y: 300, occupied: false },
+    { x: 1429, y: 300, occupied: false },
+
+    { x: 979, y: 500, occupied: false },
+    { x: 1029, y: 500, occupied: false }, { x: 1079, y: 500, occupied: false },
+    { x: 1129, y: 500, occupied: false }, { x: 1179, y: 500, occupied: false },
+    { x: 1229, y: 500, occupied: false }, { x: 1279, y: 500, occupied: false },
+    { x: 1329, y: 500, occupied: false },
+
+    { x: 979, y: 650, occupied: false },
+    { x: 1029, y: 650, occupied: false }, { x: 1079, y: 650, occupied: false },
+    { x: 1129, y: 650, occupied: false }, { x: 1179, y: 650, occupied: false },
+    { x: 1229, y: 650, occupied: false },
+    { x: 979, y: 700, occupied: false },
+    { x: 1029, y: 700, occupied: false }, { x: 1079, y: 700, occupied: false },
+    { x: 1129, y: 700, occupied: false }, { x: 1179, y: 700, occupied: false },
+    { x: 1229, y: 700, occupied: false },
+
+    { x: 979, y: 450, occupied: false },
+    { x: 1029, y: 450, occupied: false }, { x: 1079, y: 450, occupied: false },
+    { x: 1129, y: 450, occupied: false }, { x: 1179, y: 450, occupied: false },
+    { x: 1229, y: 450, occupied: false }, { x: 1279, y: 450, occupied: false },
+    { x: 1329, y: 450, occupied: false },
+    { x: 979, y: 400, occupied: false },
+    { x: 1029, y: 400, occupied: false }, { x: 1079, y: 400, occupied: false },
+    { x: 1129, y: 400, occupied: false }, { x: 1179, y: 400, occupied: false },
+    { x: 1229, y: 400, occupied: false }, { x: 1279, y: 400, occupied: false },
+    { x: 1329, y: 400, occupied: false },
+    { x: 979, y: 300, occupied: false },
+    { x: 1029, y: 300, occupied: false }, { x: 1079, y: 300, occupied: false },
+    { x: 1129, y: 300, occupied: false }, { x: 1179, y: 300, occupied: false },
+    { x: 1229, y: 300, occupied: false }, { x: 1279, y: 300, occupied: false },
+    { x: 1329, y: 300, occupied: false },
+    { x: 979, y: 350, occupied: false },
+    { x: 1029, y: 350, occupied: false }, { x: 1079, y: 350, occupied: false },
+    { x: 1129, y: 350, occupied: false }, { x: 1179, y: 350, occupied: false },
+    { x: 1229, y: 350, occupied: false }, { x: 1279, y: 350, occupied: false },
+    { x: 1329, y: 350, occupied: false },
+    { x: 979, y: 150, occupied: false },
+    { x: 1029, y: 150, occupied: false }, { x: 1079, y: 150, occupied: false },
+    { x: 1129, y: 150, occupied: false }, { x: 1179, y: 150, occupied: false },
+    { x: 1229, y: 150, occupied: false }, { x: 1279, y: 150, occupied: false },
+    { x: 1329, y: 150, occupied: false }, { x: 879, y: 150, occupied: false },
+    { x: 929, y: 150, occupied: false },  { x: 1379, y: 150, occupied: false },
+    { x: 1429, y: 150, occupied: false }, { x: 1479, y: 150, occupied: false },
+
+
+];
+
+
         export const SELL_REFUND_PERCENTAGE = 0.75;
         export const ENEMY_INTERVAL_MS = 500;
         export const PAUSE_BETWEEN_GROUPS_MS = 1000;
@@ -1169,7 +1432,7 @@ for (const key in enemyImages) {
         export const nightBackground = createImage('ФПСНночь.png');
         export const eveningBackground = createImage('ФПСНвечер.png');
         export const morningBackground = createImage('ФПСНутро.png');
-
+        export const crystalBackground = createImage('ФПСНкристалл.png');
 
         export const LEVELS_CONFIG = {
                     
@@ -1575,6 +1838,168 @@ for (const key in enemyImages) {
                             ]
                         }
                     ],
+
+                    5: [
+                        {
+                            name: "Тени",
+                            enemies: [
+                                { type: "Parasprits", count: 7, interval: 500 },
+                            ]
+                        },
+                        {
+                            name: "Тени2",
+                            enemies: [
+                                { type: "Manticora", count: 5, interval: 600 },
+                                { type: "GildaFly", count: 5, interval: 700 },
+                            ]
+                        },
+                        {
+                            name: "Мыши!",
+                            enemies: [
+                                { type: "DogS", count: 5, interval: 500 },
+                                { type: "DogL", count: 5, interval: 900 },
+                                { type: "DogM", count: 5, interval: 700 },
+                            ]
+                        },
+                        {
+                            name: "Страж",
+                            enemies: [
+                                { type: "Wolf", count: 5, interval: 700 },
+                                { type: "GildaFly", count: 10, interval: 700 },
+                            ]
+                        },
+                        {
+                            name: "Страж и Флат",
+                            enemies: [
+                                { type: "PereWalk", count: 10, interval: 600 },
+                                { type: "DogS", count: 10, interval: 500 },
+                                { type: "Parasprits", count: 5, interval: 200 },
+                            ]
+                        },
+                        {
+                            name: "Летучие",
+                            enemies: [
+                                { type: "PereWalk", count: 8, interval: 1500 },
+                                { type: "PereFly", count: 8, interval: 1000 },
+                                { type: "Manticora", count: 5, interval: 400 },
+                                { type: "DogM", count: 5, interval: 800 },
+                            ]
+                        },
+                        {
+                            name: "Все вместе",
+                            enemies: [
+                                { type: "DogS", count: 7, interval: 500 },
+                                { type: "DogL", count: 7, interval: 900 },
+                                { type: "DogM", count: 7, interval: 700 },
+                                { type: "PereWalk", count: 9, interval: 1200 },
+                                { type: "PereFly", count: 9, interval: 1000 },
+                            ]
+                        },
+                        {
+                            name: "Большие проблемы",
+                            enemies: [
+                                { type: "Wolf", count: 7, interval: 300 },
+                                { type: "PereWalk", count: 10, interval: 500 },
+                                { type: "PereFly", count: 10, interval: 700 },
+                                { type: "Parasprits", count: 10, interval: 500 },
+                            ]
+                        },
+                        {
+                            name: "Волки и леталки",
+                            enemies: [
+                                { type: "DogS", count: 10, interval: 500 },
+                                { type: "DogL", count: 10, interval: 900 },
+                                { type: "DogM", count: 10, interval: 700 },
+                                { type: "Wolf", count: 3, interval: 300 },
+                            ]
+                        },
+                        {
+                            name: "Финал (Босс)",
+                            enemies: [
+                                { type: "Crizalis", count: 1, interval: 1000 },
+                                { type: "PereWalk", count: 15, interval: 500 },
+                                { type: "PereFly", count: 15, interval: 700 },
+                            ]
+                        }
+                    ],
+
+                    6: [
+                        {
+                            name: "Тени",
+                            enemies: [
+                                { type: "SlaveSpell1", count: 7, interval: 1500 },
+                            ]
+                        },
+                        {
+                            name: "Тени2",
+                            enemies: [
+                                { type: "SlaveSpell1", count: 3, interval: 600 },
+                                { type: "SlaveSpell2", count: 3, interval: 400 },
+                                { type: "SlaveSpell3", count: 3, interval: 800 },
+                            ]
+                        },
+                        {
+                            name: "Мыши!",
+                            enemies: [
+                                { type: "SlaveChains", count: 3, interval: 1500 },
+                                { type: "SlaveSpell4", count: 10, interval: 900 },
+                                { type: "PereWalk", count: 10, interval: 500 },
+                            ]
+                        },
+                        {
+                            name: "Страж",
+                            enemies: [
+                                { type: "ShadowPony", count: 10, interval: 700 },
+                                { type: "SlaveChains", count: 10, interval: 1500 },
+                            ]
+                        },
+                        {
+                            name: "Страж и Флат",
+                            enemies: [
+                                { type: "ShadowPony", count: 10, interval: 600 },
+                                { type: "SlaveSpell2", count: 7, interval: 400 },
+                                { type: "SlaveSpell3", count: 5, interval: 800 },
+                            ]
+                        },
+                        {
+                            name: "Летучие",
+                            enemies: [
+                                { type: "Shadow", count: 4, interval: 800 },
+                                { type: "PereFly", count: 10, interval: 500 },
+                            ]
+                        },
+                        {
+                            name: "Все вместе",
+                            enemies: [
+                                { type: "Shadow", count: 4, interval: 800 },
+                                { type: "ShadowPony", count: 7, interval: 900 },
+                                { type: "SlaveSpell1", count: 7, interval: 700 },
+                                { type: "SlaveSpell3", count: 7, interval: 1200 },
+                                { type: "SlaveSpell4", count: 7, interval: 1000 },
+                            ]
+                        },
+                        {
+                            name: "Большие проблемы",
+                            enemies: [
+                                { type: "Shadow", count: 5, interval: 800 },
+                                { type: "ShadowPony", count: 5, interval: 900 },
+                                { type: "PereFly", count: 10, interval: 700 },
+                                { type: "SlaveChains", count: 8, interval: 1500 },
+                            ]
+                        },
+                        {
+                            name: "Волки и леталки",
+                            enemies: [
+                                { type: "FakeCadence", count: 1, interval: 500 },
+                            ]
+                        },
+                        {
+                            name: "Финал (Босс)",
+                            enemies: [
+                                { type: "KingSombra", count: 1, interval: 1000 },
+                            ]
+                        }
+                    ],
                 };
 
                 // --- МУЗЫКА И ЗВУКИ ---
@@ -1588,12 +2013,16 @@ nightMusic.loop = true;
 nightMusic.volume = 0.4;
 
 export const eveningMusic = new Audio('audio/Evening.mp3'); // Ночь и Вечер
-nightMusic.loop = true;
-nightMusic.volume = 0.4;
+eveningMusic.loop = true;
+eveningMusic.volume = 0.4;
 
 export const morningMusic = new Audio('audio/Morning.mp3'); // Ночь и Вечер
-nightMusic.loop = true;
-nightMusic.volume = 0.4;
+morningMusic.loop = true;
+morningMusic.volume = 0.4;
+
+export const crystalMusic = new Audio('audio/Crystal.mp3'); // Ночь и Вечер
+crystalMusic.loop = true;
+crystalMusic.volume = 0.4;
 
 export const LEVEL_START_MONEY = {
     1: 100, // Легкий старт
@@ -1602,6 +2031,7 @@ export const LEVEL_START_MONEY = {
     4: 200, // Для Найтмер Мун нужно много защиты
     5: 250,
     6: 300,
+    7: 350,
 }
 
 
