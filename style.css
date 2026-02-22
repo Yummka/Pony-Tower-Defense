@@ -6,7 +6,6 @@
     --text-color: #f3e8ff;
     --border-color: rgba(255, 255, 255, 0.1);
     
-    /* Значения по умолчанию (как у тебя было) */
     --accent-color: #ff85a1;
     --grad-start: rgb(129, 45, 77); 
     --nav-color: #a855f7;
@@ -15,20 +14,22 @@
 
 /* --- ТЕМЫ ОФОРМЛЕНИЯ --- */
 
-/* ГЛАВНОЕ МЕНЮ: Голубая тема */
+/* ГЛАВНОЕ МЕНЮ: Голубая тема (Стеклянная) */
 body.theme-main { 
-    --accent-color: #60a5fa; 
-    --grad-start: rgb(62, 120, 175); 
+    --accent-color: #a5d8ff; 
+    --grad-start: rgba(44, 82, 126, 0.7); 
     --nav-color: #3b82f6;
-    --bg-image: url('images/ФПСНутро.png'); /* Или оставь ФПСНночь.png */
+    --bg-image: url('images/ФПСНутро.png');
 }
 
-/* БАШНИ: Розовая тема */
+/* БАШНИ: Добрая пастельная тема (Четкая и светлая) */
 body.theme-towers { 
-    --accent-color: #ff6186; 
-    --grad-start: rgb(239, 157, 255); 
-    --nav-color: #fc4ae4;
-    --bg-image: url('images/ФПСН.png');
+    background: #ffdae3 !important; /* Более насыщенный розовый фон, чтобы белая плашка выделялась */
+    background-image: none !important;
+    --accent-color: #be185d; /* Малиновый для заголовков и рамок */
+    --nav-color: #db2777;
+    --text-color: #4a1a2c;
+    --panel-bg: #ffffff; /* Сделали плашку чисто белой */
 }
 
 /* ВРАГИ: Темно-красная тема */
@@ -46,25 +47,32 @@ body {
     padding: 0;
     font-family: 'Comfortaa', sans-serif;
     color: var(--text-color);
-    background-color: var(--bg-dark);
-    /* Здесь магия: градиент теперь зависит от темы */
     background: linear-gradient(var(--grad-start), rgba(26, 26, 46, 0.9)), var(--bg-image);
     background-size: cover;
     background-attachment: fixed;
-    transition: background 0.5s ease; /* Плавная смена фона */
+    transition: all 0.5s ease;
 }
 
-h1, h2, h3, .pixel-font {
+/* Центрирование заголовков */
+h1 {
     font-family: 'Press Start 2P', cursive;
-    color: var(--accent-color); /* Цвет заголовков теперь меняется! */
+    color: var(--accent-color);
+    text-align: center;
+    width: 100%;
+    margin-bottom: 40px;
+    font-size: 2rem;
+}
+
+h2, h3 {
+    font-family: 'Press Start 2P', cursive;
+    color: var(--accent-color);
     text-transform: uppercase;
 }
 
-/* Жирный и крупный текст для H1 в главном меню */
-body.theme-main h1 {
-    font-size: 2.5rem;
-    text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5);
-    letter-spacing: 2px;
+/* Желтый заголовок под цвет таблицы */
+.prep-title {
+    color: #fcc419 !important;
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
 }
 
 .wrapper {
@@ -79,24 +87,18 @@ body.theme-main h1 {
     gap: 15px;
     margin-bottom: 40px;
     padding: 15px;
-    background: rgba(10, 10, 20, 0.5);
-    backdrop-filter: blur(10px);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    border-bottom: 1px solid var(--border-color);
 }
 
 .main-nav a {
     background: rgba(0, 0, 0, 0.4);
-    border: 2px solid var(--nav-color); /* Цвет рамок кнопок меняется! */
+    border: 2px solid var(--nav-color);
     padding: 12px 25px;
     color: white;
     text-decoration: none;
-    font-size: 12px;
+    font-size: 10px;
     font-family: 'Press Start 2P', cursive;
+    border-radius: 8px;
     transition: 0.3s;
-    border-radius: 5px;
 }
 
 .main-nav a:hover, .main-nav a.active {
@@ -104,59 +106,73 @@ body.theme-main h1 {
     box-shadow: 0 0 15px var(--nav-color);
 }
 
+/* ЦЕНТРАЛЬНАЯ ПЛАШКА */
 .content-card {
     background: var(--panel-bg);
     backdrop-filter: blur(10px);
-    border: 2px solid var(--accent-color); /* Рамка карточки под цвет темы */
-    border-radius: 15px;
-    padding: 30px;
+    border: 4px solid var(--accent-color); /* Жирная малиновая обводка */
+    border-radius: 30px;
+    padding: 40px;
     margin-bottom: 30px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2); /* Тень для объема */
 }
 
 p {
     font-size: 1.1rem;
     line-height: 1.8;
-    margin-bottom: 1.5rem;
 }
 
+/* КАРТОЧКИ ВНУТРИ ПЛАШКИ */
 .tower-card {
     display: flex;
     align-items: center;
     gap: 30px;
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-left: 5px solid var(--accent-color);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-left: 8px solid var(--accent-color);
 }
 
-/* Для врагов картинка справа и поворот */
-.enemy-card {
-    flex-direction: row-reverse;
-    border-left: none;
-    border-right: 5px solid var(--accent-color);
+/* Для светлой темы: Светло-персиковые карточки */
+body.theme-towers .tower-card {
+    background: #fff4e6 !important; /* Светло-персиковый */
+    border: 2px solid #ffd8a8;
+    border-left: 10px solid #be185d;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
-.enemy-card img { transform: scaleX(-1); }
 
 .tower-card img {
     width: 120px;
-    height: 120px;
     object-fit: contain;
 }
 
-.tower-info h3 { margin-top: 0; color: #fcd34d; }
+/* Злодеи: Картинка справа + поворот */
+.enemy-card {
+    flex-direction: row-reverse;
+    border-left: none;
+    border-right: 8px solid var(--accent-color);
+}
+.enemy-card img { transform: scaleX(-1); }
 
+/* Таблицы */
 .stats-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    background: rgba(0, 0, 0, 0.3);
+    margin-top: 30px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+body.theme-towers .stats-table {
+    background: #fff9f4; /* Светлый фон таблицы */
+    color: #4a1a2c;
 }
 
 .stats-table th, .stats-table td {
     padding: 15px;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(0,0,0,0.05);
     text-align: left;
 }
 
@@ -166,5 +182,10 @@ p {
 }
 
 /* Списки */
-ol { border-left: 5px solid #fcd34d; background: rgba(255,255,255,0.05); padding: 20px 40px; margin: 20px 0; border-radius: 10px; }
-ul { border-left: 5px solid var(--accent-color); background: rgba(255,255,255,0.05); padding: 20px 40px; margin: 20px 0; border-radius: 10px; }
+ol, ul {
+    background: rgba(0,0,0,0.03);
+    padding: 25px 50px;
+    border-radius: 15px;
+    margin: 25px 0;
+    border-left: 5px solid #fcc419; /* Желтая полоска как у таблицы */
+}
