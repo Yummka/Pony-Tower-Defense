@@ -43,10 +43,7 @@ export default class Enemy {
         this.transformTimer = 0;
         this.isStatic = cfg.isStatic || false;
         this.isStealth = cfg.isStealth || false;
-
-        // =========================================================
-        //  ВОЗВРАЩАЕМ ТВОИ НАСТРОЙКИ АНИМАЦИИ (IF / ELSE)
-        // =========================================================
+        
         if (type === "Tank") {
             this.frameCount = 12; this.frameSpeed = 0.3;
         } else if(type === "Fast"){
@@ -149,10 +146,10 @@ export default class Enemy {
             this.frameCount = 21; this.frameSpeed = 0.3;
         } 
         
-        // --- НОВЫЕ ВРАГИ 6 УРОВНЯ ---
-        else if (type === "SlaveSpell") { // Для всех вариантов
+        // НОВЫЕ ВРАГИ 6 УРОВНЯ
+        else if (type === "SlaveSpell") {
              this.frameCount = 32; this.frameSpeed = 0.3;
-        } else if (type.includes("SlaveSpell")) { // Для 1, 2, 3...
+        } else if (type.includes("SlaveSpell")) {
              this.frameCount = 32; this.frameSpeed = 0.3;
         } else if (type === "SlaveChains") {
             this.frameCount = 11; this.frameSpeed = 0.2;
@@ -161,13 +158,13 @@ export default class Enemy {
         } else if (type === "Shadow") {
             this.frameCount = 16; this.frameSpeed = 0.2;
         } else if (type === "KingSombra") {
-            this.frameCount = 32; this.frameSpeed = 0.3; // <--- ВОТ ТВОИ 32 КАДРА!
+            this.frameCount = 32; this.frameSpeed = 0.3;
         } else if (type === "FakeCadence") {
             this.frameCount = 16; this.frameSpeed = 0.2;
         } else if (type === "TrueChrysalis") {
             this.frameCount = 16; this.frameSpeed = 0.3;
         } else if (type === "SombraCrystal") {
-            this.frameCount = 1; this.frameSpeed = 0; // Кристалл 1 кадр
+            this.frameCount = 1; this.frameSpeed = 0;
         }
     }
 

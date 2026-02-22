@@ -370,3 +370,40 @@ html, body {
     }
 
 }
+
+/* Кнопка выхода на сайт - ДОЛЖНА БЫТЬ ВНЕ @media */
+.back-to-site-btn {
+    position: absolute !important;
+    top: 20px !important;
+    left: 20px !important;
+    
+    /* Внешний вид */
+    background-color: #a855f7 !important; /* Фиолетовый */
+    border: 3px solid #fcd34d !important; /* Золотая рамка */
+    color: white !important;
+    padding: 12px 20px !important;
+    border-radius: 10px !important;
+    
+    /* Шрифт */
+    font-family: 'Press Start 2P', cursive !important;
+    font-size: 10px !important;
+    text-decoration: none !important;
+    white-space: nowrap !important;
+    
+    /* Слой и эффекты */
+    z-index: 9999 !important;
+    display: block !important;
+    box-shadow: 0 4px 0 #7e22ce, 0 6px 15px rgba(0,0,0,0.5) !important;
+    transition: all 0.2s ease !important;
+}
+
+.back-to-site-btn:hover {
+    background-color: #9333ea !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 2px 0 #7e22ce, 0 4px 10px #fcd34d !important;
+}
+
+.back-to-site-btn:active {
+    transform: translateY(2px) !important;
+    box-shadow: none !important;
+}

@@ -1,0 +1,170 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Comfortaa:wght@400;700&display=swap');
+
+:root {
+    --bg-dark: #1a1a2e;
+    --panel-bg: rgba(25, 25, 45, 0.85);
+    --text-color: #f3e8ff;
+    --border-color: rgba(255, 255, 255, 0.1);
+    
+    /* Значения по умолчанию (как у тебя было) */
+    --accent-color: #ff85a1;
+    --grad-start: rgb(129, 45, 77); 
+    --nav-color: #a855f7;
+    --bg-image: url('images/ФПСНночь.png');
+}
+
+/* --- ТЕМЫ ОФОРМЛЕНИЯ --- */
+
+/* ГЛАВНОЕ МЕНЮ: Голубая тема */
+body.theme-main { 
+    --accent-color: #60a5fa; 
+    --grad-start: rgb(62, 120, 175); 
+    --nav-color: #3b82f6;
+    --bg-image: url('images/ФПСНутро.png'); /* Или оставь ФПСНночь.png */
+}
+
+/* БАШНИ: Розовая тема */
+body.theme-towers { 
+    --accent-color: #ff85a1; 
+    --grad-start: rgb(129, 45, 77); 
+    --nav-color: #db2777;
+    --bg-image: url('images/ФПСН.png');
+}
+
+/* ВРАГИ: Темно-красная тема */
+body.theme-enemies { 
+    --accent-color: #ef4444; 
+    --grad-start: rgb(60, 10, 10); 
+    --nav-color: #991b1b;
+    --bg-image: url('images/ФПСНночь.png');
+}
+
+/* --- ОСНОВНЫЕ СТИЛИ --- */
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Comfortaa', sans-serif;
+    color: var(--text-color);
+    background-color: var(--bg-dark);
+    /* Здесь магия: градиент теперь зависит от темы */
+    background: linear-gradient(var(--grad-start), rgba(26, 26, 46, 0.9)), var(--bg-image);
+    background-size: cover;
+    background-attachment: fixed;
+    transition: background 0.5s ease; /* Плавная смена фона */
+}
+
+h1, h2, h3, .pixel-font {
+    font-family: 'Press Start 2P', cursive;
+    color: var(--accent-color); /* Цвет заголовков теперь меняется! */
+    text-transform: uppercase;
+}
+
+/* Жирный и крупный текст для H1 в главном меню */
+body.theme-main h1 {
+    font-size: 2.5rem;
+    text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5);
+    letter-spacing: 2px;
+}
+
+.wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.main-nav {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+    padding: 15px;
+    background: rgba(10, 10, 20, 0.5);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.main-nav a {
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid var(--nav-color); /* Цвет рамок кнопок меняется! */
+    padding: 12px 25px;
+    color: white;
+    text-decoration: none;
+    font-size: 12px;
+    font-family: 'Press Start 2P', cursive;
+    transition: 0.3s;
+    border-radius: 5px;
+}
+
+.main-nav a:hover, .main-nav a.active {
+    background: var(--nav-color);
+    box-shadow: 0 0 15px var(--nav-color);
+}
+
+.content-card {
+    background: var(--panel-bg);
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--accent-color); /* Рамка карточки под цвет темы */
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+}
+
+.tower-card {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 5px solid var(--accent-color);
+}
+
+/* Для врагов картинка справа и поворот */
+.enemy-card {
+    flex-direction: row-reverse;
+    border-left: none;
+    border-right: 5px solid var(--accent-color);
+}
+.enemy-card img { transform: scaleX(-1); }
+
+.tower-card img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+}
+
+.tower-info h3 { margin-top: 0; color: #fcd34d; }
+
+.stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.stats-table th, .stats-table td {
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.stats-table th {
+    background: var(--nav-color);
+    color: white;
+}
+
+/* Списки */
+ol { border-left: 5px solid #fcd34d; background: rgba(255,255,255,0.05); padding: 20px 40px; margin: 20px 0; border-radius: 10px; }
+ul { border-left: 5px solid var(--accent-color); background: rgba(255,255,255,0.05); padding: 20px 40px; margin: 20px 0; border-radius: 10px; }
