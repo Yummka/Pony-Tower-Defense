@@ -25,9 +25,9 @@ body.theme-main {
 
 /* БАШНИ: Розовая тема */
 body.theme-towers { 
-    --accent-color: #ff85a1; 
-    --grad-start: rgb(129, 45, 77); 
-    --nav-color: #db2777;
+    --accent-color: #ff6186; 
+    --grad-start: rgb(239, 157, 255); 
+    --nav-color: #fc4ae4;
     --bg-image: url('images/ФПСН.png');
 }
 
