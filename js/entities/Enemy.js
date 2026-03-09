@@ -71,7 +71,7 @@ export default class Enemy {
         } else if (type === "Bell") { 
             this.frameCount = 16; this.frameSpeed = 0.3;
         } else if (type === "ShadowBolts") { 
-            this.frameCount = 14; this.frameSpeed = 0.3;
+            this.frameCount = 16; this.frameSpeed = 0.3;
         } else if (type === "Flim") { 
             this.frameCount = 14; this.frameSpeed = 0.3;
         } else if (type === "Flam") { 
@@ -99,7 +99,7 @@ export default class Enemy {
         } else if (type === "Doctor") { 
             this.frameCount = 16; this.frameSpeed = 0.3;
         } else if (type === "Stariy") { 
-            this.frameCount = 15; this.frameSpeed = 0.3;
+            this.frameCount = 16; this.frameSpeed = 0.3;
         } else if (type === "Perviy") { 
             this.frameCount = 16; this.frameSpeed = 0.3;
         } else if (type === "Vtoroy") { 

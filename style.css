@@ -12,9 +12,6 @@
     --bg-image: url('images/ФПСНночь.png');
 }
 
-/* --- ТЕМЫ ОФОРМЛЕНИЯ --- */
-
-/* ГЛАВНОЕ МЕНЮ: Голубая тема (Стеклянная) */
 body.theme-main { 
     --accent-color: #a5d8ff; 
     --grad-start: rgba(44, 82, 126, 0.7); 
@@ -22,25 +19,21 @@ body.theme-main {
     --bg-image: url('images/ФПСНутро.png');
 }
 
-/* БАШНИ: Добрая пастельная тема (Четкая и светлая) */
 body.theme-towers { 
-    background: #ffdae3 !important; /* Более насыщенный розовый фон, чтобы белая плашка выделялась */
+    background: #ffdae3 !important;
     background-image: none !important;
-    --accent-color: #be185d; /* Малиновый для заголовков и рамок */
+    --accent-color: #be185d;
     --nav-color: #db2777;
     --text-color: #4a1a2c;
-    --panel-bg: #ffffff; /* Сделали плашку чисто белой */
+    --panel-bg: #ffffff;
 }
 
-/* ВРАГИ: Темно-красная тема */
 body.theme-enemies { 
     --accent-color: #ef4444; 
     --grad-start: rgb(60, 10, 10); 
     --nav-color: #991b1b;
     --bg-image: url('images/ФПСНночь.png');
 }
-
-/* --- ОСНОВНЫЕ СТИЛИ --- */
 
 body {
     margin: 0;
@@ -53,7 +46,6 @@ body {
     transition: all 0.5s ease;
 }
 
-/* Центрирование заголовков */
 h1 {
     font-family: 'Press Start 2P', cursive;
     color: var(--accent-color);
@@ -69,7 +61,6 @@ h2, h3 {
     text-transform: uppercase;
 }
 
-/* Желтый заголовок под цвет таблицы */
 .prep-title {
     color: #fcc419 !important;
     text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
@@ -106,15 +97,14 @@ h2, h3 {
     box-shadow: 0 0 15px var(--nav-color);
 }
 
-/* ЦЕНТРАЛЬНАЯ ПЛАШКА */
 .content-card {
     background: var(--panel-bg);
     backdrop-filter: blur(10px);
-    border: 4px solid var(--accent-color); /* Жирная малиновая обводка */
+    border: 4px solid var(--accent-color);
     border-radius: 30px;
     padding: 40px;
     margin-bottom: 30px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.2); /* Тень для объема */
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
 }
 
 p {
@@ -122,7 +112,6 @@ p {
     line-height: 1.8;
 }
 
-/* КАРТОЧКИ ВНУТРИ ПЛАШКИ */
 .tower-card {
     display: flex;
     align-items: center;
@@ -134,9 +123,8 @@ p {
     border-left: 8px solid var(--accent-color);
 }
 
-/* Для светлой темы: Светло-персиковые карточки */
 body.theme-towers .tower-card {
-    background: #fff4e6 !important; /* Светло-персиковый */
+    background: #fff4e6 !important;
     border: 2px solid #ffd8a8;
     border-left: 10px solid #be185d;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
@@ -147,7 +135,6 @@ body.theme-towers .tower-card {
     object-fit: contain;
 }
 
-/* Злодеи: Картинка справа + поворот */
 .enemy-card {
     flex-direction: row-reverse;
     border-left: none;
@@ -155,7 +142,6 @@ body.theme-towers .tower-card {
 }
 .enemy-card img { transform: scaleX(-1); }
 
-/* Таблицы */
 .stats-table {
     width: 100%;
     border-collapse: collapse;
@@ -166,7 +152,7 @@ body.theme-towers .tower-card {
 }
 
 body.theme-towers .stats-table {
-    background: #fff9f4; /* Светлый фон таблицы */
+    background: #fff9f4;
     color: #4a1a2c;
 }
 
@@ -187,5 +173,5 @@ ol, ul {
     padding: 25px 50px;
     border-radius: 15px;
     margin: 25px 0;
-    border-left: 5px solid #fcc419; /* Желтая полоска как у таблицы */
+    border-left: 5px solid #fcc419;
 }

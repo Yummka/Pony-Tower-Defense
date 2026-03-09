@@ -160,7 +160,7 @@ export function playSound(name) {
     if (originalSound) {
         // Создаем копию звука, чтобы можно было играть их одновременно
         const soundClone = originalSound.cloneNode();
-        soundClone.volume = 0.3; // Громкость
+        soundClone.volume = 0.2; // Громкость
         
         // Запускаем
         soundClone.play().catch(e => {
