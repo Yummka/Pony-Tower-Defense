@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Бестиарий Тьмы — Все враги Эквестрии</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Дополнительный стиль, чтобы картинка была справа */
+        .enemy-card {
+            display: flex;
+            flex-direction: row-reverse; /* Картинка справа, текст слева */
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            gap: 20px;
+            transition: 0.3s;
+
+             border-left: none !important; 
+            border-right-width: 5px;
+            border-right-style: solid;
+        }
+        .enemy-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+        }
+        .enemy-card img {
+            width: 130px;
+            height: 130px;
+            object-fit: contain;
+            transform: scaleX(-1); 
+        }
+        .enemy-info {
+            flex: 1;
+            text-align: left;
+        }
+        .enemy-info h3 {
+            margin-top: 0;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body style="background: #250606; --accent-pink: #ef4444; --accent-purple: #7e22ce;">
+    <body class="theme-enemies"></body>
+    <div class="wrapper">
+        <nav class="main-nav">
+            <a href="index.html">ГЛАВНАЯ</a>
+            <a href="game.html">ИГРАТЬ</a>
+            <a href="towers.html">БАШНИ</a>
+            <a href="enemies.html" class="active">ВРАГИ</a>
+        </nav>
+
+        <main class="content-card" style="background: rgba(15, 10, 25, 0.95); border-color: #ef4444;">
+            <h1 style="color: #ef4444;">Злодеи и Противники</h1>
+            
+            <p>Эквестрия — огромный мир, и далеко не все его обитатели дружелюбны. От школьных задир до древних королей-тиранов, каждый враг в этом списке преследует свою цель: нарушить гармонию и прорваться сквозь магические щиты Понивилля. Командующему обороной важно знать каждого из них в лицо.</p>
+
+            <p>Враги различаются по классам. Гранты и хулиганы берут числом, авиация в лице Шэдоуболтов и летучих мышей пытается проскочить над головами защитников, а бронированные монстры вроде мантикор требуют длительного обстрела. Самая сложная часть битвы — боссы, обладающие уникальными умениями влияния на ваши башни.</p>
+
+            <!-- ГРУППА 1: ХУЛИГАНЫ -->
+            <h2 style="color: #fcd34d; border-bottom: 1px solid #ef4444; padding-bottom: 10px;">Школьные задиры и горожане</h2>
+            
+            <div class="enemy-card" style="border-left: 5px solid #ff4d4d;">
+                <img src="images/ложкаИтиараСтоят.png" alt="Тиара и Спун">
+                <div class="enemy-info">
+                    <h3>Даймонд Тиара и Силвер Спун</h3>
+                    <p>Классический дуэт задир. Они слабы, но быстры и часто идут в авангарде первой волны.</p>
+                </div>
+            </div>
+
+            <div class="enemy-card" style="border-left: 5px solid #ff4d4d;">
+                <img src="images/мать тСтоит.png" alt="Spoiled Rich">
+                <div class="enemy-info">
+                    <h3>Спойлд Рич</h3>
+                    <p>Мать Даймонд Тиары. Более выносливая версия обычного врага, требует больше ударов для победы.</p>
+                </div>
+            </div>
+
+            <div class="enemy-card" style="border-left: 5px solid #ff4d4d;">
+                <img src="images/снилСтоит2.png" alt="Snail">
+                <div class="enemy-info">
+                    <h3>Снипс и Снейл</h3>
+                    <p>Неуклюжие, но упорные помощники Трикси. Двигаются медленно, но могут доставить хлопот своим числом.</p>
+                </div>
+            </div>
+
+            <!-- ГРУППА 2: ХИТРЕЦЫ -->
+            <h2 style="color: #fcd34d; border-bottom: 1px solid #ef4444; padding-bottom: 10px;">Аферисты и Знать</h2>
+
+            <div class="enemy-card" style="border-left: 5px solid #fbbf24;">
+                <img src="images/Хул4Стоят.png" alt="Flim">
+                <div class="enemy-info">
+                    <h3>ХУЛИГАНЫ</h3>
+                    <p>
+                        Скори - Один из хулиганов-спортсменов. Двигается быстро и прямолинейно, пытаясь проскочить мимо башен на скорости.
+                        Хупс - самый стремительный из банды хулиганов. Его очень сложно поймать одиночными выстрелами без замедления Флаттершай.
+                        Дамбелл - репкий задира, обладающий средним запасом здоровья. Идет в середине группы, прикрывая собой более быстрых союзников.</p>
+                </div>
+            </div>
+
+            <div class="enemy-card" style="border-left: 5px solid #fbbf24;">
+                <img src="images/ФлэмСтоит2.png" alt="Flam">
+                <div class="enemy-info">
+                    <h3>Флим и Флэм</h3>
+                    <p>Два брата-афериста. Действует одинаково стремительно, часто появляясь во второй волне.</p>
+                </div>
+            </div>
+
+            <div class="enemy-card" style="border-left: 5px solid #fbbf24;">
+                <img src="images/принцСтоит.png" alt="Prince Blueblood">
+                <div class="enemy-info">
+                    <h3>Принц Блублад</h3>
+                    <p>Самовлюбленный дворянин. Достаточно крепкий противник, который не спешит, считая, что вся дорога принадлежит ему.</p>
+                </div>
+            </div>
+
+            <!-- ГРУППА 3: ВОЗДУШНЫЕ СИЛЫ -->
+            <h2 style="color: #fcd34d; border-bottom: 1px solid #ef4444; padding-bottom: 10px;">Авиация и Наемники</h2>
+
+            <div class="enemy-card" style="border-left: 5px solid #9ca3af;">
+                <img src="images/Шедоуболты.png" alt="ShadowBolt">
+                <div class="enemy-info">
+                    <h3>Шэдоуболты</h3>
+                    <p>Темные двойники Радуги Дэш. Самые быстрые летучие враги в игре, которых крайне сложно поймать без замедления.</p>
+                </div>
+            </div>
+
+            <div class="enemy-card" style="border-left: 5px solid #9ca3af;">
+                <img src="images/ГрилдаСтоит.png" alt="Gilda">
+                <div class="enemy-info">
+                    <h3>Гилда</h3>
+                    <p>Гордый грифон. Обладает средним запасом здоровья и высокой скоростью полета.</p>
+                </div>
+            </div>
+
+            <div class="enemy-card" style="border-left: 5px solid #9ca3af;">
+                <img src="images/ЛайтнингДастСтоит.png" alt="Lightning Dust">
+                <div class="enemy-info">
+                    <h3>Лайтнинг Даст</h3>
+                    <p>Агрессивный летун. Она движется рывками, пытаясь оставить вашу оборону позади.</p>
+                </div>
+            </div>
+
+            <!-- ГРУППА 4: ТЯЖЕЛАЯ СИЛА -->
+            <h2 style="color: #fcd34d; border-bottom: 1px solid #ef4444; padding-bottom: 10px;">Монстры и Тени</h2>
+
+            <div class="enemy-card" style="border-left: 5px solid #312e81;">
+                <img src="images/БыкСтоит.png" alt="Stronghoof">
+                <div class="enemy-info">
+                    <h3>Стронгхуф (Бык)</h3>
+                    <p>Настоящий танк. Очень медленный, но невероятно живучий. Требует внимания всех ближайших башен.</p>
+                </div>
+            </div>
+
+            <div class="enemy-card" style="border-left: 5px solid #312e81;">
+                <img src="images/МантикораСтоит.png" alt="Manticore">
+                <div class="enemy-info">
+                    <h3>Мантикора</h3>
+                    <p>Опасный лесной зверь. Сочетает в себе большую силу и приличную скорость передвижения.</p>
+                </div>
+            </div>
+
+            <div class="enemy-card" style="border-left: 5px solid #312e81;">
+                <img src="images/ШедоуСтоит.png" alt="Shadow Pony">
+                <div class="enemy-info">
+                    <h3>Теневые Пони</h3>
+                    <p>Порождения магии Сомбры. Могут внезапно ускоряться и становиться полупрозрачными.</p>
+                </div>
+            </div>
+
+            <!-- ГРУППА 5: БОССЫ -->
+            <h2 style="color: #fcd34d; border-bottom: 1px solid #ef4444; padding-bottom: 10px;">Великие Боссы</h2>
+
+            <div class="enemy-card" style="border-left: 5px solid #a855f7;">
+                <img src="images/ТриксиСтоит.png" alt="Trixie">
+                <div class="enemy-info">
+                    <h3>Великая и Могучая Трикси</h3>
+                    <p>Мастер магических трюков. Как босс, она обладает огромным здоровьем и требует тактической расстановки башен.</p>
+                </div>
+            </div>
+
+            <div class="enemy-card" style="border-left: 5px solid #fb7185;">
+                <img src="images/Сирены.png" alt="Siren">
+                <div class="enemy-info">
+                    <h3>Сирены (Адажио, Ария, Соната)</h3>
+                    <p>Мифические существа, чьи песни лишают воли. Это групповой босс с колоссальным запасом энергии.</p>
+                </div>
+            </div>
+
+            <div class="enemy-card" style="border-left: 5px solid #1e40af;">
+                <img src="images/НайтмерМунСтоит.png" alt="Nightmare Moon">
+                <div class="enemy-info">
+                    <h3>Найтмер Мун</h3>
+                    <p>Главный антагонист ночных уровней. Способна усыплять ваших пони, делая их бесполезными на долгое время.</p>
+                </div>
+            </div>
+
+            <div class="enemy-card" style="border-left: 5px solid #10b981;">
+                <img src="images/КризалисСтоит.png" alt="Chrysalis">
+                <div class="enemy-info">
+                    <h3>Королева Кризалис</h3>
+                    <p>Мастер превращений. Она заменяет ваших пони на перевертышей, разрушая оборону изнутри.</p>
+                </div>
+            </div>
+
+            <div class="enemy-card" style="border-left: 5px solid #9d174d;">
+                <img src="images/СомбраСтоит.png" alt="Sombra">
+                <div class="enemy-info">
+                    <h3>Король Сомбра</h3>
+                    <p>Тиран Кристальной Империи. Самый мощный враг, блокирующий клетки строительства своими кристаллами.</p>
+                </div>
+            </div>
+
+            <p>Стратегия победы всегда индивидуальна. Против быстрых целей всегда держите наготове Флаттершай, а против боссов — накапливайте золото для призыва Принцессы Луны или постройки нескольких Эппл Джек.</p>
+
+            <p>Не забывайте, что каждый пропущенный враг лишает вас жизней. Боссы отнимают по 5 жизней сразу, поэтому их уничтожение является приоритетной задачей для любого игрока.</p>
+
+            <p>Изучайте волны, следите за индикаторами и помните: судьба Понивилля в ваших руках! Эквестрия надеется на вашу тактическую мудрость.</p>
+
+            <h3 style="margin-top: 40px; color: #fcd34d;">Таблица наград за победу:</h3>
+            <table class="stats-table">
+                <thead>
+                    <tr>
+                        <th>Класс врага</th>
+                        <th>Награда</th>
+                        <th>Пример</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Обычные</td><td>5💰</td><td>Тиара, Снейл</td></tr>
+                    <tr><td>Элитные</td><td>15💰</td><td>Гилда, Принц</td></tr>
+                    <tr><td>Танки</td><td>25💰</td><td>Стронгхуф, Мантикора</td></tr>
+                    <tr><td>Мини-боссы</td><td>100💰</td><td>Сирены</td></tr>
+                    <tr><td>Гранд-боссы</td><td>500💰</td><td>Сомбра, Кризалис</td></tr>
+                </tbody>
+            </table>
+        </main>
+
+        <footer>
+            <p>Лабораторная работа по веб-разработке. Все права на персонажей My Little Pony принадлежат Hasbro (не бейте меня).</p>
+        </footer>
+    </div>
+</body>
+</html>
