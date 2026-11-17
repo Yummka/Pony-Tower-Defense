@@ -1,11 +1,6 @@
-/* ================================================= */
-/*          ФИНАЛЬНАЯ ВЕРСИЯ ФАЙЛА Css.css           */
-/* ================================================= */
 
-/* Импорт шрифта */
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-/* --- Общие стили страницы --- */
 html, body {
     margin: 0;
     padding: 0;
@@ -15,11 +10,10 @@ html, body {
     font-family: 'Press Start 2P', cursive;
     font-size: 0.80rem;
     display: flex; 
-    justify-content: center;  /* По центру горизонтально */
+    justify-content: center;
     align-items: center; 
 }
 
-/* --- Игровой контейнер и холст --- */
 .game-container {
     position: relative;
     width: 100vw;
@@ -39,11 +33,6 @@ html, body {
     z-index: 1;
 }
 
-/* ================================================= */
-/*     НОВЫЕ СТИЛИ ДЛЯ ИГРОВОГО ИНТЕРФЕЙСА          */
-/* ================================================= */
-
-/* --- Панель информации (слева) --- */
 #info-panel {
     position: absolute;
     top: 15px;
@@ -70,7 +59,7 @@ html, body {
 
 #info-panel .stat span {
     color: #fcd34d;
-    font-weight: normal; /* Убираем лишнюю жирность */
+    font-weight: normal;
 }
 
 #info-panel .action-btn {
@@ -104,9 +93,9 @@ html, body {
     background-color: #717196;
 }
 
-/* --- Стили для режима продажи --- */
+
 #sellTowerButton.active {
-    background-color: #ef4444; /* Красный цвет для активного режима */
+    background-color: #ef4444;
     border: 2px solid #f87171;
     box-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
 }
@@ -115,7 +104,6 @@ html, body {
     background-color: #dc2626;
 }
 
-/* --- Панель строительства (снизу) --- */
 #towers-panel {
     position: absolute;
     bottom: 0;
@@ -140,15 +128,15 @@ html, body {
 #tower-info-panel {
     position: absolute;
     top: -50%;
-    right: 1px; /* Уменьшаем отступ, чтобы быть ближе к краю */
+    right: 1px;
     transform: translateY(-50%);
     
-    background-color: rgba(40, 40, 60, 0.9); /* Чуть менее прозрачный фон */
+    background-color: rgba(40, 40, 60, 0.9);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 12px;
     padding: 15px;
-    width: 240px; /* <<< ГЛАВНОЕ ИЗМЕНЕНИЕ: делаем панель значительно уже */
+    width: 240px;
     color: #fff;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     
@@ -188,16 +176,16 @@ html, body {
 
 #tower-info-panel .info-stats {
     display: grid;
-    grid-template-columns: 1fr; /* <<< ИЗМЕНЕНИЕ: Теперь ОДНА колонка, все статы друг под другом */
+    grid-template-columns: 1fr;
     gap: 8px;
     margin-bottom: 12px;
-    font-size: 0.8rem; /* <<< Уменьшаем шрифт статов */
+    font-size: 0.8rem;
     text-align: left;
 }
 
 #tower-info-panel .info-stats span {
     font-weight: bold;
-    color: #fcd34d; /* Желтый цвет для значений */
+    color: #fcd34d;
 }
 
 #tower-info-panel .info-special {
@@ -213,7 +201,6 @@ html, body {
     color: #fff;
 }
 
-/* Общие стили для кнопок покупки */
 .buy-btn {
     min-width: 110px;
     font-size: 0.75rem;
@@ -252,14 +239,12 @@ html, body {
     border-color: #c180ff;
 }
 
-/* Цвета для конкретных кнопок */
 .buy-btn[data-tower-type="Пинки Пай"] { background-color: #d754b9; }
 .buy-btn[data-tower-type="Эппл Джек"] { background-color: #f4af37; }
 .buy-btn[data-tower-type="Твайлайт Спаркл"] { background-color: #9c39c7; }
 #fluttershy-buy-button { background-color: #fde047; color: #78350f; border-color: #c48b0a;}
 
 
-/* --- Общие вспомогательные классы --- */
 #buildModeStatus {
     color: #fff;
     background-color: rgba(252, 211, 77, 0.2);
@@ -274,25 +259,21 @@ html, body {
 }
 
 #fluttershy-buy-button {
-    display: none; /* Изначально скрыта, JS ее покажет */
+    display: none;
 }
 
-/* Css.css - добавьте в конец */
-
-/* --- АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ (Маленькие экраны) --- */
 @media (max-width: 768px) {
     
-    /* 1. Уменьшаем левую панель информации */
     #info-panel {
         top: 10px;
         left: 10px;
         padding: 8px;
         gap: 5px;
-        max-width: 140px; /* Ограничиваем ширину */
+        max-width: 140px;
     }
     
     #info-panel .stat {
-        font-size: 0.6rem; /* Уменьшаем шрифт */
+        font-size: 0.6rem;
         min-width: auto;
     }
     
@@ -301,33 +282,30 @@ html, body {
         padding: 5px 0;
     }
 
-    /* 2. Кнопки внизу покомпактнее */
     #towers-panel {
         padding: 5px 0 10px 0;
     }
 
     .buy-btn {
-        min-width: 60px; /* Кнопки уже */
-        font-size: 0.55rem; /* Шрифт меньше */
+        min-width: 60px;
+        font-size: 0.55rem;
         padding: 5px;
     }
 
     .tower-buttons-group {
-        gap: 5px; /* Меньше отступы между кнопками */
-        flex-wrap: wrap; /* Разрешаем кнопкам перенос на 2 строки если не влазят */
+        gap: 5px;
+        flex-wrap: wrap;
         padding: 0 10px;
     }
 
-    /* 3. Описание башни (всплывающее окно) */
-    /* На телефоне оно будет появляться сверху по центру, а не сбоку */
     #tower-info-panel {
-        width: 160px; /* Делаем поуже */
+        width: 160px;
         top: auto;
-        bottom: 15%; /* Поднимаем чуть выше кнопок */
+        bottom: 15%;
         right: 50%;
         transform: translateX(50%);
-        font-size: 0.6rem; /* Шрифт мельче */
-        padding: 8px; /* Меньше отступы */
+        font-size: 0.6rem;
+        padding: 8px;
         border-radius: 8px;
     }
     
@@ -336,12 +314,12 @@ html, body {
     }
 
     #info-tower-img {
-        width: 32px; /* Картинка меньше */
+        width: 32px;
         height: 32px;
     }
 
     #info-tower-name {
-        font-size: 0.7rem; /* Имя башни мельче */
+        font-size: 0.7rem;
     }
 
     #tower-info-panel .info-stats {
@@ -355,42 +333,37 @@ html, body {
         line-height: 1.2;
     }
     
-    /* 4. Всплывающие окна (Победа, Интро) - делаем чуть меньше */
     .bg-secondary.rounded-xl {
-        max-width: 90vw; /* 90% ширины экрана */
+        max-width: 90vw;
         padding: 15px;
     }
     
     h2.text-3xl {
-        font-size: 1.2rem; /* Заголовки меньше */
+        font-size: 1.2rem;
     }
     
     p.text-lg {
-        font-size: 0.8rem; /* Текст меньше */
+        font-size: 0.8rem;
     }
 
 }
 
-/* Кнопка выхода на сайт - ДОЛЖНА БЫТЬ ВНЕ @media */
 .back-to-site-btn {
     position: absolute !important;
     top: 20px !important;
     left: 20px !important;
-    
-    /* Внешний вид */
-    background-color: #a855f7 !important; /* Фиолетовый */
-    border: 3px solid #fcd34d !important; /* Золотая рамка */
+
+    background-color: #a855f7 !important;
+    border: 3px solid #fcd34d !important;
     color: white !important;
     padding: 12px 20px !important;
     border-radius: 10px !important;
     
-    /* Шрифт */
     font-family: 'Press Start 2P', cursive !important;
     font-size: 10px !important;
     text-decoration: none !important;
     white-space: nowrap !important;
     
-    /* Слой и эффекты */
     z-index: 9999 !important;
     display: block !important;
     box-shadow: 0 4px 0 #7e22ce, 0 6px 15px rgba(0,0,0,0.5) !important;
