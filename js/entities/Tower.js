@@ -1,4 +1,4 @@
-import { TOWER_CONFIG, towerImages, playSound } from '../config.js'; // Добавили playSound
+import { TOWER_CONFIG, towerImages, playSound } from '../config.js';
 import Projectile from './Projectile.js';
 
 export default class Tower {
@@ -25,21 +25,19 @@ export default class Tower {
         this.image = towerImages[type];
 
         this.lastSoundTime = 0;
-        
         this.isAsleep = false; 
-
         this.isSupport = config.isSupport || false;
-        
-        // Для баффов (если эту башню баффнули)
-        this.buffTimer = 0;
+
+        // Базовые значения (для возврата после баффов Дёрпи)
         this.baseDamage = config.damage;
-        this.baseRange = config.range * this.game.scale;
+        this.baseDamageTickRate = config.damageTickRate || 0;
         this.baseFireRate = config.fireRate || 0;
+        this.baseRange = config.range * this.game.scale;
+        this.buffTimer = 0;
         
-        // Флаг, что это башня (для снаряда)
         this.isTower = true;
 
-        // Для трансформации
+        // Трансформация (Кризалис)
         this.isTransforming = false;
         this.transformFrame = 0;
         this.transformMaxFrames = 15;
@@ -49,7 +47,6 @@ export default class Tower {
         this.damageTickRate = config.damageTickRate || 0;
         this.damageCooldown = 0;
 
-        // Для Рэрити: флаг визуальной атаки (чтобы анимация не крутилась вечно)
         this.isShootingVisual = false;
 
         this.isPatrolTower = config.isPatrolTower || false;
@@ -61,7 +58,6 @@ export default class Tower {
             this.auraDamage = config.auraDamage;
             this.auraRadius = config.auraRadius * this.game.scale;
             this.patrolDirection = 1;
-            // Таймер звука для Радуги (чтобы крылья не шумели каждый кадр)
             this.soundTimer = 0;
         }
         
@@ -78,13 +74,12 @@ export default class Tower {
     }
 
     findTarget(enemies) {
-        // ... (твой код findTarget без изменений) ...
         if (this.type === 'Флаттершай') {
             let priorityTarget = null, fallbackTarget = null;
             let minPriorityDist = Infinity, minFallbackDist = Infinity;
             for (const enemy of enemies) {
                 if (enemy.currentHealth > 0 && !enemy.isFinished) {
-                    const distance = Math.sqrt(Math.pow(enemy.x - this.x, 2) + Math.pow(enemy.y - this.y, 2));
+                    const distance = Math.hypot(enemy.x - this.x, enemy.y - this.y);
                     if (distance - (enemy.hitboxRadius * this.game.scale) < this.range) {
                         if (enemy.slowDuration <= 0) {
                             if (distance < minPriorityDist) { minPriorityDist = distance; priorityTarget = enemy; }
@@ -99,9 +94,10 @@ export default class Tower {
             let minDistance = Infinity;
             for (const enemy of enemies) {
                 if (enemy.currentHealth > 0 && !enemy.isFinished) {
-                    const distance = Math.sqrt(Math.pow(enemy.x - this.x, 2) + Math.pow(enemy.y - this.y, 2));
+                    const distance = Math.hypot(enemy.x - this.x, enemy.y - this.y);
                     if ((distance - enemy.hitboxRadius * this.game.scale) < this.range) {
-                        minDistance = distance; nearestEnemy = enemy;
+                        minDistance = distance; 
+                        nearestEnemy = enemy;
                     }
                 }
             }
@@ -112,16 +108,19 @@ export default class Tower {
     update(enemies, projectiles) {
         if (this.isAsleep) return;
 
-        // 1. БАФФЫ (СВЕЧЕНИЕ)
+        // 1. БАФФЫ (СВЕЧЕНИЕ И СБРОС)
         if (this.buffTimer > 0) {
             this.buffTimer--;
             if (this.buffTimer % 10 < 5) this.color = 'gold'; else this.color = TOWER_CONFIG[this.type].color || 'white';
             if (this.buffTimer <= 0) {
                 this.damage = this.baseDamage;
+                this.damageTickRate = this.baseDamageTickRate;
+                this.fireRate = this.baseFireRate;
+                if (this.isPatrolTower) this.auraDamage = TOWER_CONFIG[this.type].auraDamage;
             }
         }
 
-        // 2. ТРАНСФОРМАЦИЯ (Кризалис эффект)
+        // 2. ТРАНСФОРМАЦИЯ
         if (this.isTransforming) {
             this.transformFrame += this.transformSpeed;
             if (this.transformFrame >= this.transformMaxFrames) {
@@ -138,7 +137,7 @@ export default class Tower {
             let targetPoint = this.patrolDirection === 1 ? this.patrolEnd : this.patrolStart;
             const dx = targetPoint.x - this.patrolCurrentPos.x;
             const dy = targetPoint.y - this.patrolCurrentPos.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            const distance = Math.hypot(dx, dy);
             
             if (distance < this.patrolSpeed) {
                 this.patrolDirection *= -1;
@@ -146,66 +145,58 @@ export default class Tower {
                 this.patrolCurrentPos.x += (dx / distance) * this.patrolSpeed;
                 this.patrolCurrentPos.y += (dy / distance) * this.patrolSpeed;
             }
-            // Радуга машет крыльями всегда, пока летит
             this.attackFrame = (this.attackFrame + config.frameSpeed) % config.frameCount;
             this.facingDirection = dx > 0 ? 1 : -1;
 
             this.soundTimer++;
-            if(this.soundTimer > 30) {
+            if (this.soundTimer > 30) {
                  playSound(this.type);
                  this.soundTimer = 0;
             }
 
             enemies.forEach(enemy => {
-                const enemyDist = Math.sqrt(Math.pow(enemy.x - this.patrolCurrentPos.x, 2) + Math.pow(enemy.y - this.patrolCurrentPos.y, 2));
-                if (enemyDist < this.auraRadius) { 
+                const enemyDist = Math.hypot(enemy.x - this.patrolCurrentPos.x, enemy.y - this.patrolCurrentPos.y);
+                // Проверка на щит маффина:
+                if (enemyDist < this.auraRadius && !enemy.isInvulnerable) { 
                     enemy.currentHealth -= this.auraDamage; 
                 }
             });
-            // Для Радуги isAttacking не используется для логики анимации в draw, так как у нее отдельный блок
             return;
         }
 
-        // 4. ДЁРПИ (ПОДДЕРЖКА) - ✅ ИСПРАВЛЕННАЯ ЛОГИКА
+        // 4. ДЁРПИ (ПОДДЕРЖКА)
         if (this.isSupport) {
-            // Если идет анимация броска - проигрываем её
             if (this.isAttacking) {
-                this.attackFrame += 0.3; // Скорость анимации
-                // Если анимация закончилась (12 кадров)
+                this.attackFrame += 0.3; 
                 if (this.attackFrame >= 12) {
-                    this.isAttacking = false; // Перестаем атаковать
-                    this.attackFrame = 0; // Сброс на стойку
+                    this.isAttacking = false; 
+                    this.attackFrame = 0; 
                 }
-                return; // Пока идет анимация, новую атаку не начинаем
+                return; 
             }
 
-            // Если не атакуем, тикает кулдаун
             if (this.cooldown > 0) {
                 this.cooldown--;
-                this.attackFrame = 0; // Стоим смирно
+                this.attackFrame = 0; 
             } else {
-                // Кулдаун прошел, ищем цель
                 const isMiss = Math.random() < config.missChance;
                 let target = null;
 
                 if (isMiss) {
-                    // Ищем врага
-                    const possibleEnemies = enemies.filter(e => !e.isFinished && e.currentHealth > 0 && Math.sqrt(Math.pow(e.x - this.x, 2) + Math.pow(e.y - this.y, 2)) < this.range);
+                    const possibleEnemies = enemies.filter(e => !e.isFinished && e.currentHealth > 0 && Math.hypot(e.x - this.x, e.y - this.y) < this.range);
                     if (possibleEnemies.length > 0) {
                         target = possibleEnemies[Math.floor(Math.random() * possibleEnemies.length)];
                     }
                 } else {
-                    // Ищем башню
-                    const allies = this.game.towers.filter(t => t !== this && t.buffTimer <= 0 && !t.isSupport && Math.sqrt(Math.pow(t.x - this.x, 2) + Math.pow(t.y - this.y, 2)) < this.range);
+                    const allies = this.game.towers.filter(t => t !== this && t.buffTimer <= 0 && !t.isSupport && Math.hypot(t.x - this.x, t.y - this.y) < this.range);
                     if (allies.length > 0) {
                         target = allies[Math.floor(Math.random() * allies.length)];
                     }
                 }
 
-                // БРОСОК!
                 if (target) {
-                    this.isAttacking = true; // Включаем флаг анимации
-                    this.attackFrame = 0;    // Начинаем с 0 кадра
+                    this.isAttacking = true; 
+                    this.attackFrame = 0;    
                     
                     const muffinConfig = { ...config, projectileType: 'muffin' };
                     projectiles.push(new Projectile(this.x, this.y, target, muffinConfig, this.game));
@@ -214,7 +205,7 @@ export default class Tower {
                     this.cooldown = config.fireRate; 
                 }
             }
-            return; // Выход для Дёрпи
+            return; 
         }
 
         // 5. РЭРИТИ (СНАЙПЕР)
@@ -226,16 +217,20 @@ export default class Tower {
             }
             let enemyInPersonalSpace = false;
             for (const enemy of enemies) {
-                if (Math.sqrt(Math.pow(enemy.x - this.x, 2) + Math.pow(enemy.y - this.y, 2)) < this.dramaFillRadius) {
-                    enemyInPersonalSpace = true; break;
+                if (Math.hypot(enemy.x - this.x, enemy.y - this.y) < this.dramaFillRadius) {
+                    enemyInPersonalSpace = true; 
+                    break;
                 }
             }
-            if (enemyInPersonalSpace && this.dramaMeter < this.dramaMeterMax) { this.dramaMeter += this.dramaFillRate; }
+            if (enemyInPersonalSpace && this.dramaMeter < this.dramaMeterMax) { 
+                this.dramaMeter += this.dramaFillRate; 
+            }
             if (this.dramaMeter >= this.dramaMeterMax) {
-                this.isUlting = true; this.dramaMeter = 0;
+                this.isUlting = true; 
+                this.dramaMeter = 0;
                 const ultRadius = config.ultRadius * this.game.scale;
                 enemies.forEach(enemy => {
-                    if (Math.sqrt(Math.pow(enemy.x - this.x, 2) + Math.pow(enemy.y - this.y, 2)) < ultRadius) {
+                    if (Math.hypot(enemy.x - this.x, enemy.y - this.y) < ultRadius) {
                         enemy.stunDuration = Math.max(enemy.stunDuration, config.ultStunDuration);
                     }
                 });
@@ -249,19 +244,22 @@ export default class Tower {
             this.isAttacking = false;
             let enemiesInRange = false;
             for (const enemy of enemies) {
-                if (Math.sqrt(Math.pow(enemy.x - this.x, 2) + Math.pow(enemy.y - this.y, 2)) < this.range) {
+                if (Math.hypot(enemy.x - this.x, enemy.y - this.y) < this.range) {
                     enemiesInRange = true;
                     break;
                 }
             }
             
             if (enemiesInRange) {
-                this.isAttacking = true; // Пинки атакует, пока есть враги
+                this.isAttacking = true;
                 if (this.damageCooldown > 0) this.damageCooldown--;
                 if (this.damageCooldown <= 0) {
                     enemies.forEach(enemy => {
-                        if (Math.sqrt(Math.pow(enemy.x - this.x, 2) + Math.pow(enemy.y - this.y, 2)) < this.range) {
-                            enemy.currentHealth -= this.damage;
+                        if (Math.hypot(enemy.x - this.x, enemy.y - this.y) < this.range) {
+                            // Проверка на щит маффина:
+                            if (!enemy.isInvulnerable) {
+                                enemy.currentHealth -= this.damage;
+                            }
                         }
                     });
                     playSound(this.type);
@@ -275,9 +273,8 @@ export default class Tower {
 
         // 7. ОСТАЛЬНЫЕ БАШНИ (ЭППЛ, ТВАЙЛАЙТ, ФЛАТТЕРШАЙ)
         if (this.type !== 'Пинки Пай' && !this.isSupport) {
-            // Проверка цели
             if (this.target) {
-                const distance = Math.sqrt(Math.pow(this.target.x - this.x, 2) + Math.pow(this.target.y - this.y, 2));
+                const distance = Math.hypot(this.target.x - this.x, this.target.y - this.y);
                 if (this.target.currentHealth <= 0 || this.target.isFinished || distance > this.range) {
                     this.target = null;
                 }
@@ -288,11 +285,10 @@ export default class Tower {
             
             this.facingDirection = this.target ? ((this.target.x > this.x) ? 1 : -1) : -1;
             
-            // Флаги анимации
             if (this.isMelee) {
-                 this.isAttacking = !!this.target; // Ближний бой атакует, если есть цель
+                 this.isAttacking = !!this.target; 
             } else {
-                 this.isAttacking = this.isShootingVisual; // Дальний бой (Рэрити) - если идет выстрел
+                 this.isAttacking = this.isShootingVisual; 
             }
 
             // Атака Ближний бой
@@ -301,7 +297,7 @@ export default class Tower {
                 if (this.damageCooldown <= 0) {
                     if (config.applySlow) {
                         this.target.slowDuration = config.slowDuration;
-                    } else {
+                    } else if (!this.target.isInvulnerable) { // Проверка на щит маффина
                         this.target.currentHealth -= this.damage;
                     }
                     playSound(this.type);
@@ -318,9 +314,8 @@ export default class Tower {
             }
         }
         
-        // --- ОБЩАЯ ЛОГИКА АНИМАЦИИ ---
-        // 1. Снайпер (Рэрити) / Дёрпи (уже обработана выше, но для страховки)
-        if ((!this.isMelee && !this.isPatrolTower && this.isShootingVisual)) {
+        // АНИМАЦИЯ
+        if (!this.isMelee && !this.isPatrolTower && this.isShootingVisual) {
             const frameSpeed = config.attackFrameSpeed || config.frameSpeed;
             const frameCount = config.attackFrameCount || config.frameCount;
             this.attackFrame += frameSpeed;
@@ -330,13 +325,11 @@ export default class Tower {
                 this.isShootingVisual = false;
             }
         }
-        // 2. Ближний бой (Пинки, Эппл)
-        else if ((this.isMelee) && this.isAttacking) {
+        else if (this.isMelee && this.isAttacking) {
             const frameSpeed = config.attackFrameSpeed || config.frameSpeed;
             const frameCount = config.attackFrameCount || config.frameCount;
             this.attackFrame = (this.attackFrame + frameSpeed) % frameCount; 
         } 
-        // 3. Сброс, если не Дёрпи и не патруль
         else if (!this.isSupport && !this.isPatrolTower && !this.isShootingVisual && !this.isAttacking) {
             this.attackFrame = 0;
         }
@@ -345,8 +338,9 @@ export default class Tower {
     shoot(projectiles) {
         const config = TOWER_CONFIG[this.type];
         if (this.target) { 
-            // ✅ ИЗМЕНЕНИЕ: Передаем this.game
-            projectiles.push(new Projectile(this.x, this.y, this.target, config, this.game));
+            // Передаем динамический урон с учетом баффов Дёрпи!
+            const dynamicConfig = { ...config, currentDamage: this.damage };
+            projectiles.push(new Projectile(this.x, this.y, this.target, dynamicConfig, this.game));
             playSound(this.type); 
             
             this.isShootingVisual = true;
@@ -355,21 +349,17 @@ export default class Tower {
     }
 
     draw(ctx) {
-        // ... (Твой код метода draw остается БЕЗ ИЗМЕНЕНИЙ, он хороший) ...
-        // Скопируй сюда полностью метод draw из прошлого рабочего файла!
-        // Я приведу его здесь сокращенно, чтобы не загромождать, но тебе нужен ПОЛНЫЙ код draw.
-        
         const cfg = TOWER_CONFIG[this.type];
         const scale = this.game.scale; 
-        const drawWidth = 75 * scale;
-        const drawHeight = 65 * scale;
-        const offsetY = -5 * scale; 
+        const drawWidth = 88 * scale;
+        const drawHeight = 78 * scale;
+        const offsetY = -8 * scale;
         
         let currentImage;
 
         if (this.isTransforming) {
             currentImage = towerImages[this.type + ' Превращение'];
-            if (currentImage && currentImage.complete) {
+            if (currentImage && currentImage.complete && currentImage.naturalWidth > 0) {
                 ctx.save();
                 const tX = (this.isPatrolTower && this.patrolEnd) ? this.patrolCurrentPos.x : this.x;
                 const tY = (this.isPatrolTower && this.patrolEnd) ? this.patrolCurrentPos.y : this.y;
@@ -386,37 +376,64 @@ export default class Tower {
             return; 
         }
 
-        // Выбор картинки
+        const isImgReady = (img) => img && img.complete && img.naturalWidth > 0;
+
+        let imgKey = this.type;
         if (this.isAsleep) {
-            currentImage = towerImages[this.type + ' Сон'] || towerImages[this.type];
+            imgKey = `${this.type} Сон`;
         } else if (this.isSniper && this.isUlting) {
-            currentImage = towerImages[this.type + ' Ульта'];
+            imgKey = `${this.type} Ульта`;
         } else if (this.isPatrolTower && this.patrolEnd) {
-            currentImage = towerImages[this.type + ' Атака'];
-        } 
-        // ВОТ ТУТ ВАЖНО: Используем isShootingVisual для стрелков, isAttacking для милишников
-        else if (this.isAttacking || (this.isSniper && this.isShootingVisual)) {
-            currentImage = towerImages[this.type + ' Атака'] || towerImages[this.type];
-        } else {
-            currentImage = towerImages[this.type];
+            imgKey = `${this.type} Атака`;
+        } else if (this.isAttacking || (this.isSniper && this.isShootingVisual)) {
+            imgKey = `${this.type} Атака`;
         }
 
-        // Отрисовка (стандартная)
+        let useGrayscaleFilter = false;
+        if (this.isEqualized) {
+            const grayAction = towerImages[`${imgKey} БезЦвет`];
+            const grayBase = towerImages[`${this.type} БезЦвет`];
+
+            if (isImgReady(grayAction)) {
+                currentImage = grayAction;
+            } else if (isImgReady(grayBase)) {
+                currentImage = grayBase;
+            } else {
+                currentImage = isImgReady(towerImages[imgKey]) ? towerImages[imgKey] : towerImages[this.type];
+                useGrayscaleFilter = true; 
+            }
+        } else {
+            currentImage = isImgReady(towerImages[imgKey]) ? towerImages[imgKey] : towerImages[this.type];
+        }
+
         if (!currentImage || !currentImage.complete || currentImage.naturalWidth === 0) {
-             ctx.save(); ctx.translate(this.x, this.y); ctx.fillStyle = 'purple'; ctx.beginPath(); ctx.arc(0, 0, 10 * scale, 0, Math.PI*2); ctx.fill(); ctx.restore();
+             ctx.save(); 
+             ctx.translate(this.x, this.y); 
+             ctx.fillStyle = 'purple'; 
+             ctx.beginPath(); 
+             ctx.arc(0, 0, 10 * scale, 0, Math.PI * 2); 
+             ctx.fill(); 
+             ctx.restore();
         } else {
             if (this.isPatrolTower) {
-                // ... (код Радуги) ...
-                // Рисуем пилоны и линию (всегда)
                 ctx.fillStyle = 'rgba(34, 211, 238, 0.5)';
-                ctx.beginPath(); ctx.arc(this.patrolStart.x, this.patrolStart.y, 10 * scale, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); 
+                ctx.arc(this.patrolStart.x, this.patrolStart.y, 10 * scale, 0, Math.PI * 2); 
+                ctx.fill();
                 if (this.patrolEnd) {
-                    ctx.beginPath(); ctx.arc(this.patrolEnd.x, this.patrolEnd.y, 10 * scale, 0, Math.PI * 2); ctx.fill();
-                    ctx.strokeStyle = 'rgba(34, 211, 238, 0.3)'; ctx.lineWidth = 3 * scale; ctx.beginPath();
-                    ctx.moveTo(this.patrolStart.x, this.patrolStart.y); ctx.lineTo(this.patrolEnd.x, this.patrolEnd.y); ctx.stroke();
+                    ctx.beginPath(); 
+                    ctx.arc(this.patrolEnd.x, this.patrolEnd.y, 10 * scale, 0, Math.PI * 2); 
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(34, 211, 238, 0.3)'; 
+                    ctx.lineWidth = 3 * scale; 
+                    ctx.beginPath();
+                    ctx.moveTo(this.patrolStart.x, this.patrolStart.y); 
+                    ctx.lineTo(this.patrolEnd.x, this.patrolEnd.y); 
+                    ctx.stroke();
                 }
 
                 ctx.save();
+                if (useGrayscaleFilter) ctx.filter = 'grayscale(100%)';
                 ctx.translate(this.patrolCurrentPos.x, this.patrolCurrentPos.y - 10 * scale);
                 if (this.facingDirection === -1) ctx.scale(-1, 1);
 
@@ -431,15 +448,16 @@ export default class Tower {
 
             } else {
                 ctx.save();
+                if (useGrayscaleFilter) ctx.filter = 'grayscale(100%)';
                 ctx.translate(this.x, this.y + offsetY);
                 if (this.facingDirection === -1) ctx.scale(-1, 1);
 
                 if (this.isSniper && this.isUlting && !this.isAsleep) {
                     const frameX = Math.floor(this.ultFrame) * cfg.ultFrameWidth;
-                    const renderW = cfg.ultFrameWidth * scale; const renderH = currentImage.height * scale;
-                    ctx.drawImage(currentImage, frameX, 0, cfg.ultFrameWidth, currentImage.height, -renderW/2, -renderH/2, renderW, renderH);
+                    const renderW = cfg.ultFrameWidth * scale; 
+                    const renderH = currentImage.height * scale;
+                    ctx.drawImage(currentImage, frameX, 0, cfg.ultFrameWidth, currentImage.height, -renderW / 2, -renderH / 2, renderW, renderH);
                 }
-                // АНИМАЦИЯ: Рисуем кадры, если isAttacking (мили) или isShootingVisual (снайпер)
                 else if ((this.isAttacking || this.isShootingVisual) && !this.isAsleep) {
                     const frameWidth = cfg.attackFrameWidth || cfg.frameWidth;
                     const frameX = Math.floor(this.attackFrame) * frameWidth;
@@ -452,20 +470,54 @@ export default class Tower {
             }
 
             if (this.isSniper) {
-                const barW = 50 * scale, barH = 5 * scale; const barX = this.x - barW / 2, barY = this.y - 45 * scale;
-                ctx.fillStyle = '#333'; ctx.fillRect(barX, barY, barW, barH);
-                ctx.fillStyle = '#f0f'; ctx.fillRect(barX, barY, barW * (this.dramaMeter / this.dramaMeterMax), barH);
+                const barW = 55 * scale, barH = 6 * scale; 
+                const barX = this.x - barW / 2;
+                const barY = this.y - 58 * scale; 
+                ctx.fillStyle = '#333'; 
+                ctx.fillRect(barX, barY, barW, barH);
+                ctx.fillStyle = '#f0f'; 
+                ctx.fillRect(barX, barY, barW * (this.dramaMeter / this.dramaMeterMax), barH);
             }
         }
 
         if (this.game.isBuilding && this.game.selectedTowerType === this.type) { 
-            ctx.beginPath(); ctx.arc(this.x, this.y, this.range, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,0,0.05)'; ctx.fill();
+            ctx.beginPath(); 
+            ctx.arc(this.x, this.y, this.range, 0, Math.PI * 2); 
+            ctx.fillStyle = 'rgba(255,255,0,0.05)'; 
+            ctx.fill();
         }
         if (this.isAsleep) {
             const zX = this.isPatrolTower ? this.patrolCurrentPos.x : this.x;
             const zY = this.isPatrolTower ? this.patrolCurrentPos.y : this.y;
-            ctx.fillStyle = 'white'; ctx.font = `bold ${20 * scale}px sans-serif`; ctx.strokeStyle = 'black'; ctx.lineWidth = 3 * scale;
-            ctx.strokeText("Zzz...", zX - 15 * scale, zY - 40 * scale); ctx.fillText("Zzz...", zX - 15 * scale, zY - 40 * scale);
+            ctx.fillStyle = 'white'; 
+            ctx.font = `bold ${20 * scale}px sans-serif`; 
+            ctx.strokeStyle = 'black'; 
+            ctx.lineWidth = 3 * scale;
+            ctx.strokeText("Zzz...", zX - 15 * scale, zY - 55 * scale); 
+            ctx.fillText("Zzz...", zX - 15 * scale, zY - 55 * scale);
+        }
+
+        // --- ВИЗУАЛ БАФФА ДЁРПИ (ЗОЛОТАЯ АУРА И ЗВЕЗДОЧКИ) ---
+        if (this.buffTimer > 0) {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+
+            // Пульсирующий круг у основания
+            const pulse = Math.sin(Date.now() / 150) * 3 * scale;
+            ctx.beginPath();
+            ctx.arc(0, 5 * scale, 30 * scale + pulse, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.18)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.8)';
+            ctx.lineWidth = 2 * scale;
+            ctx.stroke();
+
+            // Значок маффина со звездочками над головой
+            ctx.font = `${14 * scale}px sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.fillText('🧁✨', 0, -52 * scale - pulse);
+
+            ctx.restore();
         }
     }
 }

@@ -8,7 +8,7 @@ export default class Projectile {
         this.x = startX;
         this.y = startY;
         this.target = target; 
-        this.damage = config.damage;
+        this.damage = (config && config.currentDamage !== undefined) ? config.currentDamage : config.damage;
         this.isAoe = config.isAoe;
         this.aoeRadius = config.aoeRadius || 0;
         this.applySlow = config.applySlow || false;
@@ -45,26 +45,39 @@ export default class Projectile {
 
         if (dist < realSpeed) {
             // --- ЛОГИКА МАФФИНА (С ТЕКСТОМ) ---
+            // --- ЛОГИКА МАФФИНА (РЕАЛЬНЫЕ БАФФЫ) ---
             if (this.isMuffin) {
                 if (this.target.isTower) {
-                    // Бафф башне
-                    this.target.buffTimer = 300; 
-                    this.target.damage = this.target.baseDamage * 1.5; 
+                    const t = this.target;
+                    t.buffTimer = 360; // 6 секунд мощного баффа
                     
-                    // ✅ ТЕКСТ: +50% Урона
-                    if (this.game) this.game.showFloatingText(this.target.x, this.target.y - 40, "УРОН UP! 🧁", "#FFD700");
+                    // 1. Урон +60%
+                    t.damage = Math.round(t.baseDamage * 1.6);
+                    
+                    // 2. Радуга Дэш получает удвоенный урон ауры
+                    if (t.isPatrolTower) {
+                        t.auraDamage = 2;
+                    }
+                    
+                    // 3. Ускорение атак на 35%!
+                    if (t.baseFireRate > 0) {
+                        t.fireRate = Math.floor(t.baseFireRate * 0.65); // Рэрити стреляет быстрее
+                    }
+                    if (t.baseDamageTickRate > 0) {
+                        t.damageTickRate = Math.max(3, Math.floor(t.baseDamageTickRate * 0.65)); // Пинки/Эппл бьют чаще
+                    }
+                    
+                    if (this.game) this.game.showFloatingText(t.x, t.y - 45, "СУПЕР-МАФФИН! 🧁", "#FFD700");
                 } else {
-                    // Бафф врагу (Ой!)
-                    this.target.derpyBuffTimer = 180;
-                    this.target.currentHealth += 50;
-                    if(this.target.currentHealth > this.target.maxHealth) this.target.currentHealth = this.target.maxHealth;
-                    this.target.currentSpeed *= 1.5;
-                    this.target.isInvulnerable = true; 
+                    // Бафф врагу при промахе
+                    const e = this.target;
+                    e.derpyBuffTimer = 150;
+                    e.currentHealth = Math.min(e.maxHealth, e.currentHealth + 60);
+                    e.isInvulnerable = true; 
                     
-                    // ✅ ТЕКСТ: Ой...
-                    if (this.game) this.game.showFloatingText(this.target.x, this.target.y - 40, "Упс... Скорость UP", "#FF4444");
+                    if (this.game) this.game.showFloatingText(e.x, e.y - 40, "УПС! Враг съел маффин!", "#FF4444");
                 }
-                return true; // Снаряд исчез
+                return true; 
             }
 
             // --- ОБЫЧНЫЙ УРОН ---

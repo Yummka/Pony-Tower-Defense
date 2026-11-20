@@ -1,4 +1,4 @@
-import { towerImages, playSound } from '../config.js'; // Убедитесь, что playSound импортирован
+import { towerImages, playSound } from '../config.js';
 
 export default class LunaEffect {
     constructor(targetX, targetY, game, config) {
@@ -6,7 +6,7 @@ export default class LunaEffect {
         this.targetX = targetX;
         this.targetY = targetY;
         this.damage = config.damage;
-        this.aoeRadius = config.aoeRadius * game.scale; 
+        this.aoeRadius = (config.aoeRadius || 250) * game.scale; 
         
         this.x = game.canvas.width + 200;
         this.y = -200;
@@ -18,8 +18,6 @@ export default class LunaEffect {
         
         this.frame = 0;
         this.totalFrames = 29; 
-        this.frameWidth = 146; 
-        this.frameHeight = 142; 
         this.animSpeed = 0.5; 
         
         this.renderWidth = 150 * game.scale; 
@@ -33,15 +31,15 @@ export default class LunaEffect {
         if (this.state === 'fly_in') {
             const dx = this.targetX - this.x;
             const dy = this.targetY - this.y;
-            const dist = Math.sqrt(dx*dx + dy*dy);
+            const dist = Math.hypot(dx, dy);
             
             if (dist < this.speed) {
                 this.x = this.targetX;
                 this.y = this.targetY;
                 this.state = 'attack';
             } else {
-                this.x += (dx/dist) * this.speed;
-                this.y += (dy/dist) * this.speed;
+                this.x += (dx / dist) * this.speed;
+                this.y += (dy / dist) * this.speed;
             }
         }
         else if (this.state === 'attack') {
@@ -49,17 +47,15 @@ export default class LunaEffect {
             
             // Удар на 20-м кадре
             if (this.timer === 20) {
-                
-                // --- ИСПРАВЛЕНИЕ: ЗВУК ОДИН РАЗ (ДО ЦИКЛА) ---
                 playSound('Принцесса Луна'); 
                 console.log("BOOM! Luna strikes.");
-                // ---------------------------------------------
 
                 enemies.forEach(e => {
-                    const dist = Math.sqrt(Math.pow(e.x - this.x, 2) + Math.pow(e.y - this.y, 2));
+                    const dist = Math.hypot(e.x - this.x, e.y - this.y);
                     if (dist < this.aoeRadius) {
                         e.currentHealth -= this.damage;
-                        e.stunDuration += 120; 
+                        // Защита от undefined
+                        e.stunDuration = (e.stunDuration || 0) + 120; 
                     }
                 });
             }
@@ -81,19 +77,32 @@ export default class LunaEffect {
     draw(ctx) {
         let img = towerImages['Принцесса Луна Атака']; 
         
-        if (img && img.complete) {
+        // 1. Проверяем, что картинка реально загружена и не битая
+        if (img && img.complete && img.naturalWidth > 0) {
             ctx.save();
             ctx.translate(this.x, this.y);
             ctx.scale(-1, 1); 
 
-            const sx = Math.floor(this.frame) * this.frameWidth; 
+            // 2. ДИНАМИЧЕСКИЙ РАСЧЁТ ШИРИНЫ КАДРА:
+            // Игра сама разделит ширину картинки на 29 частей, даже если размер изменился
+            const frameW = img.naturalWidth / this.totalFrames;
+            const frameH = img.naturalHeight;
             
-            ctx.drawImage(
-                img, 
-                sx, 0, this.frameWidth, this.frameHeight, 
-                -this.renderWidth/2, -this.renderHeight/2, this.renderWidth, this.renderHeight 
-            );
+            // 3. Защита от выхода за границу спрайта
+            const currentFrameIndex = Math.min(Math.floor(this.frame), this.totalFrames - 1);
+            const sx = Math.max(0, Math.min(currentFrameIndex * frameW, img.naturalWidth - frameW)); 
             
+            try {
+                ctx.drawImage(
+                    img, 
+                    sx, 0, frameW, frameH, 
+                    -this.renderWidth / 2, -this.renderHeight / 2, this.renderWidth, this.renderHeight 
+                );
+            } catch (err) {
+                console.warn("Ошибка отрисовки спрайта Луны:", err);
+            }
+            
+            // Спецэффекты удара
             if (this.state === 'attack') {
                 if (this.timer >= 15 && this.timer <= 25) {
                     ctx.globalAlpha = 0.6;
@@ -103,11 +112,14 @@ export default class LunaEffect {
                     ctx.fill();
                 }
                 if (this.timer > 20) {
-                    ctx.globalAlpha = 1 - (this.timer - 20) / 40;
+                    // 4. Защита от отрицательного globalAlpha (только от 0 до 1)
+                    const fadeProgress = (this.timer - 20) / 40;
+                    ctx.globalAlpha = Math.max(0, Math.min(1, 1 - fadeProgress));
+                    
                     ctx.lineWidth = 5;
                     ctx.strokeStyle = 'white';
                     ctx.beginPath();
-                    ctx.arc(0, 0, this.aoeRadius * ((this.timer - 20) / 20), 0, Math.PI * 2);
+                    ctx.arc(0, 0, this.aoeRadius * Math.min(1, (this.timer - 20) / 20), 0, Math.PI * 2);
                     ctx.stroke();
                 }
             }

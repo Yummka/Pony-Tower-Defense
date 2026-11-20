@@ -86,7 +86,7 @@
     <!-- Всплывающее окно интро Флаттершай -->
     <div id="fluttershyIntroPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 p-4">
         <div class="bg-secondary border-2 border-yellow-300/50 rounded-xl p-8 text-center text-white max-w-2xl w-full shadow-2xl flex flex-col md:flex-row items-center gap-8">
-            <img src="images/Флат_стоит.png" alt="Fluttershy" class="w-32 h-32 object-contain">
+            <img src="images/Флат_стоит.webp" alt="Fluttershy" class="w-32 h-32 object-contain">
             <div>
                 <h2 class="text-2xl font-bold text-yellow-300 mb-4">НОВАЯ ПОНИ ДОСТУПНА!</h2>
                 <p class="text-left text-gray-300 mb-6">
@@ -102,7 +102,7 @@
 
     <div id="rainbowDashIntroPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 p-4">
     <div class="bg-secondary border-2 border-cyan-400/50 rounded-xl p-8 text-center text-white max-w-2xl w-full shadow-2xl flex flex-col md:flex-row items-center gap-8">
-        <img src="images/РадугаСтоит.png" alt="Rainbow Dash" class="w-32 h-32 object-contain">
+        <img src="images/РадугаСтоит.webp" alt="Rainbow Dash" class="w-32 h-32 object-contain">
         <div>
             <h2 class="text-2xl font-bold text-cyan-400 mb-4">НОВАЯ ПОНИ ДОСТУПНА!</h2>
             <p class="text-left text-gray-300 mb-6">
@@ -118,7 +118,7 @@
 
 <div id="rarityIntroPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 p-4">
     <div class="bg-secondary border-2 border-purple-400/50 rounded-xl p-8 text-center text-white max-w-2xl w-full shadow-2xl flex flex-col md:flex-row items-center gap-8">
-        <img src="images/РаритиСтоит.png" alt="Rarity" class="w-32 h-32 object-contain">
+        <img src="images/РаритиСтоит.webp" alt="Rarity" class="w-32 h-32 object-contain">
         <div>
             <h2 class="text-2xl font-bold text-purple-400 mb-4">НОВАЯ ПОНИ ДОСТУПНА!</h2>
             <p class="text-left text-gray-300 mb-6">
@@ -135,7 +135,7 @@
 <!-- Всплывающее окно интро Луны -->
     <div id="lunaIntroPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50 p-4">
         <div class="bg-secondary border-2 border-blue-500/50 rounded-xl p-8 text-center text-white max-w-2xl w-full shadow-2xl flex flex-col md:flex-row items-center gap-8">
-            <img src="images/ЛунаСтоит.png" alt="Luna" class="w-32 h-32 object-contain">
+            <img src="images/ЛунаСтоит.webp" alt="Luna" class="w-32 h-32 object-contain">
             <div>
                 <h2 class="text-2xl font-bold text-blue-300 mb-4">ЛУНА ВЕРНУЛАСЬ!</h2>
                 <p class="text-left text-gray-300 mb-6">
@@ -153,7 +153,7 @@
     <!-- Интро Дёрпи -->
     <div id="derpyIntroPopup" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50 p-4">
         <div class="bg-secondary border-4 border-gray-400 rounded-xl p-8 text-center text-white max-w-2xl w-full shadow-2xl flex flex-col md:flex-row items-center gap-8">
-            <img src="images/ДёрпиСтоит.png" alt="Derpy" class="w-32 h-32 object-contain animate-bounce">
+            <img src="images/ДёрпиСтоит.webp" alt="Derpy" class="w-32 h-32 object-contain animate-bounce">
             <div>
                 <h2 class="text-2xl font-bold text-gray-200 mb-4">НОВАЯ ПОНИ: ДЁРПИ!</h2>
                 <p class="text-left text-gray-300 mb-6">
@@ -183,43 +183,56 @@
     <!-- Игровое поле -->
     <canvas id="gameCanvas"></canvas>
 
-    <!-- ПАНЕЛЬ ИНФОРМАЦИИ -->
-    <div id="info-panel">
-        <div class="stat">💰 Золото: <span id="moneyDisplay">100</span></div>
-        <div class="stat">❤️ Жизни: <span id="livesDisplay">20</span></div>
-        <div class="stat">🌊 Волна: <span id="waveDisplay">1</span></div>
-        <button id="startWaveButton" class="action-btn">🚀 Новая Волна</button>
-        <button id="ingameMenuButton" class="action-btn secondary">🏠 В Меню</button>
-        <button id="sellTowerButton" class="action-btn secondary">💲 Продать Пони</button>
-    </div>
-
-    <div id="towers-panel">
-        <div id="buildModeStatus" class="hidden">
-            Режим строительства: <b id="selectedTowerName"></b> (Esc — отменить)
-        </div>
-        <div class="tower-buttons-group">
-            <button class="buy-btn tower-select-button" data-tower-type="Пинки Пай" data-cost="50">Пинки Пай (45💰)</button>
-            <button class="buy-btn tower-select-button" data-tower-type="Эппл Джек" data-cost="60">Эппл Джек (70💰)</button>
-            <button class="buy-btn tower-select-button" data-tower-type="Твайлайт Спаркл" data-cost="60">Твайлайт Спаркл (60💰)</button>
-            <button class="buy-btn tower-select-button" data-tower-type="Флаттершай" data-cost="55" id="fluttershy-buy-button">Флаттершай (55💰)</button>
-            <button class="buy-btn tower-select-button" data-tower-type="Радуга Дэш" data-cost="80" id="rainbowdash-buy-button" style="display: none;">Радуга Дэш (80💰)</button>
-            <button class="buy-btn tower-select-button" data-tower-type="Рэрити" data-cost="75" id="rarity-buy-button" style="display: none;">Рэрити (75💰)</button>
-            <button class="buy-btn tower-select-button" data-tower-type="Принцесса Луна" data-cost="500" id="luna-buy-button" style="display: none;">Луна (500💰)</button>
-            <button class="buy-btn tower-select-button" data-tower-type="Дёрпи" data-cost="100" id="derpy-buy-button" style="display: none;">Дёрпи (100💰)</button>
+    <!-- ЛЕВАЯ КОЛОНКА УПРАВЛЕНИЯ -->
+    <!-- ЛЕВАЯ КОЛОНКА УПРАВЛЕНИЯ -->
+    <div id="sidebar-left">
+        <!-- ПАНЕЛЬ ИНФОРМАЦИИ -->
+        <div id="info-panel">
+            <div class="stat">💰 Золото: <span id="moneyDisplay">100</span></div>
+            <div class="stat">❤️ Жизни: <span id="livesDisplay">20</span></div>
+            <div class="stat">🌊 Волна: <span id="waveDisplay">1</span></div>
+            <button id="startWaveButton" class="action-btn">🚀 Новая Волна</button>
+            <button id="ingameMenuButton" class="action-btn secondary">🏠 В Меню</button>
+            <button id="sellTowerButton" class="action-btn secondary">💲 Продать Пони</button>
         </div>
 
-        <div id="tower-info-panel" class="hidden">
-    <div class="info-header">
-        <img id="info-tower-img" src="" alt="Tower Image">
-        <h3 id="info-tower-name"></h3>
-    </div>
-    <div class="info-stats">
-        <p>💥 Урон: <span id="info-tower-damage"></span></p>
-        <p>🎯 Радиус: <span id="info-tower-range"></span></p>
-        <p>⏱️ Скорость: <span id="info-tower-speed"></span></p>
-    </div>
-    <p class="info-special"><b>Фишка:</b> <span id="info-tower-special"></span></p>
-</div>
+        <!-- ОТДЕЛЬНЫЙ БЛОК СУПЕРАТАКИ (ЛУНА) -->
+        <div id="ultimate-panel">
+            <button class="buy-btn tower-select-button ultimate-btn" data-tower-type="Принцесса Луна" data-cost="500" id="luna-buy-button" style="display: none;">
+                🌙 ГНЕВ ЛУНЫ (500💰)
+            </button>
+        </div>
+
+        <!-- ПАНЕЛЬ ОБЫЧНЫХ ПОНИ -->
+        <div id="towers-panel">
+            <div id="buildModeStatus" class="hidden">
+                Режим: <b id="selectedTowerName"></b><br><span style="font-size:0.55rem; color:#cbd5e1;">(Esc — отмена)</span>
+            </div>
+            
+            <div class="tower-buttons-group">
+                <button class="buy-btn tower-select-button" data-tower-type="Пинки Пай" data-cost="50">Пинки Пай (45💰)</button>
+                <button class="buy-btn tower-select-button" data-tower-type="Эппл Джек" data-cost="60">Эппл Джек (70💰)</button>
+                <button class="buy-btn tower-select-button" data-tower-type="Твайлайт Спаркл" data-cost="60">Твайлайт Спаркл (60💰)</button>
+                <button class="buy-btn tower-select-button" data-tower-type="Флаттершай" data-cost="55" id="fluttershy-buy-button">Флаттершай (55💰)</button>
+                <button class="buy-btn tower-select-button" data-tower-type="Радуга Дэш" data-cost="80" id="rainbowdash-buy-button" style="display: none;">Радуга Дэш (80💰)</button>
+                <button class="buy-btn tower-select-button" data-tower-type="Рэрити" data-cost="75" id="rarity-buy-button" style="display: none;">Рэрити (75💰)</button>
+                <button class="buy-btn tower-select-button" data-tower-type="Дёрпи" data-cost="70" id="derpy-buy-button" style="display: none;">Дёрпи (70💰)</button>
+            </div>
+
+            <!-- Всплывающая карточка описания пони -->
+            <div id="tower-info-panel" class="hidden">
+                <div class="info-header">
+                    <img id="info-tower-img" src="" alt="Tower Image">
+                    <h3 id="info-tower-name"></h3>
+                </div>
+                <div class="info-stats">
+                    <p>💥 Урон: <span id="info-tower-damage"></span></p>
+                    <p>🎯 Радиус: <span id="info-tower-range"></span></p>
+                    <p>⏱️ Скорость: <span id="info-tower-speed"></span></p>
+                </div>
+                <p class="info-special"><b>Фишка:</b> <span id="info-tower-special"></span></p>
+            </div>
+        </div>
     </div>
 </div>
 
