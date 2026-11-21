@@ -322,18 +322,22 @@ const stateShort = { 'Сон': 'С', 'Превращение': 'М' };
 
 export const towerImages = {};
 
-// Загружаем и обычные, и серые ("БезЦвет") версии для всех стоек, атак и ульт!
+// Список имён именно пони, для которых есть версии "БезЦвет"
+const ponyNames = ['Пинки Пай', 'Эппл Джек', 'Твайлайт Спаркл', 'Флаттершай', 'Радуга Дэш', 'Рэрити', 'Дёрпи'];
+
 Object.entries(towerImgMap).forEach(([k, v]) => {
-    // 1. Обычная цветная картинка:
+    // 1. Обычная картинка
     towerImages[k] = createImage(v + '.webp');
     
-    // 2. Серая версия БезЦвет (автоматически для всех стоек и атак!):
-    towerImages[`${k} БезЦвет`] = createImage(`${v}БезЦвет.webp`);
+    // 2. Версия БезЦвет ТОЛЬКО для главных пони-башен!
+    if (ponyNames.some(pony => k.startsWith(pony))) {
+        towerImages[`${k} БезЦвет`] = createImage(`${v}БезЦвет.webp`);
+    }
 });
 
 // Загрузка состояний Сна и Превращения
 towerPonies.forEach(p => towerStates.forEach(s => {
-    towerImages[`${p} ${s}`] = createImage(`${p[0]}${stateShort[s]}.webp`);
+    towerImages[`${p} ${s}`] = createImage(`${p[0] + stateShort[s]}.webp`);
 }));
 
 const enemyImgMap = { 
